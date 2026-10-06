@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Reading Assessment Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .word-correct { color: #16a34a; font-weight: 500; }
+        .word-incorrect { color: #dc2626; text-decoration: underline wavy #dc2626; font-weight: 600; background-color: #fee2e2; padding: 0.1rem 0.2rem; border-radius: 0.25rem; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .recording-pulse { animation: pulse-ring 1.5s infinite; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide">English Reading Challenge</h1>
+            </div>
+            <div id="nav-user-info" class="hidden flex items-center space-x-4">
+                <span id="nav-student-badge" class="bg-indigo-700 px-3 py-1 rounded-full text-sm font-medium"></span>
+                <button onclick="logoutStudent()" class="text-indigo-200 hover:text-white text-sm"><i class="fa-solid fa-right-from-bracket mr-1"></i> Exit</button>
+            </div>
+            <div id="nav-teacher-btn">
+                <button onclick="openTeacherLogin()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                    <i class="fa-solid fa-lock mr-1"></i> Teacher Portal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8">
+
+        <!-- VIEW 1: STUDENT LOGIN -->
+        <div id="view-login" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 mt-10">
+            <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 p-6 text-white text-center">
+                <i class="fa-solid fa-book-open-reader text-4xl mb-2"></i>
+                <h2 class="text-2xl font-bold">Student Login</h2>
+                <p class="text-indigo-100 text-sm mt-1">Enter your details to start the reading challenge</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Full Name (ローマ字 / Kanji)</label>
+                    <input type="text" id="student-name" placeholder="e.g., Tanaka Kenji" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Class</label>
+                    <input type="text" id="student-class" placeholder="e.g., 1-1 or 2-B" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="button" onclick="handleStudentLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                    <span>Start Challenge</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: LEVEL SELECTOR -->
+        <div id="view-levels" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Reading Units & Parts</h2>
+                    <p class="text-slate-500 text-sm">Complete a part to unlock the next one! You can redo recordings anytime to improve your score.</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 text-sm">
+                    <span class="text-slate-500">Student:</span> <strong id="lbl-student-name" class="text-indigo-600"></strong>
+                </div>
+            </div>
+
+            <div id="levels-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Dynamically populated levels -->
+            </div>
+        </div>
+
+        <!-- VIEW 3: READING TEST ARENA -->
+        <div id="view-arena" class="hidden">
+            <div class="mb-4 flex items-center justify-between">
+                <button onclick="backToLevels()" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium transition shadow-sm">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Units
+                </button>
+                <div id="arena-level-badge" class="bg-indigo-100 text-indigo-700 font-bold px-4 py-1.5 rounded-full text-sm">
+                    Unit & Part
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 space-y-6">
+                <div>
+                    <h3 id="arena-title" class="text-xl font-bold text-slate-900 mb-2">Reading Section</h3>
+                    <p class="text-slate-500 text-sm">Read at your own pace. Note: Speaker names are excluded from speech evaluation. Click the red microphone to start recording, read the passage fully, and click the stop button whenever you are finished.</p>
+                </div>
+
+                <!-- Target Reading Text Box -->
+                <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-6 text-center">
+                    <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-2">Reading Passage</span>
+                    <p id="arena-passage" class="text-xl md:text-2xl font-medium text-slate-800 leading-relaxed font-serif whitespace-pre-line"></p>
+                </div>
+
+                <!-- Recorder & Status Bar -->
+                <div class="flex flex-col items-center justify-center space-y-3 pt-2">
+                    <button id="mic-btn" onclick="toggleRecording()" class="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105 focus:outline-none">
+                        <i id="mic-icon" class="fa-solid fa-microphone text-3xl"></i>
+                    </button>
+                    <p id="recording-status" class="text-sm font-medium text-slate-500">Click microphone to start reading (Unlimited time)</p>
+                </div>
+
+                <!-- Audio Playback Card -->
+                <div id="playback-card" class="hidden bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-900 text-sm">Listen to Your Reading Recording</h4>
+                            <p class="text-xs text-indigo-700">Play back your voice to check your pronunciation.</p>
+                        </div>
+                    </div>
+                    <audio id="audio-playback" controls class="w-full sm:w-64"></audio>
+                </div>
+
+                <!-- Results & Feedback Box -->
+                <div id="results-card" class="hidden border-t border-slate-200 pt-6 mt-6 space-y-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-50 p-6 rounded-xl border border-slate-200 gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Assessment Score</span>
+                            <div class="text-4xl font-extrabold text-indigo-600 mt-1" id="score-percentage">0%</div>
+                            <span class="text-xs text-slate-500 mt-1 block" id="attempt-counter-label">Attempts: 1</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-3">
+                            <button onclick="redoRecording()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Redo Recording</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-2">Speech Comparison (What you said vs Target - Speaker names excluded)</span>
+                        <div id="diff-output" class="p-4 bg-white border border-slate-200 rounded-xl text-lg leading-relaxed font-serif"></div>
+                    </div>
+
+                    <div id="unlock-banner" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-circle-check text-2xl text-emerald-600"></i>
+                            <div>
+                                <h5 class="font-bold">Assessment Complete!</h5>
+                                <p class="text-sm text-emerald-700">You can move to the next part or redo to improve your score.</p>
+                            </div>
+                        </div>
+                        <button onclick="goToNextLevel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium text-sm transition shadow-sm">
+                            Next Part <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- TEACHER LOGIN MODAL -->
+    <div id="modal-teacher-login" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Teacher Portal Access</h3>
+                <button onclick="closeTeacherLogin()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="teacher-password" placeholder="Enter password (default: admin)" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="button" onclick="handleTeacherLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-sm">Login as Teacher</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER PORTAL VIEW -->
+    <div id="view-teacher" class="hidden max-w-5xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-chalkboard-user text-indigo-600 mr-2"></i> Teacher Portal</h2>
+                <p class="text-slate-500 text-sm">Update reading texts and review student progress seamlessly</p>
+            </div>
+            <button onclick="exitTeacherPortal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Exit Portal
+            </button>
+        </div>
+
+        <!-- Portal Tabs -->
+        <div class="flex space-x-2 border-b border-slate-200 mb-6">
+            <button onclick="switchTeacherTab('passages')" id="tab-btn-passages" class="py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600">Manage Passages</button>
+            <button onclick="switchTeacherTab('scores')" id="tab-btn-scores" class="py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700">Student Results</button>
+        </div>
+
+        <!-- Tab 1: Manage Passages -->
+        <div id="teacher-tab-passages" class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Select Part to Edit</h3>
+                <div id="teacher-levels-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-6 max-h-64 overflow-y-auto p-1">
+                    <!-- Populated via JS -->
+                </div>
+
+                <div class="space-y-4 border-t border-slate-100 pt-6">
+                    <input type="hidden" id="edit-level-id">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="edit-label-indicator">Editing Section</label>
+                        <textarea id="edit-text" rows="5" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none font-serif text-lg" placeholder="Type or paste the reading text here..."></textarea>
+                    </div>
+                    <button type="button" onclick="savePassage()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Reading Text
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Student Scores -->
+        <div id="teacher-tab-scores" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Student Progress & Scores</h3>
+                <button onclick="clearAllScores()" class="text-red-600 hover:text-red-700 text-sm font-medium"><i class="fa-solid fa-trash mr-1"></i> Reset All Data</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+                            <th class="p-4">Student Name</th>
+                            <th class="p-4">Class</th>
+                            <th class="p-4">Highest Unlocked Part</th>
+                            <th class="p-4">Best Scores & Total Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scores-table-body" class="divide-y divide-slate-100 text-sm">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Updated Units 6-10 Reading Texts with Speaker Names Excluded from Dialogue Lines
+        const DEFAULT_PASSAGES = [
+            // Unit 6
+            { id: 1, label: "Unit 6 - Part 1", text: "Oh, that’s Tom. Do you know him?\nNo, I don’t. Is he your friend?\nYes. He’s in class 2-2. Let’s say hi to him. Hello, Tom.\nHi. How’s everything?\nEverything is fine. Oh, what’s that?\nThis is a poster for a rakugo show.\nOh, that’s Diane Kichijitsu. I like her.\nWho is she?\nShe’s a rakugo performer from the U.K. I want to see her.\nWhy don’t we go together?" },
+            { id: 2, label: "Unit 6 - Part 2", text: "The show starts in five minutes.\nI can’t wait! Oh, whose ticket is this?\nIs it yours, Eddy?\nNo. I have mine. Maybe it’s Riko’s.\nOops! Yes, it’s mine. Thanks.\nBe careful with that.\nWow. It’s very crowded here.\nYes. Rakugo has a long history, and it’s still popular today.\nHow old is rakugo?\nWell, it’s over 400 years old.\nOver 400? Wow!" },
+            { id: 3, label: "Unit 6 - Read and Think", text: "Questions for Diane Kichijitsu\n1. What is rakugo?\nRakugo is Japanese comic storytelling. A performer on a cushion plays different roles. The performer uses only two props, a fan and a hand towel.\n2. Which do you speak in your shows, English or Japanese?\nI usually speak English, but I sometimes speak Japanese.\n3. Which do you usually wear, kimonos or casual clothes?\nI usually wear casual clothes, but I love kimonos. I have a large kimono collection." },
+
+            // Unit 7
+            { id: 4, label: "Unit 7 - Part 1", text: "Hello?\nHello, Eddy? This is Anna. Are you busy now?\nNo. I’m watching TV, but I can talk. What’s up?\nI’m thinking about tomorrow. Do you have any plans?\nTomorrow? No, I’m free. Why?\nLet’s visit the U.K. together.\nThe U.K.? What do you mean?\nWell, I’m talking about an online tour.\nWow. Sounds like fun.\nGreat. Can you come to my house at three?\nSure. I’m looking forward to it." },
+            { id: 5, label: "Unit 7 - Part 2", text: "Welcome to our online tour. I’m Kate. I’m at a market in London now. You can buy food and souvenirs here. Also, this place appears in the Harry Potter movies.\nCool. What are those people doing?\nThey’re taking pictures.\nHi, I’m John. I’m in the Lake District.\nThis place is the home of Peter Rabbit.\nWow, I love Peter Rabbit! Are you walking around a lake?\nYes, I am. It’s very beautiful." },
+            { id: 6, label: "Unit 7 - Read and Think", text: "Eddy, what are you doing?\nIt’s 6 o’clock. Are you still with your friends?\nYes, I’m sorry. We’re traveling in London now. It’s a big city.\nLondon? What a funny excuse!\nDon’t be angry. We’re taking an online tour. We’re looking at Buckingham Palace now. The guide is taking some pictures for us.\nAn online tour? How interesting! Well, that sounds exciting, but don’t be too late.\nOK, Mom. Thanks!" },
+
+            // Unit 8
+            { id: 7, label: "Unit 8 - Part 1", text: "This is Mina, my cousin. She works in an ethnic restaurant in our town. She loves Africa. Every summer, she visits Kenya as a volunteer. She wants to help people in need.\nSome children can’t go to school. It’s a big problem in some countries.\nMina teaches children in Kenya. She always tries to do her best. I respect her, and I want to become like her." },
+            { id: 8, label: "Unit 8 - Part 2", text: "Let’s eat some African food.\nWhat do you want to eat?\nI want to eat meat pie, bean soup, chicken curry, . . . .\nWe can’t eat all that food, Eddy.\nWe need to reduce food waste.\nYou’re right.\nIn our restaurant, we try to reduce plastic waste. We use paper straws. We make original reusable bags, too. Do you want to see one?\nYes, of course!" },
+            { id: 9, label: "Unit 8 - Read and Think", text: "We Need Your Help!\nThe children in this picture are getting clean water from a well. They look happy. On the other hand, in some villages, children collect water at the river. It is very far. They walk for a long time every day. They want to go to school, but they do not have time. Our volunteer group builds wells in places like these. We are collecting money for them. We need your help." },
+
+            // Unit 9
+            { id: 10, label: "Unit 9 - Part 1", text: "I went back to Canada during the winter vacation. I went to the mountains and stayed in Whistler Village for a week. The village is famous for winter sports. I enjoyed snowboarding there.\nOn Christmas Day, I relaxed at home with my family in Vancouver. On December 31st, I met my friends and watched an ice hockey game with them. I saw my favorite player in that game. I enjoyed my vacation very much." },
+            { id: 11, label: "Unit 9 - Part 2", text: "Did you enjoy your vacation, Anna?\nYes, I did. I tried some traditional Japanese food with my family.\nThat’s nice! Did you eat rice cakes?\nNo, I didn’t. But we ate special soba on New Year’s Eve.\nHow nice!\nHow about you, Riko?\nWhat did you do?\nI cleaned my grandparents’ house with my family.\nGood for you!\nAfter that, I wrote New Year’s cards and watched TV." },
+            { id: 12, label: "Unit 9 - Read and Think", text: "New Year in Japan\nI spent the New Year at Jun’s grandparents’ house. On New Year’s Day, Jun, his grandparents and I went to a shrine. Many people came to the shrine. I bought a fortune slip. Jun read it and said, “It’s sue-kichi. Your future is not so bad.” I did not buy a good luck charm, but I got a special wooden tablet and wrote my wish on it. In the evening, we enjoyed sugoroku, a Japanese board game together. We had a great time." },
+
+            // Unit 10
+            { id: 13, label: "Unit 10 - Part 1", text: "I remember our chorus contest. At first, I didn’t like singing, so I was bored during practice. You were so angry.\nYes, I was. I wanted to win first place.\nI realized that, so I tried hard.\nWere you nervous during the contest?\nNo, I wasn’t, but I made some mistakes.\nReally? Well, anyone can make mistakes. We won anyway. We were so happy after the contest.\nI know. It’s my best memory. I like singing now." },
+            { id: 14, label: "Unit 10 - Part 2", text: "Hey, Jun. I didn’t see you during lunch break. What were you doing?\nI was playing soccer then. Were you looking for me?\nYes. I wanted to show this to you. It’s a photo album for this year. I made it yesterday.\nWow.\nThese pictures bring back a lot of memories.\nI remember the first day. I was really nervous. My heart was beating fast on my way to school. Now I enjoy each and every day with you all." },
+            { id: 15, label: "Unit 10 - Read and Think", text: "MY BEST MEMORY\nI remember our school camping trip in July. We went to Lake Sakura. There is a campground near the lake. The campground is large and clean. There is a hot spring, too.\nWe set up our tents and stayed for two nights. The main event on the second evening was a campfire. There were many students around the campfire. Jun was there, too. We talked a lot. It is my best memory." }
+        ];
+
+        // App State
+        let passages = JSON.parse(localStorage.getItem('reading_passages_units_nonames')) || DEFAULT_PASSAGES;
+        let studentProgress = JSON.parse(localStorage.getItem('reading_student_progress_units_nonames')) || {}; 
+        let currentStudent = null; 
+        let activeLevelId = 1;
+        let isRecording = false;
+        let recognition = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let accumulatedTranscript = "";
+
+        // Initialize Speech Recognition & Media Recorder
+        if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true; 
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                accumulatedTranscript = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    accumulatedTranscript += event.results[i][0].transcript + ' ';
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.warn("Speech recognition notice:", event.error);
+            };
+
+            recognition.onend = function() {
+                if (isRecording) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            };
+        }
+
+        // Student Login Handler
+        function handleStudentLogin() {
+            const nameInput = document.getElementById('student-name');
+            const classInput = document.getElementById('student-class');
+            
+            const name = nameInput.value.trim();
+            const studentClass = classInput.value.trim();
+            
+            if (!name || !studentClass) {
+                alert("Please enter both your name and your class!");
+                return;
+            }
+
+            currentStudent = { name, class: studentClass };
+            const key = `${name}_${studentClass}`;
+            
+            if (!studentProgress[key]) {
+                studentProgress[key] = { unlockedLevel: 1, scores: {}, attempts: {} };
+                saveProgressToStorage();
+            }
+
+            document.getElementById('nav-user-info').classList.remove('hidden');
+            document.getElementById('nav-teacher-btn').classList.add('hidden');
+            document.getElementById('nav-student-badge').textContent = `${name} (${studentClass})`;
+            document.getElementById('lbl-student-name').textContent = `${name} (${studentClass})`;
+
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-levels').classList.remove('hidden');
+            renderLevels();
+        }
+
+        function logoutStudent() {
+            currentStudent = null;
+            document.getElementById('nav-user-info').classList.add('hidden');
+            document.getElementById('nav-teacher-btn').classList.add('hidden');
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-arena').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('student-name').value = '';
+            document.getElementById('student-class').value = '';
+        }
+
+        function getStudentKey() {
+            return currentStudent ? `${currentStudent.name}_${currentStudent.class}` : null;
+        }
+
+        function saveProgressToStorage() {
+            localStorage.setItem('reading_student_progress_units_nonames', JSON.stringify(studentProgress));
+        }
+
+        // Render Levels Grid grouped by Unit
+        function renderLevels() {
+            const grid = document.getElementById('levels-grid');
+            grid.innerHTML = '';
+            const key = getStudentKey();
+            const progress = studentProgress[key] || { unlockedLevel: 1, scores: {}, attempts: {} };
+
+            passages.forEach(p => {
+                const isUnlocked = p.id <= progress.unlockedLevel;
+                const bestScore = progress.scores[p.id];
+                const hasTried = bestScore !== undefined;
+                const attemptsCount = progress.attempts && progress.attempts[p.id] ? progress.attempts[p.id] : 0;
+                const isPerfect = hasTried && bestScore === 100;
+
+                const card = document.createElement('div');
+                card.className = `rounded-2xl p-5 flex flex-col justify-between border transition shadow-sm ${
+                    isUnlocked 
+                        ? (hasTried ? 'bg-emerald-50/50 border-emerald-300 hover:shadow-md cursor-pointer' : 'bg-white border-slate-200 hover:border-indigo-500 hover:shadow-md cursor-pointer') 
+                        : 'bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed'
+                }`;
+                
+                if (isUnlocked) {
+                    card.onclick = () => openLevelArena(p.id);
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-md ${isUnlocked ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200 text-slate-600'}">${p.label}</span>${isUnlocked ? (hasTried ? '<i class="fa-solid fa-circle-check text-emerald-600 text-lg" title="Completed"></i>' : '<i class="fa-solid fa-arrow-right text-indigo-500"></i>') : '<i class="fa-solid fa-lock text-slate-400"></i>'}
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-3 font-serif mt-2">${p.text}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Best Score:</span>
+                            <strong class="${isPerfect ? 'text-emerald-600' : 'text-slate-700'}">${hasTried ? bestScore + '%' : 'Not tried'}</strong>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span>Attempts:</span>
+                            <span>${attemptsCount}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Open Level Arena
+        function openLevelArena(levelId) {
+            activeLevelId = levelId;
+            const passage = passages.find(p => p.id === levelId);
+            if (!passage) return;
+
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-arena').classList.remove('hidden');
+
+            document.getElementById('arena-level-badge').textContent = passage.label;
+            document.getElementById('arena-title').textContent = passage.label;
+            document.getElementById('arena-passage').textContent = passage.text;
+
+            document.getElementById('results-card').classList.add('hidden');
+            document.getElementById('playback-card').classList.add('hidden');
+            stopRecordingUI();
+        }
+
+        function backToLevels() {
+            if (isRecording) {
+                stopRecordingProcess();
+            }
+            document.getElementById('view-arena').classList.add('hidden');
+            document.getElementById('view-levels').classList.remove('hidden');
+            renderLevels();
+        }
+
+        // Recording Controls
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecordingProcess();
+            } else {
+                accumulatedTranscript = "";
+                audioChunks = [];
+                
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audioElement = document.getElementById('audio-playback');
+                        audioElement.src = audioUrl;
+                        document.getElementById('playback-card').classList.remove('hidden');
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+
+                    if (recognition) {
+                        recognition.start();
+                    }
+
+                    startRecordingUI();
+                } catch (err) {
+                    console.error("Microphone access error:", err);
+                    alert("Could not access microphone. Please ensure microphone permissions are enabled in your browser.");
+                }
+            }
+        }
+
+        function startRecordingUI() {
+            isRecording = true;
+            const btn = document.getElementById('mic-btn');
+            const icon = document.getElementById('mic-icon');
+            const status = document.getElementById('recording-status');
+
+            btn.classList.remove('bg-red-500', 'hover:bg-red-600');
+            btn.classList.add('bg-slate-800', 'recording-pulse');
+            icon.className = 'fa-solid fa-stop text-2xl';
+            status.textContent = 'Recording in progress (Take your time!). Click the stop button when finished reading.';
+            document.getElementById('results-card').classList.add('hidden');
+            document.getElementById('playback-card').classList.add('hidden');
+        }
+
+        function stopRecordingProcess() {
+            isRecording = false;
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            stopRecordingUI();
+            
+            setTimeout(() => {
+                evaluateReading(accumulatedTranscript);
+            }, 300);
+        }
+
+        function stopRecordingUI() {
+            const btn = document.getElementById('mic-btn');
+            const icon = document.getElementById('mic-icon');
+            const status = document.getElementById('recording-status');
+
+            btn.classList.remove('bg-slate-800', 'recording-pulse');
+            btn.classList.add('bg-red-500', 'hover:bg-red-600');
+            icon.className = 'fa-solid fa-microphone text-3xl';
+            status.textContent = 'Click microphone to start reading';
+        }
+
+        function redoRecording() {
+            document.getElementById('results-card').classList.add('hidden');
+            document.getElementById('playback-card').classList.add('hidden');
+            accumulatedTranscript = "";
+            audioChunks = [];
+            toggleRecording();
+        }
+
+        // Word Diff Scoring Evaluation
+        function evaluateReading(spokenText) {
+            const passage = passages.find(p => p.id === activeLevelId);
+            if (!passage) return;
+
+            const cleanPunctuation = (str) => str.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?]/g, "").trim();
+            
+            const targetWords = passage.text.split(/\s+/);
+            const spokenRawWords = spokenText.split(/\s+/);
+            const spokenCleanSet = new Set(spokenRawWords.map(w => cleanPunctuation(w)));
+
+            let matchCount = 0;
+            let diffHtml = '';
+
+            targetWords.forEach((word) => {
+                const cleanedTarget = cleanPunctuation(word);
+                const isMatch = spokenCleanSet.has(cleanedTarget);
+
+                if (isMatch) {
+                    matchCount++;
+                    diffHtml += `<span class="word-correct mr-1">${word}</span>`;
+                } else {
+                    diffHtml += `<span class="word-incorrect mr-1" title="Mispronounced or missed">${word}</span>`;
+                }
+            });
+
+            const percentage = Math.round((matchCount / targetWords.length) * 100);
+
+            const key = getStudentKey();
+            const studentDat = studentProgress[key];
+            if (!studentDat.attempts) studentDat.attempts = {};
+            studentDat.attempts[activeLevelId] = (studentDat.attempts[activeLevelId] || 0) + 1;
+
+            if (studentDat.scores[activeLevelId] === undefined || percentage > studentDat.scores[activeLevelId]) {
+                studentDat.scores[activeLevelId] = percentage;
+            }
+
+            // Unlock next level as soon as an attempt is finished/scored
+            if (activeLevelId >= studentDat.unlockedLevel && activeLevelId < passages.length) {
+                studentDat.unlockedLevel = activeLevelId + 1;
+            }
+            saveProgressToStorage();
+
+            document.getElementById('score-percentage').textContent = `${percentage}%`;
+            document.getElementById('attempt-counter-label').textContent = `Total Attempts: ${studentDat.attempts[activeLevelId]}`;
+            document.getElementById('diff-output').innerHTML = diffHtml;
+            document.getElementById('results-card').classList.remove('hidden');
+
+            const unlockBanner = document.getElementById('unlock-banner');
+            unlockBanner.classList.remove('hidden');
+
+            document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function goToNextLevel() {
+            if (activeLevelId < passages.length) {
+                openLevelArena(activeLevelId + 1);
+            } else {
+                backToLevels();
+            }
+        }
+
+        // Teacher Portal Functions
+        function openTeacherLogin() {
+            document.getElementById('modal-teacher-login').classList.remove('hidden');
+        }
+
+        function closeTeacherLogin() {
+            document.getElementById('modal-teacher-login').classList.add('hidden');
+            document.getElementById('teacher-password').value = '';
+        }
+
+        function handleTeacherLogin() {
+            const pass = document.getElementById('teacher-password').value;
+            if (pass === 'admin' || pass === 'teacher123') {
+                closeTeacherLogin();
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('view-levels').classList.add('hidden');
+                document.getElementById('view-arena').classList.add('hidden');
+                document.getElementById('view-teacher').classList.remove('hidden');
+                renderTeacherPassagesGrid();
+                renderTeacherScoresTable();
+            } else {
+                alert('Incorrect password. (Default is: admin)');
+            }
+        }
+
+        function exitTeacherPortal() {
+            document.getElementById('view-teacher').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+        }
+
+        function switchTeacherTab(tab) {
+            const passagesTab = document.getElementById('teacher-tab-passages');
+            const scoresTab = document.getElementById('teacher-tab-scores');
+            const btnPassages = document.getElementById('tab-btn-passages');
+            const btnScores = document.getElementById('tab-btn-scores');
+
+            if (tab === 'passages') {
+                passagesTab.classList.remove('hidden');
+                scoresTab.classList.add('hidden');
+                btnPassages.className = 'py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600';
+                btnScores.className = 'py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700';
+                renderTeacherPassagesGrid();
+            } else {
+                passagesTab.classList.add('hidden');
+                scoresTab.classList.remove('hidden');
+                btnScores.className = 'py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600';
+                btnPassages.className = 'py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700';
+                renderTeacherScoresTable();
+            }
+        }
+
+        function renderTeacherPassagesGrid() {
+            const grid = document.getElementById('teacher-levels-grid');
+            grid.innerHTML = '';
+            passages.forEach((p, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `p-3 rounded-xl border text-sm font-medium transition ${idx === 0 ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 hover:border-slate-300 text-slate-700'}`;
+                btn.textContent = p.label;
+                btn.onclick = () => selectPassageToEdit(p.id, btn);
+                grid.appendChild(btn);
+            });
+            if (passages.length > 0) {
+                loadPassageIntoForm(passages[0].id);
+            }
+        }
+
+        function selectPassageToEdit(id, clickedBtn) {
+            document.querySelectorAll('#teacher-levels-grid button').forEach(b => {
+                b.className = 'p-3 rounded-xl border border-slate-200 hover:border-slate-300 text-slate-700 text-sm font-medium transition';
+            });
+            clickedBtn.className = 'p-3 rounded-xl border border-indigo-600 bg-indigo-50 text-indigo-700 text-sm font-medium transition';
+            loadPassageIntoForm(id);
+        }
+
+        function loadPassageIntoForm(id) {
+            const p = passages.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('edit-level-id').value = p.id;
+            document.getElementById('edit-label-indicator').textContent = `Reading Passage for: ${p.label}`;
+            document.getElementById('edit-text').value = p.text;
+        }
+
+        function savePassage() {
+            const id = parseInt(document.getElementById('edit-level-id').value);
+            const text = document.getElementById('edit-text').value;
+
+            const index = passages.findIndex(p => p.id === id);
+            if (index !== -1) {
+                passages[index].text = text;
+                localStorage.setItem('reading_passages_units_nonames', JSON.stringify(passages));
+                alert(`${passages[index].label} successfully updated!`);
+            }
+        }
+
+        function renderTeacherScoresTable() {
+            const tbody = document.getElementById('scores-table-body');
+            tbody.innerHTML = '';
+
+            const keys = Object.keys(studentProgress);
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">No student assessment records found yet.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(key => {
+                const dat = studentProgress[key];
+                const parts = key.split('_');
+                const name = parts[0];
+                const studentClass = parts[1];
+
+                let summaryItems = [];
+                if (dat.scores) {
+                    for (let [lvl, scr] of Object.entries(dat.scores)) {
+                        let pObj = passages.find(p => p.id == lvl);
+                        let labelName = pObj ? pObj.label : `Part ${lvl}`;
+                        let attempts = dat.attempts && dat.attempts[lvl] ? dat.attempts[lvl] : 1;
+                        summaryItems.push(`${labelName}: ${scr}% (${attempts} attempts)`);
+                    }
+                }
+
+                const unlockedObj = passages.find(p => p.id == dat.unlockedLevel);
+                const unlockedLabel = unlockedObj ? unlockedObj.label : `Part ${dat.unlockedLevel}`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-4 font-medium text-slate-900">${name}</td>
+                    <td class="p-4 text-slate-600"><span class="bg-slate-100 px-2.5 py-1 rounded-md text-xs font-semibold">${studentClass}</span></td>
+                    <td class="p-4 font-bold text-indigo-600">${unlockedLabel}</td>
+                    <td class="p-4 text-slate-600 text-xs">${summaryItems.join('<br>') || 'No attempts yet'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearAllScores() {
+            if (confirm("Are you sure you want to reset all student progress and scores?")) {
+                studentProgress = {};
+                localStorage.removeItem('reading_student_progress_units_nonames');
+                renderTeacherScoresTable();
+                alert("All student records have been reset.");
+            }
+        }
+    </script>
+</body>
+</html>
