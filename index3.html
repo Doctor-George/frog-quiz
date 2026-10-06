@@ -68,7 +68,7 @@
                     <label class="block text-sm font-medium text-slate-700 mb-1">Class</label>
                     <input type="text" id="student-class" placeholder="e.g., 1-1 or 2-B" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
-                <button type="button" onclick="handleStudentLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition shadow-md flex items-center justify-center space-x-2">
+                <button type="button" onclick="handleStudentLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
                     <span>Start Challenge</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -80,7 +80,7 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800">Reading Units & Parts</h2>
-                    <p class="text-slate-500 text-sm">Score 100% on a part to unlock the next one!</p>
+                    <p class="text-slate-500 text-sm">Complete a part to unlock the next one! You can redo recordings anytime to improve your score.</p>
                 </div>
                 <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 text-sm">
                     <span class="text-slate-500">Student:</span> <strong id="lbl-student-name" class="text-indigo-600"></strong>
@@ -162,8 +162,8 @@
                         <div class="flex items-center space-x-3">
                             <i class="fa-solid fa-circle-check text-2xl text-emerald-600"></i>
                             <div>
-                                <h5 class="font-bold">Perfect Score Achieved!</h5>
-                                <p class="text-sm text-emerald-700">The next part is now unlocked.</p>
+                                <h5 class="font-bold">Assessment Complete!</h5>
+                                <p class="text-sm text-emerald-700">You can move to the next part or redo to improve your score.</p>
                             </div>
                         </div>
                         <button onclick="goToNextLevel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium text-sm transition shadow-sm">
@@ -324,7 +324,7 @@
             };
         }
 
-        // Student Login Handler (Using regular button click to avoid form submission bugs)
+        // Student Login Handler
         function handleStudentLogin() {
             const nameInput = document.getElementById('student-name');
             const classInput = document.getElementById('student-class');
@@ -383,14 +383,15 @@
 
             passages.forEach(p => {
                 const isUnlocked = p.id <= progress.unlockedLevel;
-                const bestScore = progress.scores[p.id] || 0;
+                const bestScore = progress.scores[p.id];
+                const hasTried = bestScore !== undefined;
                 const attemptsCount = progress.attempts && progress.attempts[p.id] ? progress.attempts[p.id] : 0;
-                const isPerfect = bestScore === 100;
+                const isPerfect = hasTried && bestScore === 100;
 
                 const card = document.createElement('div');
                 card.className = `rounded-2xl p-5 flex flex-col justify-between border transition shadow-sm ${
                     isUnlocked 
-                        ? (isPerfect ? 'bg-emerald-50/50 border-emerald-300 hover:shadow-md cursor-pointer' : 'bg-white border-slate-200 hover:border-indigo-500 hover:shadow-md cursor-pointer') 
+                        ? (hasTried ? 'bg-emerald-50/50 border-emerald-300 hover:shadow-md cursor-pointer' : 'bg-white border-slate-200 hover:border-indigo-500 hover:shadow-md cursor-pointer') 
                         : 'bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed'
                 }`;
                 
@@ -401,14 +402,14 @@
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-md ${isUnlocked ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200 text-slate-600'}">${p.label}</span>${isUnlocked ? (isPerfect ? '<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>' : '<i class="fa-solid fa-arrow-right text-indigo-500"></i>') : '<i class="fa-solid fa-lock text-slate-400"></i>'}
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-md ${isUnlocked ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200 text-slate-600'}">${p.label}</span>${isUnlocked ? (hasTried ? '<i class="fa-solid fa-circle-check text-emerald-600 text-lg" title="Completed"></i>' : '<i class="fa-solid fa-arrow-right text-indigo-500"></i>') : '<i class="fa-solid fa-lock text-slate-400"></i>'}
                         </div>
                         <p class="text-xs text-slate-600 line-clamp-3 font-serif mt-2">${p.text}</p>
                     </div>
                     <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs">
                         <div class="flex justify-between items-center">
                             <span class="text-slate-500">Best Score:</span>
-                            <strong class="${isPerfect ? 'text-emerald-600' : 'text-slate-700'}">${bestScore}%</strong>
+                            <strong class="${isPerfect ? 'text-emerald-600' : 'text-slate-700'}">${hasTried ? bestScore + '%' : 'Not tried'}</strong>
                         </div>
                         <div class="flex justify-between items-center text-slate-400">
                             <span>Attempts:</span>
@@ -568,11 +569,12 @@
             if (!studentDat.attempts) studentDat.attempts = {};
             studentDat.attempts[activeLevelId] = (studentDat.attempts[activeLevelId] || 0) + 1;
 
-            if (!studentDat.scores[activeLevelId] || percentage > studentDat.scores[activeLevelId]) {
+            if (studentDat.scores[activeLevelId] === undefined || percentage > studentDat.scores[activeLevelId]) {
                 studentDat.scores[activeLevelId] = percentage;
             }
 
-            if (percentage === 100 && (activeLevelId >= studentDat.unlockedLevel && activeLevelId < passages.length)) {
+            // Unlock next level as soon as an attempt is finished/scored, regardless of the score percentage
+            if (activeLevelId >= studentDat.unlockedLevel && activeLevelId < passages.length) {
                 studentDat.unlockedLevel = activeLevelId + 1;
             }
             saveProgressToStorage();
@@ -582,12 +584,9 @@
             document.getElementById('diff-output').innerHTML = diffHtml;
             document.getElementById('results-card').classList.remove('hidden');
 
+            // Show completion banner since the next level is now unlocked
             const unlockBanner = document.getElementById('unlock-banner');
-            if (percentage === 100) {
-                unlockBanner.classList.remove('hidden');
-            } else {
-                unlockBanner.classList.add('hidden');
-            }
+            unlockBanner.classList.remove('hidden');
 
             document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
         }
