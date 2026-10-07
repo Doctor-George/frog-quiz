@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team A vs Team B Word Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        button {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 h-screen overflow-hidden flex flex-col justify-between select-none p-2">
+
+    <!-- Top Navigation / Header -->
+    <header class="bg-white border-b border-slate-200 px-4 py-2 flex justify-between items-center shadow-sm shrink-0 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div>
+                <span class="text-[10px] text-indigo-600 font-bold tracking-wide uppercase block">Prepared by Dr. George Cabrera.</span>
+                <h1 class="text-xs sm:text-sm font-semibold text-slate-700">English-Japanese Team Word Game</h1>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <div id="word-timer-badge" class="hidden bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-lg text-xs">
+                <i class="fa-solid fa-hourglass-half mr-1"></i> Word Time: <span id="word-time-left">00:00</span>
+            </div>
+            <div id="timer-display" class="hidden bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg text-xs">
+                <i class="fa-solid fa-clock mr-1"></i> Game Time: <span id="time-left">00:00</span>
+            </div>
+            <button onclick="openTeacherLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-1.5 rounded-lg text-xs transition shadow-sm">
+                Teacher Portal
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="max-w-6xl mx-auto px-2 py-2 w-full flex-grow flex flex-col justify-between min-h-0">
+        
+        <!-- Prompt / Japanese Meaning Display Box -->
+        <div class="bg-white border-2 border-emerald-500 rounded-xl p-3 text-center shadow-sm shrink-0">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Japanese Meaning (Shuffled Order)</span>
+            <div id="game-prompt" class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-wide min-h-[32px] flex items-center justify-center">
+                Press START to Play
+            </div>
+        </div>
+
+        <!-- Team Boards Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-grow min-h-0 my-2">
+            
+            <!-- TEAM A -->
+            <div class="bg-white rounded-xl border-2 border-indigo-900 p-3 shadow-md flex flex-col justify-between h-full">
+                <div>
+                    <h2 class="text-center font-bold text-indigo-900 text-sm mb-1.5">Team A (Type English)</h2>
+                    <div id="team-a-display" class="w-full bg-slate-50 border-2 border-indigo-900 rounded-lg h-12 px-3 flex items-center overflow-x-auto text-lg font-mono text-slate-800 whitespace-nowrap mb-2"></div>
+                </div>
+
+                <!-- SCORE DISPLAY POSITIONED ABOVE KEYBOARD -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-2 mb-2 flex justify-between items-center shrink-0">
+                    <span class="text-xs font-black text-indigo-900 uppercase tracking-wider">Team A Score</span>
+                    <div id="score-a" class="text-indigo-900 font-black text-2xl px-3 py-0.5 rounded-md bg-white border border-indigo-300 shadow-inner">0</div>
+                </div>
+
+                <!-- Letter Keyboard A -->
+                <div class="flex flex-col justify-end flex-grow">
+                    <div class="grid grid-cols-6 gap-1 mb-2" id="keyboard-a"></div>
+                    <div class="flex gap-1.5">
+                        <button onclick="handleTeamAction('A', 'space')" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-1.5 rounded-md text-[11px] font-semibold border border-indigo-200 transition active:scale-95">Space</button>
+                        <button onclick="handleTeamAction('A', 'backspace')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 rounded-md text-[11px] font-semibold border border-slate-300 transition active:scale-95">Backspace</button>
+                        <button onclick="handleTeamAction('A', 'clear')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 rounded-md text-[11px] font-semibold border border-slate-300 transition active:scale-95">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEAM B -->
+            <div class="bg-white rounded-xl border-2 border-rose-700 p-3 shadow-md flex flex-col justify-between h-full">
+                <div>
+                    <h2 class="text-center font-bold text-rose-700 text-sm mb-1.5">Team B (Type English)</h2>
+                    <div id="team-b-display" class="w-full bg-slate-50 border-2 border-rose-700 rounded-lg h-12 px-3 flex items-center overflow-x-auto text-lg font-mono text-slate-800 whitespace-nowrap mb-2"></div>
+                </div>
+
+                <!-- SCORE DISPLAY POSITIONED ABOVE KEYBOARD -->
+                <div class="bg-rose-50 border border-rose-200 rounded-lg p-2 mb-2 flex justify-between items-center shrink-0">
+                    <span class="text-xs font-black text-rose-900 uppercase tracking-wider">Team B Score</span>
+                    <div id="score-b" class="text-rose-900 font-black text-2xl px-3 py-0.5 rounded-md bg-white border border-rose-300 shadow-inner">0</div>
+                </div>
+
+                <!-- Letter Keyboard B -->
+                <div class="flex flex-col justify-end flex-grow">
+                    <div class="grid grid-cols-6 gap-1 mb-2" id="keyboard-b"></div>
+                    <div class="flex gap-1.5">
+                        <button onclick="handleTeamAction('B', 'space')" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-700 py-1.5 rounded-md text-[11px] font-semibold border border-rose-200 transition active:scale-95">Space</button>
+                        <button onclick="handleTeamAction('B', 'backspace')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 rounded-md text-[11px] font-semibold border border-slate-300 transition active:scale-95">Backspace</button>
+                        <button onclick="handleTeamAction('B', 'clear')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 rounded-md text-[11px] font-semibold border border-slate-300 transition active:scale-95">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Global Controls -->
+        <div class="flex justify-center items-center gap-3 shrink-0 pt-1">
+            <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-xl transition shadow-md flex items-center space-x-2 text-xs active:scale-95">
+                <i class="fa-solid fa-play"></i>
+                <span>Start Game</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2 rounded-xl transition shadow-md flex items-center space-x-2 text-xs active:scale-95">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Reset Game</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- 1. TEACHER PASSWORD LOGIN MODAL -->
+    <div id="modal-teacher-login" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-800">Teacher Login</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Password Required</label>
+                <input type="password" id="teacher-password-input" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Enter password...">
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModals()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">Cancel</button>
+                <button onclick="verifyTeacherPassword()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-sm">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. TEACHER PORTAL SETTINGS MODAL -->
+    <div id="modal-portal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-800">Teacher Portal - Game Settings</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Entire Game Duration</label>
+                    <select id="teacher-game-timer-select" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="180">3 Minutes</option>
+                        <option value="240">4 Minutes</option>
+                        <option value="300" selected>5 Minutes</option>
+                        <option value="360">6 Minutes</option>
+                        <option value="420">7 Minutes</option>
+                        <option value="480">8 Minutes</option>
+                        <option value="540">9 Minutes</option>
+                        <option value="600">10 Minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Per-Word Time Limit</label>
+                    <select id="teacher-word-timer-select" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="30" selected>30 Seconds</option>
+                        <option value="60">1 Minute</option>
+                        <option value="120">2 Minutes</option>
+                        <option value="180">3 Minutes</option>
+                        <option value="240">4 Minutes</option>
+                        <option value="300">5 Minutes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Word Pairs (Format: English : Japanese)</label>
+                <textarea id="teacher-words-input" rows="6" class="w-full p-3 border rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <p class="text-xs text-slate-400 mt-1">One pair per line (e.g. <code>apple : りんご</code>).</p>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModals()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">Cancel</button>
+                <button onclick="saveTeacherSettings()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-sm">Save & Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Game Logic -->
+    <script>
+        const defaultPairs = [
+            { en: "nice to meet you", jp: "はじめまして" },
+            { en: "good morning", jp: "おはようございます" },
+            { en: "hi", jp: "こんにちは / やあ" },
+            { en: "my name is", jp: "私の名前は〜です" },
+            { en: "hello", jp: "こんにちは" },
+            { en: "do like tennis", jp: "テニスが好きですか" },
+            { en: "yes", jp: "はい" },
+            { en: "apple", jp: "りんご" },
+            { en: "bat", jp: "バット" },
+            { en: "cat", jp: "ねこ" },
+            { en: "dog", jp: "いぬ" },
+            { en: "egg", jp: "たまご" },
+            { en: "flower", jp: "はな" },
+            { en: "gorilla", jp: "ゴリラ" },
+            { en: "horse", jp: "うま" },
+            { en: "ink", jp: "インク" },
+            { en: "jump", jp: "ジャンプする" },
+            { en: "koala", jp: "コアラ" },
+            { en: "log", jp: "丸太" },
+            { en: "monkey", jp: "さる" },
+            { en: "net", jp: "ネット" },
+            { en: "octopus", jp: "たこ" },
+            { en: "queen", jp: "女王" },
+            { en: "rabbit", jp: "うさぎ" },
+            { en: "snake", jp: "へび" },
+            { en: "tree", jp: "木" },
+            { en: "umbrella", jp: "傘" },
+            { en: "V sign", jp: "Vサイン" },
+            { en: "wolf", jp: "おおかみ" },
+            { en: "fox", jp: "きつね" },
+            { en: "yo-yo", jp: "ヨーヨー" },
+            { en: "zipper", jp: "ジッパー" },
+            { en: "city", jp: "都市" },
+            { en: "gym", jp: "体育館" },
+            { en: "apron", jp: "エプロン" },
+            { en: "evening", jp: "夕方" },
+            { en: "ice", jp: "氷" },
+            { en: "ocean", jp: "海" },
+            { en: "uniform", jp: "制服" },
+            { en: "fan", jp: "扇風機 / ファン" },
+            { en: "pen", jp: "ペン" },
+            { en: "ten", jp: "10" },
+            { en: "sun", jp: "太陽" },
+            { en: "run", jp: "走る" },
+            { en: "hat", jp: "帽子" },
+            { en: "hot", jp: "暑い" },
+            { en: "cup", jp: "カップ" },
+            { en: "cap", jp: "キャップ" },
+            { en: "map", jp: "地図" },
+            { en: "mop", jp: "モップ" },
+            { en: "cut", jp: "切る" },
+            { en: "TV", jp: "テレビ" },
+            { en: "milk", jp: "牛乳" },
+            { en: "box", jp: "箱" },
+            { en: "desk", jp: "机" },
+            { en: "bed", jp: "ベッド" },
+            { en: "red", jp: "赤" },
+            { en: "P.E.", jp: "体育" },
+            { en: "play soccer", jp: "サッカーをする" },
+            { en: "have a", jp: "〜を持っている" },
+            { en: "want", jp: "欲しい" },
+            { en: "call", jp: "呼ぶ / 電話する" },
+            { en: "South Africa", jp: "南アフリカ" },
+            { en: "love", jp: "愛する / 大好き" },
+            { en: "everyone", jp: "みんな" },
+            { en: "me", jp: "私を / 私に" },
+            { en: "from", jp: "〜から" },
+            { en: "Japanese", jp: "日本人 / 日本語" },
+            { en: "too", jp: "〜もまた" },
+            { en: "join the club", jp: "部活に入る" },
+            { en: "one", jp: "1" },
+            { en: "two", jp: "2" },
+            { en: "three", jp: "3" },
+            { en: "four", jp: "4" },
+            { en: "five", jp: "5" },
+            { en: "six", jp: "6" },
+            { en: "seven", jp: "7" },
+            { en: "eight", jp: "8" },
+            { en: "nine", jp: "9" },
+            { en: "ten", jp: "10" },
+            { en: "eleven", jp: "11" },
+            { en: "twelve", jp: "12" },
+            { en: "thirteen", jp: "13" },
+            { en: "fourteen", jp: "14" },
+            { en: "fifteen", jp: "15" },
+            { en: "sixteen", jp: "16" },
+            { en: "seventeen", jp: "17" },
+            { en: "eighteen", jp: "18" },
+            { en: "nineteen", jp: "19" },
+            { en: "twenty", jp: "20" },
+            { en: "thirty", jp: "30" },
+            { en: "forty", jp: "40" },
+            { en: "fifty", jp: "50" },
+            { en: "sixty", jp: "60" },
+            { en: "seventy", jp: "70" },
+            { en: "eighty", jp: "80" },
+            { en: "ninety", jp: "90" },
+            { en: "hundred", jp: "100" },
+            { en: "zero", jp: "0" },
+            { en: "often", jp: "よく" },
+            { en: "with", jp: "〜と一緒に" },
+            { en: "but", jp: "しかし" },
+            { en: "rugby", jp: "ラグビー" },
+            { en: "watch", jp: "見る / 腕時計" },
+            { en: "friend", jp: "友達" },
+            { en: "great", jp: "素晴らしい" },
+            { en: "no", jp: "いいえ" },
+            { en: "not", jp: "〜ではない" },
+            { en: "oh", jp: "おお" },
+            { en: "don't", jp: "〜しない" },
+            { en: "draw", jp: "描く" },
+            { en: "an anime", jp: "アニメ" },
+            { en: "so", jp: "だから / とても" },
+            { en: "about", jp: "〜について" },
+            { en: "lesson", jp: "レッスン / 授業" },
+            { en: "comic", jp: "漫画" },
+            { en: "wow", jp: "わあ" },
+            { en: "are", jp: "〜です / いる" },
+            { en: "in", jp: "〜の中に" },
+            { en: "art", jp: "美術 / 芸術" },
+            { en: "how", jp: "どのように" },
+            { en: "school", jp: "学校" },
+            { en: "now", jp: "今" },
+            { en: "take", jp: "取る / 連れて行く" },
+            { en: "swimming", jp: "水泳" },
+            { en: "shop", jp: "店" },
+            { en: "cherry", jp: "チェリー / 桜" },
+            { en: "think", jp: "考える / 思う" },
+            { en: "this", jp: "これ / この" },
+            { en: "white", jp: "白" },
+            { en: "photo", jp: "写真" },
+            { en: "black", jp: "黒" },
+            { en: "cake", jp: "ケーキ" },
+            { en: "we", jp: "私たち" },
+            { en: "rice", jp: "ご飯 / 米" },
+            { en: "home", jp: "家" },
+            { en: "cute", jp: "かわいい" },
+            { en: "fish", jp: "魚" },
+            { en: "lunch", jp: "昼食" },
+            { en: "king", jp: "王様" },
+            { en: "math", jp: "数学" },
+            { en: "English", jp: "英語" },
+            { en: "strong", jp: "強い" },
+            { en: "bath", jp: "お風呂" },
+            { en: "clock", jp: "時計" },
+            { en: "lake", jp: "湖" },
+            { en: "bike", jp: "自転車" },
+            { en: "game", jp: "ゲーム" },
+            { en: "shrine", jp: "神社" },
+            { en: "nose", jp: "鼻" }
+        ];
+
+        let wordPairs = JSON.parse(localStorage.getItem('dr_cabrera_pairs')) || defaultPairs;
+        let gameTimeSetting = parseInt(localStorage.getItem('dr_cabrera_game_timer')) || 300;
+        let wordTimeSetting = parseInt(localStorage.getItem('dr_cabrera_word_timer')) || 30;
+
+        let shuffledQueue = [];
+        let currentIndex = 0;
+        let gameActive = false;
+        let teamAInput = "";
+        let teamBInput = "";
+        let scoreA = 0;
+        let scoreB = 0;
+        let currentPair = null;
+
+        let gameTimerInterval = null;
+        let gameTimeLeft = 0;
+
+        let wordTimerInterval = null;
+        let wordTimeLeft = 0;
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initKeyboards() {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+            ['A', 'B'].forEach(team => {
+                const container = document.getElementById(`keyboard-${team.toLowerCase()}`);
+                container.innerHTML = "";
+                alphabet.forEach(letter => {
+                    const btn = document.createElement('button');
+                    btn.type = "button";
+                    btn.textContent = letter;
+                    btn.className = "bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold py-1.5 rounded-md text-xs transition shadow-xs active:bg-slate-200 active:scale-95";
+                    btn.addEventListener('pointerdown', (e) => {
+                        e.preventDefault();
+                        handleLetterClick(team, letter);
+                    });
+                    container.appendChild(btn);
+                });
+            });
+        }
+
+        function startGame() {
+            if (wordPairs.length === 0) {
+                alert("Word pairs list is empty! Please add words via the Teacher Portal.");
+                return;
+            }
+            shuffledQueue = shuffleArray(wordPairs);
+            currentIndex = 0;
+            scoreA = 0;
+            scoreB = 0;
+            teamAInput = "";
+            teamBInput = "";
+            gameActive = true;
+            
+            document.getElementById('score-a').textContent = scoreA;
+            document.getElementById('score-b').textContent = scoreB;
+            document.getElementById('timer-display').classList.remove('hidden');
+            document.getElementById('word-timer-badge').classList.remove('hidden');
+
+            loadNextPair();
+
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            gameTimeLeft = gameTimeSetting;
+            updateGameTimerDisplay();
+
+            gameTimerInterval = setInterval(() => {
+                gameTimeLeft--;
+                updateGameTimerDisplay();
+                if (gameTimeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    if (wordTimerInterval) clearInterval(wordTimerInterval);
+                    endGameByTimeUp();
+                }
+            }, 1000);
+        }
+
+        function loadNextPair() {
+            if (!gameActive) return;
+
+            if (currentIndex >= shuffledQueue.length) {
+                shuffledQueue = shuffleArray(wordPairs);
+                currentIndex = 0;
+            }
+            currentPair = shuffledQueue[currentIndex];
+            currentIndex++;
+
+            document.getElementById('game-prompt').textContent = currentPair.jp;
+            teamAInput = "";
+            teamBInput = "";
+            updateDisplays();
+
+            startWordTimer();
+        }
+
+        function startWordTimer() {
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            wordTimeLeft = wordTimeSetting;
+            updateWordTimerDisplay();
+
+            wordTimerInterval = setInterval(() => {
+                wordTimeLeft--;
+                updateWordTimerDisplay();
+                if (wordTimeLeft <= 0) {
+                    loadNextPair();
+                }
+            }, 1000);
+        }
+
+        function updateGameTimerDisplay() {
+            const minutes = Math.floor(gameTimeLeft / 60);
+            const seconds = gameTimeLeft % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('time-left').textContent = formatted;
+        }
+
+        function updateWordTimerDisplay() {
+            const minutes = Math.floor(wordTimeLeft / 60);
+            const seconds = wordTimeLeft % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('word-time-left').textContent = formatted;
+        }
+
+        function endGameByTimeUp() {
+            gameActive = false;
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            document.getElementById('word-timer-badge').classList.add('hidden');
+            
+            const promptBox = document.getElementById('game-prompt');
+            let resultMessage = "Time's up! Game Over! ";
+            if (scoreA > scoreB) {
+                resultMessage += "Team A Wins! 🎉";
+            } else if (scoreB > scoreA) {
+                resultMessage += "Team B Wins! 🎉";
+            } else {
+                resultMessage += "It's a Tie! 🤝";
+            }
+            
+            promptBox.textContent = resultMessage;
+            promptBox.classList.add('text-rose-600', 'font-extrabold');
+        }
+
+        function handleLetterClick(team, letter) {
+            if (!gameActive) return;
+            if (team === 'A') {
+                teamAInput += letter;
+                updateDisplays();
+                checkTeamWin('A');
+            } else {
+                teamBInput += letter;
+                updateDisplays();
+                checkTeamWin('B');
+            }
+        }
+
+        function handleTeamAction(team, action) {
+            if (!gameActive) return;
+            if (team === 'A') {
+                if (action === 'space') teamAInput += " ";
+                if (action === 'backspace') teamAInput = teamAInput.slice(0, -1);
+                if (action === 'clear') teamAInput = "";
+                updateDisplays();
+            } else {
+                if (action === 'space') teamBInput += " ";
+                if (action === 'backspace') teamBInput = teamBInput.slice(0, -1);
+                if (action === 'clear') teamBInput = "";
+                updateDisplays();
+            }
+        }
+
+        function updateDisplays() {
+            document.getElementById('team-a-display').textContent = teamAInput;
+            document.getElementById('team-b-display').textContent = teamBInput;
+        }
+
+        function checkTeamWin(team) {
+            const targetClean = currentPair.en.replace(/\s+/g, '').toUpperCase();
+            const teamInputClean = (team === 'A' ? teamAInput : teamBInput).replace(/\s+/g, '').toUpperCase();
+
+            if (teamInputClean === targetClean) {
+                if (team === 'A') {
+                    scoreA++;
+                    document.getElementById('score-a').textContent = scoreA;
+                } else {
+                    scoreB++;
+                    document.getElementById('score-b').textContent = scoreB;
+                }
+                flashWinner(team);
+                loadNextPair();
+            }
+        }
+
+        function flashWinner(team) {
+            const display = document.getElementById(`team-${team.toLowerCase()}-display`);
+            display.classList.add('bg-emerald-100', 'border-emerald-600');
+            setTimeout(() => {
+                display.classList.remove('bg-emerald-100', 'border-emerald-600');
+            }, 800);
+        }
+
+        function resetGame() {
+            gameActive = false;
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            document.getElementById('timer-display').classList.add('hidden');
+            document.getElementById('word-timer-badge').classList.add('hidden');
+            teamAInput = "";
+            teamBInput = "";
+            scoreA = 0;
+            scoreB = 0;
+            document.getElementById('score-a').textContent = 0;
+            document.getElementById('score-b').textContent = 0;
+            document.getElementById('team-a-display').textContent = "";
+            document.getElementById('team-b-display').textContent = "";
+            const promptBox = document.getElementById('game-prompt');
+            promptBox.textContent = "Press START to Play";
+            promptBox.classList.remove('text-rose-600', 'font-extrabold');
+        }
+
+        function openTeacherLoginModal() {
+            document.getElementById('teacher-password-input').value = "";
+            document.getElementById('modal-teacher-login').classList.remove('hidden');
+        }
+
+        function closeModals() {
+            document.getElementById('modal-teacher-login').classList.add('hidden');
+            document.getElementById('modal-portal').classList.add('hidden');
+        }
+
+        function verifyTeacherPassword() {
+            const pass = document.getElementById('teacher-password-input').value;
+            if (pass === 'admin' || pass === 'teacher123') {
+                closeModals();
+                openTeacherPortalSettings();
+            } else {
+                alert('Incorrect password! Access denied.');
+            }
+        }
+
+        function openTeacherPortalSettings() {
+            document.getElementById('teacher-game-timer-select').value = gameTimeSetting;
+            document.getElementById('teacher-word-timer-select').value = wordTimeSetting;
+            document.getElementById('teacher-words-input').value = wordPairs.map(p => `${p.en} : ${p.jp}`).join('\n');
+            document.getElementById('modal-portal').classList.remove('hidden');
+        }
+
+        function saveTeacherSettings() {
+            gameTimeSetting = parseInt(document.getElementById('teacher-game-timer-select').value);
+            wordTimeSetting = parseInt(document.getElementById('teacher-word-timer-select').value);
+            
+            localStorage.setItem('dr_cabrera_game_timer', gameTimeSetting);
+            localStorage.setItem('dr_cabrera_word_timer', wordTimeSetting);
+
+            const raw = document.getElementById('teacher-words-input').value;
+            const lines = raw.split('\n');
+            let newPairs = [];
+
+            lines.forEach(line => {
+                if (line.includes(':')) {
+                    let parts = line.split(':');
+                    let en = parts[0].trim();
+                    let jp = parts.slice(1).join(':').trim();
+                    if (en && jp) {
+                        newPairs.push({ en, jp });
+                    }
+                }
+            });
+
+            if (newPairs.length === 0) {
+                alert("Please format at least one pair correctly using a colon (e.g., apple : りんご).");
+                return;
+            }
+
+            wordPairs = newPairs;
+            localStorage.setItem('dr_cabrera_pairs', JSON.stringify(wordPairs));
+            closeModals();
+            alert("Settings updated successfully!");
+            resetGame();
+        }
+
+        window.onload = function() {
+            initKeyboards();
+        };
+    </script>
+</body>
+</html>
