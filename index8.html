@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Reading Assessment Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .word-correct { color: #16a34a; font-weight: 500; }
+        .word-incorrect { color: #dc2626; text-decoration: underline wavy #dc2626; font-weight: 600; background-color: #fee2e2; padding: 0.1rem 0.2rem; border-radius: 0.25rem; }
+        .speaker-tag { color: #6366f1; font-weight: 700; font-family: sans-serif; margin-right: 0.35rem; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .recording-pulse { animation: pulse-ring 1.5s infinite; }
+        @keyframes bounce-in {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes float-sticker {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .floating-sticker { animation: float-sticker 3s ease-in-out infinite; filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.18)); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide">English Reading Challenge</h1>
+            </div>
+            <div id="nav-user-info" class="hidden flex items-center space-x-4">
+                <span id="nav-student-badge" class="bg-indigo-700 px-3 py-1 rounded-full text-sm font-medium"></span>
+                <button onclick="logoutStudent()" class="text-indigo-200 hover:text-white text-sm"><i class="fa-solid fa-right-from-bracket mr-1"></i> Exit</button>
+            </div>
+            <div id="nav-teacher-btn">
+                <button onclick="openTeacherLogin()" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                    <i class="fa-solid fa-lock mr-1"></i> Teacher Portal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8">
+
+        <!-- VIEW 1: STUDENT LOGIN -->
+        <div id="view-login" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 mt-10">
+            <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 p-6 text-white text-center">
+                <i class="fa-solid fa-book-open-reader text-4xl mb-2"></i>
+                <h2 class="text-2xl font-bold">Student Login</h2>
+                <p class="text-indigo-100 text-sm mt-1">Enter your details to start the reading challenge</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Full Name (ローマ字 / Kanji)</label>
+                    <input type="text" id="student-name" placeholder="e.g., Tanaka Kenji" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Class</label>
+                    <input type="text" id="student-class" placeholder="e.g., 1-1 or 2-B" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="button" onclick="handleStudentLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                    <span>Start Challenge</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: LEVEL SELECTOR -->
+        <div id="view-levels" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Reading Units & Parts</h2>
+                    <p class="text-slate-500 text-sm">Complete a part to unlock the next one! You can redo recordings anytime to improve your score.</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 text-sm">
+                    <span class="text-slate-500">Student:</span> <strong id="lbl-student-name" class="text-indigo-600"></strong>
+                </div>
+            </div>
+
+            <div id="levels-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Dynamically populated levels -->
+            </div>
+        </div>
+
+        <!-- VIEW 3: READING TEST ARENA -->
+        <div id="view-arena" class="hidden">
+            <div class="mb-4 flex items-center justify-between">
+                <button onclick="backToLevels()" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg border border-slate-300 text-sm font-medium transition shadow-sm">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Units
+                </button>
+                <div id="arena-level-badge" class="bg-indigo-100 text-indigo-700 font-bold px-4 py-1.5 rounded-full text-sm">
+                    Unit & Part
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 space-y-6">
+                <div>
+                    <h3 id="arena-title" class="text-xl font-bold text-slate-900 mb-2">Reading Section</h3>
+                    <p class="text-slate-500 text-sm">Read at your own pace. Character names (like Anna:) are shown for clarity but are not scored. Click the red microphone to start recording.</p>
+                </div>
+
+                <!-- Target Reading Text Box -->
+                <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-6 text-center">
+                    <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-2">Reading Passage</span>
+                    <div id="arena-passage" class="text-xl md:text-2xl font-medium text-slate-800 leading-relaxed font-serif text-left inline-block max-w-full"></div>
+                </div>
+
+                <!-- Recorder & Status Bar -->
+                <div class="flex flex-col items-center justify-center space-y-3 pt-2">
+                    <button id="mic-btn" onclick="toggleRecording()" class="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105 focus:outline-none">
+                        <i id="mic-icon" class="fa-solid fa-microphone text-3xl"></i>
+                    </button>
+                    <p id="recording-status" class="text-sm font-medium text-slate-500">Click microphone to start reading (Unlimited time)</p>
+                </div>
+
+                <!-- Audio Playback Card -->
+                <div id="playback-card" class="hidden bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-indigo-900 text-sm">Listen to Your Reading Recording</h4>
+                            <p class="text-xs text-indigo-700">Play back your voice to check your pronunciation.</p>
+                        </div>
+                    </div>
+                    <audio id="audio-playback" controls class="w-full sm:w-64"></audio>
+                </div>
+
+                <!-- Results & Feedback Box -->
+                <div id="results-card" class="hidden border-t border-slate-200 pt-6 mt-6 space-y-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-50 p-6 rounded-xl border border-slate-200 gap-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Assessment Score</span>
+                            <div class="text-4xl font-extrabold text-indigo-600 mt-1" id="score-percentage">0%</div>
+                            <span class="text-xs text-slate-500 mt-1 block" id="attempt-counter-label">Attempts: 1</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-3">
+                            <button onclick="redoRecording()" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-semibold text-sm transition shadow-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Redo Recording</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="text-xs uppercase font-bold tracking-wider text-slate-400 block mb-2">Speech Comparison (Evaluated words)</span>
+                        <div id="diff-output" class="p-4 bg-white border border-slate-200 rounded-xl text-lg leading-relaxed font-serif"></div>
+                    </div>
+
+                    <div id="unlock-banner" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-circle-check text-2xl text-emerald-600"></i>
+                            <div>
+                                <h5 class="font-bold">Assessment Complete!</h5>
+                                <p class="text-sm text-emerald-700">You can move to the next part or redo to improve your score.</p>
+                            </div>
+                        </div>
+                        <button onclick="goToNextLevel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium text-sm transition shadow-sm">
+                            Next Part <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- REWARD POPUP MODAL -->
+    <div id="reward-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 animate-bounce-in border-4 border-amber-300 relative overflow-hidden">
+            <h3 id="reward-title" class="text-2xl font-extrabold text-indigo-700">Fantastic!</h3>
+            
+            <div class="flex justify-center py-2 relative">
+                <div class="absolute inset-0 bg-gradient-to-tr from-emerald-100/50 to-amber-100/50 rounded-full filter blur-xl transform scale-75"></div>
+                <div id="reward-sticker-container" class="relative floating-sticker"></div>
+            </div>
+
+            <p id="reward-message" class="text-slate-600 font-medium text-sm"></p>
+            <button onclick="closeRewardModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-md">
+                Continue <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- TEACHER LOGIN MODAL -->
+    <div id="modal-teacher-login" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Teacher Portal Access</h3>
+                <button onclick="closeTeacherLogin()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="teacher-password" placeholder="Enter password (default: admin)" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <button type="button" onclick="handleTeacherLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-sm">Login as Teacher</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER PORTAL VIEW -->
+    <div id="view-teacher" class="hidden max-w-5xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800"><i class="fa-solid fa-chalkboard-user text-indigo-600 mr-2"></i> Teacher Portal</h2>
+                <p class="text-slate-500 text-sm">Update reading texts and review student progress seamlessly</p>
+            </div>
+            <button onclick="exitTeacherPortal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Exit Portal
+            </button>
+        </div>
+
+        <div class="flex space-x-2 border-b border-slate-200 mb-6">
+            <button onclick="switchTeacherTab('passages')" id="tab-btn-passages" class="py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600">Manage Passages</button>
+            <button onclick="switchTeacherTab('scores')" id="tab-btn-scores" class="py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700">Student Results</button>
+        </div>
+
+        <div id="teacher-tab-passages" class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Select Part to Edit</h3>
+                <div id="teacher-levels-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-6 max-h-64 overflow-y-auto p-1"></div>
+
+                <div class="space-y-4 border-t border-slate-100 pt-6">
+                    <input type="hidden" id="edit-level-id">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="edit-label-indicator">Editing Section</label>
+                        <textarea id="edit-text" rows="5" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none font-serif text-lg" placeholder="Type or paste the reading text here..."></textarea>
+                    </div>
+                    <button type="button" onclick="savePassage()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Reading Text
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="teacher-tab-scores" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Student Progress & Scores</h3>
+                <button onclick="clearAllScores()" class="text-red-600 hover:text-red-700 text-sm font-medium"><i class="fa-solid fa-trash mr-1"></i> Reset All Data</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+                            <th class="p-4">Student Name</th>
+                            <th class="p-4">Class</th>
+                            <th class="p-4">Highest Unlocked Part</th>
+                            <th class="p-4">Best Scores & Total Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scores-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const DEFAULT_PASSAGES = [
+            // Unit 0
+            { id: 1, unit: 0, part: 1, label: "Unit 0 - Discover a New Side of Classmates", text: "Riko: Hi, Eddy.\nEddy: Good morning! How was your weekend?\nRiko: Great. I finally saw the musical The Lion King with my family. I’m really into musicals!\nEddy: I didn’t know you liked musicals.\nRiko: Yes. I like musicals because I enjoy the stories, the singing, and the dancing.\nEddy: Oh, I see. Do you have a favorite musical actor?\nRiko: Of course. I like Kirara the best. She’s so cool. Come with me next time!\nEddy: Well, maybe . . . ." },
+            
+            // Unit 1
+            { id: 2, unit: 1, part: 1, label: "Unit 1 - Part 1", text: "The foreign tourists are interested in ....\nAnime and Manga\nFood\nFashion\nShrines and Temples\nMartial Arts\nOther\n[Comments]\nI I have watched Japanese anime many times, so I’m excited to go to an anime museum in Tokyo.\nII I love Japanese food, so I came here to eat many regional dishes.\nIII I have never been to a Japanese shrine, so I want to visit some here." },
+            { id: 3, unit: 1, part: 2, label: "Unit 1 - Part 2", text: "Jun: I’m surprised by these results. Japanese pop culture is so popular among foreigners.\nMs. Chen: Right. I like watching anime, too. I sometimes use anime to learn Japanese.\nJun: Oh, really? Have you ever watched Pokémon? It’s my favorite.\nMs. Chen: Yes, I have. I’ve watched it many times.\nJun: That’s nice to hear! Have you been to an anime event in Japan?\nMs. Chen: No, I haven’t.\nJun: Really? Anime events are so much fun." },
+            { id: 4, unit: 1, part: 3, label: "Unit 1 - Read & Think 1", text: "Anime Goes Global\nThere are many anime fans around the world. What makes anime so popular in other countries?\nOne reason is that the stories have various genres, such as adventure, sports, and history. Both children and adults enjoy watching anime. I especially love sports stories. They make me excited!\nAnother reason is the quality of the animation and the drawings. They are so delicate. You can really understand the feelings of each character.\nIn addition, the music matches each work. Anime songs make me happy and positive.\nI hope anime will be enjoyed more and more all over the world!" },
+            { id: 5, unit: 1, part: 4, label: "Unit 1 - Read & Think 2", text: "When we talk about Japanese anime, we cannot ignore the existence of manga, the roots of anime. It is said that the first Japanese manga was drawn over 800 years ago. The artists expressed movement in picture scrolls. These techniques were used by ukiyo-e artists, too. And they influenced Japanese anime.\nAnime shows us that Japanese pop culture comes from traditional culture. Look around and try to find other examples of new pop culture like anime. How about matcha parfait? This is an example of new pop culture. This sweet takes advantage of a traditional Japanese taste, matcha. I think pop culture is linked to traditional culture and becomes something entirely new." },
+
+            // Unit 2
+            { id: 6, unit: 2, part: 1, label: "Unit 2 - Part 1", text: "From Anna, on Friday evening\nHey. I’ve already finished my home economics essay. Have you finished yours yet? If you haven’t, maybe we can help you. My mom is an ethical fashion designer. Do you want to interview her sometime this weekend?\nFrom Jun, on Saturday morning\nHi. I’ve just read your message! I was sleeping when it came. I haven’t finished my homework yet! An interview sounds great. Is your mom free at 3 p.m. tomorrow?" },
+            { id: 7, unit: 2, part: 2, label: "Unit 2 - Part 2", text: "Jun: How long have you lived in Japan?\nOlivia: I’ve lived in Japan for five years.\nJun: What kind of products do you design?\nOlivia: Clothes and fashion accessories. This hat is made of recycled materials. So, it is eco-friendly.\nJun: Wow, that’s so cool!\nOlivia: I’m happy that you like it. I think that Japanese people have become concerned about fashion’s impact on the environment since the SDGs were introduced.\nJun: Yes! And I’m one of them!" },
+            { id: 8, unit: 2, part: 3, label: "Unit 2 - Read & Think 1", text: "Eddy: What are you doing, Jun? You’ve been reading that since 4 p.m.\nJun: It’s a book about ethical fashion. It’s a little difficult, but it’s interesting.\nRecently, ethical fashion has been getting more popular all over the world. “Ethical” means “morally good.” Some clothing companies have been making efforts to create ethical products. Here are some examples.\nFirst, they make products in an eco-friendly way. They try to use smaller amounts of water and chemicals in their factories. The use of recycled materials also leads to less waste.\nSecond, they reduce the negative impact on animals. Materials for many of their products are animal-free. Such materials include vegan leather. They avoid using wool and fur, too." },
+            { id: 9, unit: 2, part: 4, label: "Unit 2 - Read & Think 2", text: "Moreover, ethical fashion companies are friendly to their workers. In developing countries, people at clothing factories often work in severe conditions. Low wages and long working hours have been a big problem in the fashion industry. Sometimes even children have to work in those conditions.\nEthical fashion companies have been trying to change this situation. They pay their workers fair wages and prohibit child labor. Now, more and more clothing companies have become responsible for their workers and their working conditions.\nIt is not difficult to be ethical about fashion. For example, when you go shopping, decide carefully what to buy. By choosing ethical products, you can help the workers’ lives and protect animals and the planet." },
+
+            // Unit 3
+            { id: 10, unit: 3, part: 1, label: "Unit 3 - Part 1", text: "Save the Animals\nMany kinds of animals are in danger of extinction today. They are facing a lot of challenges because of climate change and human activities. It is difficult for endangered animals to survive in these conditions.\nIt is important for us to understand this.\nThe fastest animal needs the fastest help!\nSave us, or there will be trouble." },
+            { id: 11, unit: 3, part: 2, label: "Unit 3 - Part 2", text: "Eddy: Have you ever heard of the IUCN Red List?\nRiko: No, I’ve never heard of it. What is it?\nEddy: The Red List gives us information about endangered animals, birds, plants, and so on.\nRiko: What animals are on the list?\nEddy: Pandas, cheetahs, and sea otters, for example.\nRiko: Really? I didn’t know that.\nEddy: Why don’t we write an article for our class newspaper?\nRiko: That’s a good idea. I want everyone to know about endangered animals." },
+            { id: 12, unit: 3, part: 3, label: "Unit 3 - Read & Think 1", text: "Sea Animals in Danger!\nHave you ever heard of the sea otter? It lives in the ocean. It is one of the world’s endangered animals. Let us tell you about sea otters.\nLong ago, there were many sea otters in the Northern Pacific Ocean. However, their population decreased rapidly. People hunted them for their warm fur. As a result, the number decreased from about 300,000 to 2,000 in the beginning of the 20th century.\nPeople were shocked about the situation and decided to help sea otters live safely. They started to end overhunting. Thanks to their efforts, the population of sea otters started to increase again.\nToday, however, sea otters are still facing the danger of extinction due to oil spills and hunting by killer whales. What can we do to protect these cute sea animals?" },
+            { id: 13, unit: 3, part: 4, label: "Unit 3 - Read & Think 2", text: "Native Animals of Japan Need Our Help!\nMany animals are in danger of extinction in Japan. One such animal is the Iriomote cat. It is native to the Japanese island of Iriomote.\nIts population was already very small in the 1960s. Logging in their habitats was one of the reasons. Traffic accidents were another reason for its decrease.\nResearch says that only about 100 Iriomote cats now live on the island. They are categorized as “critically endangered” by IUCN. Local citizens have been working to protect the cats.\nWhy do we need to protect these animals? Each animal has its own role in the ecosystem. Human beings are part of this ecosystem. We are all related to each other. So, it is important for us to take action now. Let’s help these animals survive." },
+
+            // Unit 4
+            { id: 14, unit: 4, part: 1, label: "Unit 4 - Part 1", text: "Are you prepared for a disaster?\nWhat do you know?\nPlease circle the number(s).\n1 I know where the local shelter is.\n2 I know how much food and water I should store.\n3 I know what number I should call in case of a fire.\n4 I know how to use a fire extinguisher." },
+            { id: 15, unit: 4, part: 2, label: "Unit 4 - Part 2", text: "Eddy: Riko, tell me what your family has done to prepare for a disaster.\nRiko: We’ve made an emergency kit.\nEddy: That’s great. Actually, my family hasn’t made one yet. It’s hard for us to understand the Japanese information about disasters.\nRiko: I can send you a link. It shows you what you should prepare in English.\nEddy: Oh, thanks!\nRiko: You’re welcome. By the way, my dad recommended a movie about an earthquake. Why don’t we watch it together?\nEddy: Sure." },
+            { id: 16, unit: 4, part: 3, label: "Unit 4 - Read & Think 1", text: "About 20,000 people lost their lives in the Great East Japan Earthquake on March 11, 2011. Several foreigners were also killed in the disaster. There is a movie called Live Your Dream: The Taylor Anderson Story. The woman smiling in a kimono in the picture is Taylor.\nTaylor started to learn Japanese as a small girl in America and became attracted to Japan. She wanted to become a bridge between Japan and America. In 2008, she came to Ishinomaki to work as an ALT. She was an energetic and kind teacher and encouraged her students all the time. Many students became interested in English and foreign cultures thanks to her bright personality. Taylor loved her students and all her new experiences in Japan.\nThen, the earthquake hit. Taylor was at school with her students. Taylor comforted the students and took them to a nearby safe place.\nAfter that, Taylor rode her bicycle toward her apartment and was caught in the tsunami on her way. She died at the age of twenty-four. Taylor’s family was shocked at the sudden news.\nShortly after the earthquake, Taylor’s parents and their friends worked together to create “Taylor Reading Corner” in Ishinomaki schools. They also started student exchange programs. That was because Taylor loved reading books for herself and to her students, and she always wanted to bring people together. Many of Taylor’s students kept on studying English, and some became English teachers. Taylor is no longer with us today, but her dream lives on in the hearts of many people.\nEvery year, many foreign people come to live in Japan. It is important for everyone to be prepared for disasters and work together. It is necessary for us to support each other both in ordinary times and in times of crisis." },
+
+            // Unit 5
+            { id: 17, unit: 5, part: 1, label: "Unit 5 - Part 1", text: "Look. This is a picture I found on the internet. Do you know who this person is? His name is Mahatma Gandhi. His image is printed on all Indian rupee notes. He’s a leader Indian people respect greatly.\nGandhi was born on October 2, 1869. His birthday is now an Indian national holiday. It’s also the International Day of Non-Violence." },
+            { id: 18, unit: 5, part: 2, label: "Unit 5 - Part 2", text: "Jun: Nice presentation, Anna. That was interesting.\nAnna: Thanks. Gandhi is a man who has influenced a lot of people around the world.\nJun: He worked for Indian independence, right?\nAnna: Yes. Do you know how he did it?\nJun: Non-violence?\nAnna: Right. He never used violence, so he’s still respected by people who fight for human rights.\nJun: I see. I want to learn more about him.\nAnna: Well, he also went on fasts to protest.\nJun: “Fasts”?\nAnna: A “fast” means eating little or no food.\nJun: Wow. That sounds tough." },
+            { id: 19, unit: 5, part: 3, label: "Unit 5 - Read & Think 1", text: "Gandhi moved to South Africa to work as a lawyer in 1893. It was under British rule at that time and there was a lot of discrimination. For example, Indians could not go out at night freely or walk on the sidewalk. There were also hotels that did not accept Indian guests.\nIn 1906, the British made a law that was even more unfair to Indian people. Indians in South Africa got angry and stood up against the law. Gandhi decided to lead a movement to protect their rights. His message was, “Don’t follow the law, but don’t use violence, even if you are arrested.” Soon the jails became full of Indians, and Gandhi himself was sent there.\nFinally, in 1914, after many years and much effort, the law was removed. It showed that non-violent movements can be effective.\nGandhi returned to India in 1915. India was also a British colony. In those days, there was a law that the British made for salt. According to the law, only the British could produce or sell salt. They put a heavy tax on it. The Indians were very poor, but they had to buy expensive salt. The money went to the British. Gandhi thought it was unfair.\nIn 1930, Gandhi decided to walk to the sea and make salt himself. He started with 78 followers. Thousands of people joined him on the way. After walking almost 400 kilometers, he reached the sea. This non-violent march was called the Salt March. News of the march spread around the world. It showed people a new way to fight against discrimination.\nGandhi’s peaceful fight continued after that. In 1947, India won independence. Non-violent protest is the legacy that Gandhi left. It has influenced famous leaders, such as Martin Luther King, Jr. and Nelson Mandela." },
+
+            // Unit 6
+            { id: 20, unit: 6, part: 1, label: "Unit 6 - Part 1", text: "School Backpacks Travel Overseas\n“I wish I could go to school.” “I wish I had pens and notebooks.” Have you ever felt this way? Children in some parts of the world cannot study at school. We are running a campaign to help them. Send us unused school supplies, and we will send them to children abroad. You can also donate your old school backpack. It can have a new life overseas." },
+            { id: 21, unit: 6, part: 2, label: "Unit 6 - Part 2", text: "Riko: Have you ever heard of groups that collect Japanese school backpacks? They send them overseas.\nEddy: I’ve never heard of them, but it’s a great idea. Japanese school backpacks are cool.\nRiko: They send them to children in Afghanistan. So far, more than 260,000 backpacks have been sent. I’ve already sent mine.\nEddy: Wow. If I were a Japanese student, I would send my old backpack.\nRiko: Actually, you can help them by donating other things, like pencils and notebooks.\nEddy: Really? That’s great. I’ll definitely do that." },
+            { id: 22, unit: 6, part: 3, label: "Unit 6 - Read & Think 1", text: "Imagine your life without school. If you didn’t study, you couldn’t read or write. If you were illiterate, you couldn’t get information through books or websites. In some parts of the world, there are children living like this.\nChildren like these in Afghanistan receive school backpacks from Japan. It makes them happy. It also encourages their parents to send their sons and daughters to school.\nMost of the backpacks come with pens and notebooks. So, students will be ready for school. In areas with no school buildings, children can use the backpacks as desks in the open air. In these ways, school backpacks from Japan have been changing children’s lives.\nSchool backpacks from Japan travel to Afghanistan. They help the school children there. Other goods and services travel from one country to another all around the globe. These exchanges connect and help us all. Our borders are only lines on a map.\nLike most countries, Japan depends on foreign trade for its survival. Many things that we see every day come from overseas, such as food and clothes. For example, one-third of the chicken that we eat comes from other countries, like Brazil and Thailand. If we didn’t import chicken from these countries, fried chicken would be quite expensive in Japan. We depend on foreign countries even more for beef and pork.\nAlso, about 90 percent of our clothes, shirts, pants, and coats, for example, are imported from China and other Asian countries. In fact, many products that are sold by Japanese companies are made in other countries. Electronic devices are no exception. We’re surrounded by imported products in our daily lives.\nOur relationships with foreign countries are becoming more and more interdependent. It’s necessary for us to continue helping each other ― beyond our borders." },
+            { id: 23, unit: 6, part: 4, label: "Let's Read 2 - Power Your Future", text: "If the electricity were cut for one week, what would happen to our lives? The lights would be off. Trains would stop. We could not charge our smartphones. We depend on electricity to power most of our daily activities. How can we make the electricity we need for our future?\nChart 1 shows that Japan uses oil, coal, and natural gas to make more than 84 percent of its electricity. These resources are called “fossil fuels.” Fossil fuels have some good points. They are relatively cheap, and they can be used for many things. However, fossil fuels release carbon dioxide that leads to global warming. Furthermore, we may run out of fossil fuels in about 100 years.\nJapan also makes electricity from nuclear power. Nuclear power produces a large amount of energy without releasing carbon dioxide. However, it is difficult to control radiation and handle nuclear waste safely all the time.\nNow many countries are using sunshine, wind, steam, rivers, and even ocean waves to make electricity. These are examples of “renewable energy.” Japan has many rivers, and their power is used to produce electricity. Their water is renewable and does not release dangerous chemicals. However, we need dams to use water power, and these dams can damage the environment.\nResearch in other renewable energy technologies is progressing. Already, Denmark gets 40 percent of its electricity from wind power. One quarter of the electricity used in Iceland comes from the natural heat in the ground. People around the world are working to solve our energy problems.\nReyhan Jamalova is one of those people. Reyhan is a student in Azerbaijan. When she was fifteen, Reyhan invented a device to make electricity from rain. Reyhan’s device can power 22 LED lamps for 50 seconds. Each device uses only 7 liters of rainwater. Its battery can store power to use later. Reyhan says she created the device to help poor people, especially in rainy countries. Her device is not expensive. It does not even need power lines. It can help many people get electricity.\nIs there anything you can do for a sustainable energy future? As a consumer, you can decide how much electricity you use. You can also decide what kind of energy you want to use. You may even be an inventor, like Reyhan. Your actions are important. What can you do to make your energy future brighter?" },
+            { id: 24, unit: 6, part: 5, label: "Let's Read 3 - Coloring Outside the Lines", text: "When you were little, what picture book did you like to read? One of the most popular picture books is probably The Very Hungry Caterpillar. In the book, a caterpillar comes out of its egg, eats a lot, and finally becomes a beautiful butterfly. Children can learn the names of foods, days of the week, and how to count. Actually, the author also put in some important messages.\nThe name of the author is Eric Carle. He was born in 1929 in New York. When he was six years old, he moved to Germany. He was a boy who loved drawing, and went to an art school. He moved back to New York in 1952, and started a job as a graphic designer for The New York Times.\nEric Carle also made illustrations for his friends’ picture books. Soon he started to write his own stories. He believed that it was important to think outside the box. He came up with a lot of ideas to make his picture books more fun. He soon became a famous artist.\nIn 1969, Eric Carle published The Very Hungry Caterpillar. In the book, there are holes on the pictures of foods that the caterpillar ate through. At first, he could not find printers that could print the book in the U.S. because a book with holes was too unusual. However, one Japanese printer liked the book so much that it agreed to print it.\nThe book became a bestseller. It has been printed in more than 75 languages, and now there are many fans of Eric Carle worldwide. The Very Hungry Caterpillar is a book you can play with, and a toy you can read.\nYou can find a lot of unique features in other picture books of Eric Carle, too. Colorful animals, such as a blue horse or a yellow cow, often appear in the stories. He even liked coloring outside the lines. These techniques in his works showed children what creativity means. Through his books, he delivered messages to his little readers; there isn’t any wrong color, and you don’t always have to stay inside the lines.\nEric Carle also believed that colorfulness represents peace and freedom. When he was in Germany, his city was colorless because of World War II. Houses were painted in dark colors, and people could not wear colorful clothes. This experience inspired him to draw with many colors. He wanted everyone to be free in art.\nEric Carle created more than 70 books during his life, and they are loved in many countries. He continued to write books until 2015, and he passed away in 2021. The great works Eric Carle left still encourage the imagination of children all over the world.\nIn 2002, Eric and his wife, Barbara, built the Eric Carle Museum of Picture Book Art in Massachusetts. There are three art galleries, an art studio, a theater, and a library filled with many picture books. They wanted visitors to love art and learn by reading picture books. Although we cannot read any new books from Carle anymore, his spirit is alive not only in his books, but also in his museum.\n“The Very Hungry Caterpillar story is about hope. You, like the little caterpillar, will grow up, unfold your wings, and fly into the future.” ―Eric Carle" }
+        ];
+
+        let passages = JSON.parse(localStorage.getItem('reading_passages_units')) || DEFAULT_PASSAGES;
+        let studentProgress = JSON.parse(localStorage.getItem('reading_student_progress_units')) || {}; 
+        let currentStudent = null; 
+        let activeLevelId = 1;
+        let isRecording = false;
+        let recognition = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let accumulatedTranscript = "";
+
+        if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true; 
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                accumulatedTranscript = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    accumulatedTranscript += event.results[i][0].transcript + ' ';
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.warn("Speech recognition notice:", event.error);
+            };
+
+            recognition.onend = function() {
+                if (isRecording) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            };
+        }
+
+        function playDrumrollSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+
+                const totalDuration = 1.8;
+                const hitInterval = 0.06;
+                const startTime = audioCtx.currentTime;
+
+                for (let t = 0; t < totalDuration - 0.2; t += hitInterval) {
+                    let hitTime = startTime + t;
+                    let bufferSize = audioCtx.sampleRate * 0.05;
+                    let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    let data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+
+                    let noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    let filter = audioCtx.createBiquadFilter();
+                    filter.type = 'highpass';
+                    filter.frequency.value = 800;
+
+                    let gain = audioCtx.createGain();
+                    let intensity = 0.15 + (t / totalDuration) * 0.25;
+                    gain.gain.setValueAtTime(intensity, hitTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, hitTime + 0.05);
+
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    noise.start(hitTime);
+                }
+
+                let crashTime = startTime + totalDuration - 0.15;
+                let crashBufferSize = audioCtx.sampleRate * 1.2;
+                let crashBuffer = audioCtx.createBuffer(1, crashBufferSize, audioCtx.sampleRate);
+                let crashData = crashBuffer.getChannelData(0);
+                for (let i = 0; i < crashBufferSize; i++) { crashData[i] = Math.random() * 2 - 1; }
+
+                let crashSource = audioCtx.createBufferSource();
+                crashSource.buffer = crashBuffer;
+                let crashFilter = audioCtx.createBiquadFilter();
+                crashFilter.type = 'bandpass';
+                crashFilter.frequency.value = 1200;
+
+                let crashGain = audioCtx.createGain();
+                crashGain.gain.setValueAtTime(0.6, crashTime);
+                crashGain.gain.exponentialRampToValueAtTime(0.001, crashTime + 1.2);
+
+                crashSource.connect(crashFilter);
+                crashFilter.connect(crashGain);
+                crashGain.connect(audioCtx.destination);
+                crashSource.start(crashTime);
+            } catch (e) {
+                console.log("Audio playback note:", e);
+            }
+        }
+
+        function triggerConfetti() {
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        }
+
+        function checkAndShowRewards(percentage, isFirstPassCompletion) {
+            if (percentage >= 80 && isFirstPassCompletion) {
+                playDrumrollSound();
+                triggerConfetti();
+
+                const modal = document.getElementById('reward-modal');
+                const title = document.getElementById('reward-title');
+                const stickerContainer = document.getElementById('reward-sticker-container');
+                const msg = document.getElementById('reward-message');
+
+                title.innerText = "Fantastic!";
+                msg.innerText = `You earned a frog reward for passing this part with ${percentage}%!`;
+
+                const stickerSvg = `
+                    <svg viewBox="0 0 340 340" width="200" height="200" class="mx-auto overflow-visible">
+                      <defs>
+                        <filter id="exact-sticker-glow" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000000" flood-opacity="0.22"/>
+                        </filter>
+                      </defs>
+                      <g filter="url(#exact-sticker-glow)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                          <rect x="25" y="8" width="270" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                          <text x="160" y="43" fill="#ffffff" font-size="25" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif" letter-spacing="0.5">${percentage >= 92 ? 'Good job!' : 'Good.'}</text>
+                          <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <path d="M 115 140 C 95 165, 90 220, 115 285 C 130 300, 150 290, 150 270 L 150 220 C 150 210, 170 210, 170 220 L 170 270 C 170 290, 190 300, 205 285 C 230 220, 225 165, 205 140 Z" fill="#84cc16" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+                        <ellipse cx="160" cy="205" rx="52" ry="48" fill="#fef08a" opacity="0.65"/>
+                        <path d="M 115 280 C 110 295, 125 310, 145 305 C 135 295, 125 290, 115 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 280 C 210 295, 195 310, 175 305 C 185 295, 195 290, 205 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 105 160 Q 80 180, 85 220 Q 95 240, 110 230 Q 100 200, 115 175 Z" fill="#84cc16" stroke="#ffffff" stroke-width="5" stroke-linejoin="round"/>
+                        <path d="M 100 150 Q 160 175 220 150 L 225 175 Q 160 200 95 175 Z" fill="#854d0e" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M 175 168 L 175 225 Q 175 235, 190 235 Q 205 235, 205 225 L 205 165 Z" fill="#a16207" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+                        <circle cx="160" cy="115" r="45" fill="#84cc16" stroke="#ffffff" stroke-width="6"/>
+                        <circle cx="130" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="190" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="130" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="190" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="133" cy="80" r="2" fill="#ffffff"/>
+                        <circle cx="193" cy="80" r="2" fill="#ffffff"/>
+                        <ellipse cx="138" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <ellipse cx="182" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <path d="M 145 125 Q 160 140 175 125" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+                        <g transform="translate(205, 175)">
+                          <circle cx="12" cy="12" r="14" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                          <path d="M 18 10 C 25 5, 28 -5, 22 -10 C 18 -12, 12 -8, 12 -2 Z" fill="#84cc16" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+                        </g>
+                      </g>
+                    </svg>
+                `;
+                stickerContainer.innerHTML = stickerSvg;
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeRewardModal() {
+            document.getElementById('reward-modal').classList.add('hidden');
+        }
+
+        function handleStudentLogin() {
+            const name = document.getElementById('student-name').value.trim();
+            const cls = document.getElementById('student-class').value.trim();
+            if (!name || !cls) {
+                alert("Please enter both your name and class.");
+                return;
+            }
+            currentStudent = { name, class: cls };
+            document.getElementById('lbl-student-name').innerText = `${name} (${cls})`;
+            document.getElementById('nav-student-badge').innerText = `${name} | Class ${cls}`;
+            document.getElementById('nav-user-info').classList.remove('hidden');
+            document.getElementById('nav-teacher-btn').classList.add('hidden');
+
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-levels').classList.remove('hidden');
+            renderLevelsGrid();
+        }
+
+        function logoutStudent() {
+            currentStudent = null;
+            document.getElementById('nav-user-info').classList.add('hidden');
+            document.getElementById('nav-teacher-btn').classList.remove('hidden');
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-arena').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('student-name').value = '';
+            document.getElementById('student-class').value = '';
+        }
+
+        function getStudentKey() {
+            if (!currentStudent) return 'guest';
+            return `${currentStudent.class}_${currentStudent.name}`.replace(/\s+/g, '_');
+        }
+
+        function getStudentData() {
+            const sKey = getStudentKey();
+            if (!studentProgress[sKey]) {
+                studentProgress[sKey] = {
+                    highestUnlocked: 1,
+                    scores: {} 
+                };
+            }
+            return studentProgress[sKey];
+        }
+
+        function renderLevelsGrid() {
+            const grid = document.getElementById('levels-grid');
+            grid.innerHTML = '';
+            const sData = getStudentData();
+
+            passages.forEach((p, idx) => {
+                const isUnlocked = p.id <= sData.highestUnlocked;
+                const pRecord = sData.scores[p.id] || { bestScore: 0, attempts: 0, rewardClaimed: false };
+                const isPassed = pRecord.bestScore >= 80;
+
+                const card = document.createElement('div');
+                card.className = `rounded-2xl p-5 border transition flex flex-col justify-between relative overflow-hidden ${
+                    isUnlocked ? (isPassed ? 'bg-emerald-50/60 border-emerald-300 shadow-sm' : 'bg-white border-slate-200 shadow-sm hover:border-indigo-300') : 'bg-slate-100 border-slate-200 opacity-60'
+                }`;
+
+                let statusBadge = '';
+                if (!isUnlocked) {
+                    statusBadge = `<span class="bg-slate-200 text-slate-600 px-2.5 py-1 rounded-full text-xs font-bold"><i class="fa-solid fa-lock mr-1"></i> Locked</span>`;
+                } else if (isPassed) {
+                    let passedCountUpToHere = 0;
+                    passages.forEach(item => {
+                        if (item.id <= p.id && sData.scores[item.id] && sData.scores[item.id].bestScore >= 80) {
+                            passedCountUpToHere++;
+                        }
+                    });
+
+                    let frogThumbnailsHtml = '';
+                    for (let i = 0; i < passedCountUpToHere; i++) {
+                        frogThumbnailsHtml += `
+                            <svg viewBox="0 0 100 100" width="18" height="18" class="inline-block align-middle ${i > 0 ? 'ml-0.5' : 'mr-1'}">
+                                <ellipse cx="50" cy="62" rx="28" ry="24" fill="#aed581" stroke="#689f38" stroke-width="2"/>
+                                <ellipse cx="50" cy="65" rx="18" ry="16" fill="#f1f8e9"/>
+                                <circle cx="50" cy="38" r="22" fill="#aed581" stroke="#689f38" stroke-width="2"/>
+                                <circle cx="38" cy="24" r="8" fill="#aed581" stroke="#689f38" stroke-width="1.5"/>
+                                <circle cx="62" cy="24" r="8" fill="#aed581" stroke="#689f38" stroke-width="1.5"/>
+                                <circle cx="35" cy="42" r="4" fill="#ffab91" opacity="0.7"/>
+                                <circle cx="65" cy="42" r="4" fill="#ffab91" opacity="0.7"/>
+                                <path d="M40 42 Q50 50 60 42" fill="none" stroke="#b71c1c" stroke-width="1.5"/>
+                            </svg>
+                        `;
+                    }
+
+                    statusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-bold flex items-center w-fit">${frogThumbnailsHtml} Passed (${pRecord.bestScore}%)</span>`;
+                } else if (pRecord.attempts > 0) {
+                    statusBadge = `<span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-bold">Try Again (${pRecord.bestScore}%)</span>`;
+                } else {
+                    statusBadge = `<span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full text-xs font-bold">Not Tried</span>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Part ${p.id}</span>
+                            ${statusBadge}
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-1">${p.label}</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2 font-serif mb-4">${p.text}</p>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
+                            <span>Attempts: ${pRecord.attempts}</span>
+                            <span>Best: ${pRecord.bestScore}%</span>
+                        </div>
+                        <button onclick="${isUnlocked ? `openArena(${p.id})` : ''}" class="w-full py-2.5 rounded-xl font-semibold text-sm transition ${
+                            isUnlocked ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        }">
+                            ${isUnlocked ? '<i class="fa-solid fa-microphone mr-1"></i> Open Challenge' : '<i class="fa-solid fa-lock mr-1"></i> Locked'}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderPassageHTML(text) {
+            const lines = text.split('\n');
+            let html = '';
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) {
+                    html += '<br>';
+                    return;
+                }
+                const colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0 && colonIdx < 18 && !trimmed.substring(0, colonIdx).includes(' ')) {
+                    const speaker = trimmed.substring(0, colonIdx + 1);
+                    const dialogue = trimmed.substring(colonIdx + 1);
+                    html += `<div class="mb-2"><span class="speaker-tag">${speaker}</span><span>${dialogue}</span></div>`;
+                } else {
+                    html += `<div class="mb-2">${trimmed}</div>`;
+                }
+            });
+            return html;
+        }
+
+        function getCleanEvaluationWords(text) {
+            const lines = text.split('\n');
+            let evaluableText = '';
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                const colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0 && colonIdx < 18 && !trimmed.substring(0, colonIdx).includes(' ')) {
+                    evaluableText += ' ' + trimmed.substring(colonIdx + 1);
+                } else {
+                    evaluableText += ' ' + trimmed;
+                }
+            });
+            return evaluableText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").toLowerCase().split(/\s+/).filter(w => w.length > 0);
+        }
+
+        function openArena(passageId) {
+            activeLevelId = passageId;
+            const p = passages.find(x => x.id === passageId);
+            document.getElementById('arena-level-badge').innerText = p.label;
+            document.getElementById('arena-title').innerText = p.label;
+            document.getElementById('arena-passage').innerHTML = renderPassageHTML(p.text);
+
+            document.getElementById('playback-card').classList.add('hidden');
+            document.getElementById('results-card').classList.add('hidden');
+            document.getElementById('recording-status').innerText = "Click microphone to start reading (Unlimited time)";
+            document.getElementById('recording-status').className = "text-sm font-medium text-slate-500";
+            document.getElementById('mic-btn').className = "w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105 focus:outline-none";
+            document.getElementById('mic-icon').className = "fa-solid fa-microphone text-3xl";
+
+            document.getElementById('view-levels').classList.add('hidden');
+            document.getElementById('view-arena').classList.remove('hidden');
+        }
+
+        function backToLevels() {
+            if (isRecording) { stopRecordingProcess(); }
+            document.getElementById('view-arena').classList.add('hidden');
+            document.getElementById('view-levels').classList.remove('hidden');
+            renderLevelsGrid();
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                startRecordingProcess();
+            } else {
+                stopRecordingProcess();
+            }
+        }
+
+        function startRecordingProcess() {
+            isRecording = true;
+            accumulatedTranscript = "";
+            audioChunks = [];
+
+            document.getElementById('mic-btn').className = "w-20 h-20 bg-slate-800 hover:bg-slate-900 text-white rounded-full flex items-center justify-center shadow-lg recording-pulse transition focus:outline-none";
+            document.getElementById('mic-icon').className = "fa-solid fa-stop text-3xl";
+            document.getElementById('recording-status').innerText = "Recording in progress... Read the passage clearly. Click stop when finished.";
+            document.getElementById('recording-status').className = "text-sm font-bold text-red-600 animate-pulse";
+
+            document.getElementById('playback-card').classList.add('hidden');
+            document.getElementById('results-card').classList.add('hidden');
+
+            if (recognition) {
+                try { recognition.start(); } catch(e) {}
+            }
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audioElement = document.getElementById('audio-playback');
+                    audioElement.src = audioUrl;
+                    document.getElementById('playback-card').classList.remove('hidden');
+                    processAssessmentResult();
+                };
+                mediaRecorder.start();
+            }).catch(err => {
+                console.warn("Microphone access notice:", err);
+            });
+        }
+
+        function stopRecordingProcess() {
+            isRecording = false;
+            if (recognition) { try { recognition.stop(); } catch(e) {} }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+
+            document.getElementById('mic-btn').className = "w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform hover:scale-105 focus:outline-none";
+            document.getElementById('mic-icon').className = "fa-solid fa-microphone text-3xl";
+            document.getElementById('recording-status').innerText = "Recording finished! Review your results below.";
+            document.getElementById('recording-status').className = "text-sm font-medium text-slate-500";
+        }
+
+        function redoRecording() {
+            document.getElementById('results-card').classList.add('hidden');
+            document.getElementById('playback-card').classList.add('hidden');
+            document.getElementById('recording-status').innerText = "Click microphone to start reading (Unlimited time)";
+            document.getElementById('recording-status').className = "text-sm font-medium text-slate-500";
+        }
+
+        function processAssessmentResult() {
+            const p = passages.find(x => x.id === activeLevelId);
+            
+            const cleanTargetWords = getCleanEvaluationWords(p.text);
+            const spokenWords = accumulatedTranscript.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").toLowerCase().split(/\s+/).filter(w => w.length > 0);
+
+            let matchedCount = 0;
+            let diffHtml = '';
+
+            cleanTargetWords.forEach((tw) => {
+                const spokenMatch = spokenWords.includes(tw);
+                if (spokenMatch) {
+                    matchedCount++;
+                    diffHtml += `<span class="word-correct mr-1.5">${tw}</span>`;
+                } else {
+                    diffHtml += `<span class="word-incorrect mr-1.5">${tw}</span>`;
+                }
+            });
+
+            let rawRatio = cleanTargetWords.length > 0 ? (matchedCount / cleanTargetWords.length) : 0;
+            let percentage = Math.round(rawRatio * 100);
+            if (spokenWords.length > 3 && percentage < 25) percentage = 45;
+            if (spokenWords.length === 0) percentage = 0;
+            if (percentage > 100) percentage = 100;
+
+            const sData = getStudentData();
+            if (!sData.scores[activeLevelId]) {
+                sData.scores[activeLevelId] = { bestScore: 0, attempts: 0, rewardClaimed: false };
+            }
+            
+            const pRecord = sData.scores[activeLevelId];
+            pRecord.attempts++;
+
+            let isFirstPassCompletion = false;
+            if (percentage > pRecord.bestScore) {
+                pRecord.bestScore = percentage;
+            }
+
+            if (pRecord.bestScore >= 80 && !pRecord.rewardClaimed) {
+                pRecord.rewardClaimed = true;
+                isFirstPassCompletion = true;
+            }
+
+            if (pRecord.bestScore >= 80) {
+                if (activeLevelId + 1 > sData.highestUnlocked && activeLevelId < passages.length) {
+                    sData.highestUnlocked = activeLevelId + 1;
+                }
+            }
+
+            document.getElementById('score-percentage').innerText = `${pRecord.bestScore}%`;
+            document.getElementById('attempt-counter-label').innerText = `Attempts: ${pRecord.attempts} (Latest: ${percentage}%)`;
+            document.getElementById('diff-output').innerHTML = diffHtml;
+            document.getElementById('results-card').classList.remove('hidden');
+
+            if (pRecord.bestScore >= 80) {
+                document.getElementById('unlock-banner').classList.remove('hidden');
+            } else {
+                document.getElementById('unlock-banner').classList.add('hidden');
+            }
+
+            localStorage.setItem('reading_student_progress_units', JSON.stringify(studentProgress));
+            checkAndShowRewards(pRecord.bestScore, isFirstPassCompletion);
+        }
+
+        function goToNextLevel() {
+            if (activeLevelId < passages.length) {
+                const sData = getStudentData();
+                if (activeLevelId + 1 <= sData.highestUnlocked) {
+                    openArena(activeLevelId + 1);
+                    return;
+                }
+            }
+            backToLevels();
+        }
+
+        function openTeacherLogin() {
+            document.getElementById('modal-teacher-login').classList.remove('hidden');
+            document.getElementById('teacher-password').value = '';
+        }
+        function closeTeacherLogin() {
+            document.getElementById('modal-teacher-login').classList.add('hidden');
+        }
+        function handleTeacherLogin() {
+            const pwd = document.getElementById('teacher-password').value;
+            if (pwd === 'admin' || pwd === '') {
+                closeTeacherLogin();
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('view-levels').classList.add('hidden');
+                document.getElementById('view-teacher').classList.remove('hidden');
+                renderTeacherPassagesGrid();
+                renderTeacherScoresTable();
+            } else {
+                alert("Incorrect password. (Default is 'admin').");
+            }
+        }
+        function exitTeacherPortal() {
+            document.getElementById('view-teacher').classList.add('hidden');
+            if (currentStudent) {
+                document.getElementById('view-levels').classList.remove('hidden');
+                renderLevelsGrid();
+            } else {
+                document.getElementById('view-login').classList.remove('hidden');
+            }
+        }
+        function switchTeacherTab(tab) {
+            if (tab === 'passages') {
+                document.getElementById('tab-btn-passages').className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600";
+                document.getElementById('tab-btn-scores').className = "py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700";
+                document.getElementById('teacher-tab-passages').classList.remove('hidden');
+                document.getElementById('teacher-tab-scores').classList.add('hidden');
+                renderTeacherPassagesGrid();
+            } else {
+                document.getElementById('tab-btn-scores').className = "py-2.5 px-4 font-semibold text-sm border-b-2 border-indigo-600 text-indigo-600";
+                document.getElementById('tab-btn-passages').className = "py-2.5 px-4 font-semibold text-sm text-slate-500 hover:text-slate-700";
+                document.getElementById('teacher-tab-scores').classList.remove('hidden');
+                document.getElementById('teacher-tab-passages').classList.add('hidden');
+                renderTeacherScoresTable();
+            }
+        }
+        function renderTeacherPassagesGrid() {
+            const grid = document.getElementById('teacher-levels-grid');
+            grid.innerHTML = '';
+            passages.forEach((p, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `p-3 rounded-xl border text-left text-xs font-bold transition ${
+                    idx === 0 ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                }`;
+                btn.innerHTML = `Part ${p.id}<br><span class="font-normal text-slate-400">Unit ${p.unit}</span>`;
+                btn.onclick = () => selectPassageForEdit(p.id);
+                grid.appendChild(btn);
+            });
+            if (passages.length > 0) selectPassageForEdit(passages[0].id);
+        }
+        function selectPassageForEdit(id) {
+            const p = passages.find(x => x.id === id);
+            document.getElementById('edit-level-id').value = p.id;
+            document.getElementById('edit-label-indicator').innerText = `Editing: ${p.label}`;
+            document.getElementById('edit-text').value = p.text;
+        }
+        function savePassage() {
+            const id = parseInt(document.getElementById('edit-level-id').value);
+            const newText = document.getElementById('edit-text').value.trim();
+            const p = passages.find(x => x.id === id);
+            if (p) {
+                p.text = newText;
+                localStorage.setItem('reading_passages_units', JSON.stringify(passages));
+                alert("Reading text updated successfully!");
+            }
+        }
+        function renderTeacherScoresTable() {
+            const tbody = document.getElementById('scores-table-body');
+            tbody.innerHTML = '';
+            const keys = Object.keys(studentProgress);
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">No student assessment records found yet.</td></tr>`;
+                return;
+            }
+            keys.forEach(k => {
+                const data = studentProgress[k];
+                const parts = k.split('_');
+                const studentClass = parts[0] || '1-1';
+                const studentName = parts.slice(1).join(' ') || k;
+
+                let scoresSummary = '';
+                for (let pid in data.scores) {
+                    const sc = data.scores[pid];
+                    scoresSummary += `P${pid}: ${sc.bestScore}% (${sc.attempts} tries)<br>`;
+                }
+                if (!scoresSummary) scoresSummary = 'No attempts yet';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-slate-800">${studentName}</td>
+                    <td class="p-4 text-slate-600">${studentClass}</td>
+                    <td class="p-4"><span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-full text-xs">Part ${data.highestUnlocked}</span></td>
+                    <td class="p-4 text-xs text-slate-600 leading-relaxed">${scoresSummary}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        function clearAllScores() {
+            if (confirm("Are you sure you want to reset all student scores and progress data?")) {
+                studentProgress = {};
+                localStorage.removeItem('reading_student_progress_units');
+                renderTeacherScoresTable();
+                alert("All student records have been cleared.");
+            }
+        }
+    </script>
+</body>
+</html>
