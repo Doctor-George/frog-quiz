@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Challenge - Junior High School</title>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --secondary-color: #319795;
+            --accent-color: #38a169;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Creator Tag */
+        .creator-tag {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 15px;
+            font-style: italic;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        /* Screen States */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Login Screen */
+        .login-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .login-header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #2c5282;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: #4a5568;
+        }
+        .btn-secondary:hover {
+            background-color: #2d3748;
+        }
+
+        .btn-danger {
+            background-color: #e53e3e;
+        }
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        /* Quiz Screen Header */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        .progress-indicator {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .score-tracker {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Instruction Box */
+        .instruction-box {
+            background: #ebf8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: #2b6cb0;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Question Box Layout */
+        .question-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* Answer Options Display */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-tag {
+            padding: 12px;
+            background: #edf2f7;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        /* Input area */
+        .sentence-input-group {
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sentence-input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .sentence-input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            color: #2d3748;
+            background: #fff;
+        }
+
+        .sentence-input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+        }
+
+        /* Feedback & Next */
+        .feedback-container {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .feedback-container.show {
+            display: block;
+        }
+
+        .feedback-correct {
+            background: #f0fff4;
+            color: #276749;
+            border: 1px solid #9ae6b4;
+        }
+
+        .feedback-incorrect {
+            background: #fff5f5;
+            color: #9b2c2c;
+            border: 1px solid #feb2b2;
+        }
+
+        .submit-answer-btn {
+            background-color: var(--accent-color);
+            margin-top: 10px;
+        }
+        .submit-answer-btn:hover {
+            background-color: #2f855a;
+        }
+
+        .next-btn-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .next-btn-container.show {
+            display: block;
+        }
+
+        /* Results Screen */
+        .results-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .results-header h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .student-badge-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .student-badge-info h3 {
+            font-size: 1.2rem;
+            color: #2d3748;
+        }
+
+        .student-badge-info p {
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        /* REWARD CARD POP-OUT ANIMATION */
+        @keyframes pop-out-bounce {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.08); opacity: 1; }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes float-sticker {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+
+        .frog-reward-card {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border: 2px solid #38a169;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(56, 161, 105, 0.15);
+        }
+
+        .pop-out-anim {
+            animation: pop-out-bounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .reward-sticker-container {
+            display: inline-block;
+            margin-bottom: 12px;
+            animation: float-sticker 3s ease-in-out infinite;
+        }
+
+        .frog-desc {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2f855a;
+        }
+
+        /* Teacher Portal Styles */
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-list-container {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+        }
+
+        .question-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #edf2f7;
+            background: #fff;
+            margin-bottom: 6px;
+            border-radius: 6px;
+        }
+
+        .question-item-row span {
+            font-size: 0.95rem;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 400px;
+        }
+
+        .action-btns button {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            margin-left: 5px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-q-btn { background: #319795; color: white; }
+        .del-q-btn { background: #e53e3e; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- LOGIN SCREEN -->
+        <div id="login-screen" class="screen active">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="login-header">
+                <h1>🐸 Quiz Challenge</h1>
+                <p>人称代名詞とBe動詞：次の各文のカッコ内から適切なものを選びなさい。</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="student-name">Student Name (名前)</label>
+                    <input type="text" id="student-name" required placeholder="Tanaka Kenji">
+                </div>
+                <div class="form-group">
+                    <label for="student-class">Class (クラス / 組)</label>
+                    <input type="text" id="student-class" required placeholder="1-1">
+                </div>
+                <button type="submit" class="btn">Start Quiz 🚀</button>
+            </form>
+            <button id="goto-teacher-portal-btn" class="btn btn-secondary" style="margin-top: 15px;">🔒 Teacher Portal</button>
+        </div>
+
+        <!-- TEACHER LOGIN SCREEN -->
+        <div id="teacher-login-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="login-header">
+                <h1>🔒 Teacher Portal Login</h1>
+                <p>Enter teacher password to manage quiz questions.</p>
+            </div>
+            <form id="teacher-login-form">
+                <div class="form-group">
+                    <label for="teacher-password">Password</label>
+                    <input type="password" id="teacher-password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn">Login to Portal</button>
+                <button type="button" id="back-to-login-btn" class="btn btn-secondary" style="margin-top: 10px;">Back to Student Login</button>
+            </form>
+        </div>
+
+        <!-- TEACHER DASHBOARD SCREEN -->
+        <div id="teacher-dashboard-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="portal-header">
+                <h2>Teacher Question Manager</h2>
+                <button id="logout-teacher-btn" class="btn btn-danger" style="width: auto; padding: 8px 15px; margin:0;">Logout</button>
+            </div>
+
+            <div class="instruction-box">
+                Add, edit, or delete questions below. Changes apply instantly to active student quizzes.
+            </div>
+
+            <h3 id="form-mode-title" style="margin-bottom: 10px; font-size: 1.1rem; color: var(--primary-color);">Add New Question</h3>
+            <form id="question-edit-form" style="background: #edf2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <input type="hidden" id="edit-index" value="-1">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="input-q-text">Question Prompt (use "( )" for blank)</label>
+                    <input type="text" id="input-q-text" required placeholder="e.g. 1. I ( ) a Japanese boy.">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="input-q-options">Options (comma-separated)</label>
+                    <input type="text" id="input-q-options" required placeholder="e.g. am, are, is">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="input-q-full">Complete Sentence Answer</label>
+                    <input type="text" id="input-q-full" required placeholder="e.g. I am a Japanese boy.">
+                </div>
+                <button type="submit" class="btn" id="save-question-btn">Save Question</button>
+                <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display: none; margin-top: 5px;">Cancel Edit</button>
+            </form>
+
+            <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Existing Questions (<span id="total-q-count">0</span>)</h3>
+            <div class="question-list-container" id="question-list-div">
+                <!-- Injected via JS -->
+            </div>
+            <button id="back-to-home-from-portal" class="btn btn-secondary">Return to Quiz Home</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="quiz-header">
+                <div class="progress-indicator" id="progress-text">Question 1 of 30</div>
+                <div class="score-tracker">Score: <span id="current-score">0</span></div>
+            </div>
+
+            <div class="instruction-box">
+                人称代名詞とBe動詞：次の各文のカッコ内から適切なものを選びなさい。解答欄には完全な文を書きなさい。
+            </div>
+
+            <div class="question-card">
+                <div class="question-text" id="question-prompt">Loading question...</div>
+                
+                <div class="options-grid" id="options-container">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <div class="sentence-input-group">
+                    <label for="student-sentence-input">Type your complete sentence answer (解答欄):</label>
+                    <input type="text" id="student-sentence-input" placeholder="">
+                </div>
+
+                <button id="submit-answer-btn" class="btn submit-answer-btn">Submit Answer ✓</button>
+
+                <div id="feedback" class="feedback-container"></div>
+
+                <div class="next-btn-container" id="next-container">
+                    <button id="next-btn" class="btn">Next Question ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="results-header">
+                <h2>🎉 Quiz Completed! 🎉</h2>
+            </div>
+
+            <div class="student-badge-info">
+                <h3 id="result-name-class">Student Name (Class)</h3>
+                <p>Final Score: <strong id="final-score" style="color: var(--primary-color); font-size: 1.2rem;">0</strong> / <span id="final-total">30</span></p>
+            </div>
+
+            <div class="frog-reward-card pop-out-anim" id="frog-reward-box">
+                <div id="frog-sticker-container" class="reward-sticker-container"></div>
+                <div class="frog-desc" id="frog-desc"></div>
+            </div>
+
+            <button id="restart-btn" class="btn">Try Again 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // AESTHETIC SVG TEMPLATES (STANDING, FULL BODY, DISTINCT QUEEN HAIR)
+        const FROG_SVGS = {
+            king: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">KING FROG</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <path d="M 115 140 C 95 165, 90 220, 115 285 C 130 300, 150 290, 150 270 L 150 220 C 150 210, 170 210, 170 220 L 170 270 C 170 290, 190 300, 205 285 C 230 220, 225 165, 205 140 Z" fill="#84cc16" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+                        <path d="M 115 140 L 140 210 L 200 210 L 225 140 Z" fill="#2563eb" stroke="#ffffff" stroke-width="4"/>
+                        <ellipse cx="160" cy="185" rx="42" ry="32" fill="#fef08a" opacity="0.7"/>
+                        <path d="M 115 280 C 110 295, 125 310, 145 305 C 135 295, 125 290, 115 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 280 C 210 295, 195 310, 175 305 C 185 295, 195 290, 205 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="115" r="45" fill="#84cc16" stroke="#ffffff" stroke-width="6"/>
+                        <circle cx="130" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="190" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="130" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="190" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="133" cy="80" r="2" fill="#ffffff"/>
+                        <circle cx="193" cy="80" r="2" fill="#ffffff"/>
+                        <ellipse cx="138" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <ellipse cx="182" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <path d="M 145 125 Q 160 140 175 125" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+                        <polygon points="120,70 160,20 200,70 212,48 200,85 120,85 108,48" fill="#eab308" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="45" r="5" fill="#ef4444"/>
+                        <circle cx="135" cy="65" r="3.5" fill="#3b82f6"/>
+                        <circle cx="185" cy="65" r="3.5" fill="#22c55e"/>
+                    </g>
+                </svg>
+            `,
+            queen: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#7e22ce" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">QUEEN FROG</text>
+                            <polygon points="150,60 170,60 160,76" fill="#7e22ce"/>
+                        </g>
+                        <!-- Flowing Auburn Hair -->
+                        <path d="M 115 100 Q 70 150 65 240 Q 80 270 100 280 Q 90 200 115 130 Z" fill="#b45309" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 100 Q 250 150 255 240 Q 240 270 220 280 Q 230 200 205 130 Z" fill="#b45309" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 115 140 C 95 165, 90 220, 115 285 C 130 300, 150 290, 150 270 L 150 220 C 150 210, 170 210, 170 220 L 170 270 C 170 290, 190 300, 205 285 C 230 220, 225 165, 205 140 Z" fill="#84cc16" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+                        <path d="M 110 135 L 138 210 L 182 210 L 210 135 Z" fill="#9333ea" stroke="#ffffff" stroke-width="4"/>
+                        <ellipse cx="160" cy="185" rx="42" ry="32" fill="#fce7f3" opacity="0.8"/>
+                        <path d="M 115 280 C 110 295, 125 310, 145 305 C 135 295, 125 290, 115 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 280 C 210 295, 195 310, 175 305 C 185 295, 195 290, 205 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="115" r="45" fill="#84cc16" stroke="#ffffff" stroke-width="6"/>
+                        <circle cx="130" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="190" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="130" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="190" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="133" cy="80" r="2" fill="#ffffff"/>
+                        <circle cx="193" cy="80" r="2" fill="#ffffff"/>
+                        <ellipse cx="138" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <ellipse cx="182" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <path d="M 145 125 Q 160 140 175 125" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+                        <polygon points="120,70 160,22 200,70 212,48 200,85 120,85 108,48" fill="#eab308" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="45" r="5" fill="#ec4899"/>
+                        <circle cx="135" cy="65" r="3.5" fill="#3b82f6"/>
+                        <circle cx="185" cy="65" r="3.5" fill="#a855f7"/>
+                    </g>
+                </svg>
+            `,
+            ok: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">OK FROG</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <path d="M 115 140 C 95 165, 90 220, 115 285 C 130 300, 150 290, 150 270 L 150 220 C 150 210, 170 210, 170 220 L 170 270 C 170 290, 190 300, 205 285 C 230 220, 225 165, 205 140 Z" fill="#84cc16" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+                        <path d="M 115 140 L 140 210 L 200 210 L 225 140 Z" fill="#3b82f6" stroke="#ffffff" stroke-width="4"/>
+                        <ellipse cx="160" cy="185" rx="42" ry="32" fill="#e0e7ff" opacity="0.8"/>
+                        <path d="M 115 280 C 110 295, 125 310, 145 305 C 135 295, 125 290, 115 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 280 C 210 295, 195 310, 175 305 C 185 295, 195 290, 205 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="115" r="45" fill="#84cc16" stroke="#ffffff" stroke-width="6"/>
+                        <circle cx="130" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="190" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="130" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="190" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="133" cy="80" r="2" fill="#ffffff"/>
+                        <circle cx="193" cy="80" r="2" fill="#ffffff"/>
+                        <ellipse cx="138" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <ellipse cx="182" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <path d="M 145 125 Q 160 140 175 125" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+                        <g transform="translate(205, 175)">
+                            <circle cx="12" cy="12" r="14" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                            <path d="M 18 10 C 25 5, 28 -5, 22 -10 C 18 -12, 12 -8, 12 -2 Z" fill="#84cc16" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+                        </g>
+                    </g>
+                </svg>
+            `,
+            baby: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">BABY FROG</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <path d="M 115 140 C 95 165, 90 220, 115 285 C 130 300, 150 290, 150 270 L 150 220 C 150 210, 170 210, 170 220 L 170 270 C 170 290, 190 300, 205 285 C 230 220, 225 165, 205 140 Z" fill="#84cc16" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+                        <path d="M 115 140 L 140 210 L 200 210 L 225 140 Z" fill="#10b981" stroke="#ffffff" stroke-width="4"/>
+                        <ellipse cx="160" cy="185" rx="42" ry="32" fill="#d1fae5" opacity="0.8"/>
+                        <path d="M 115 280 C 110 295, 125 310, 145 305 C 135 295, 125 290, 115 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M 205 280 C 210 295, 195 310, 175 305 C 185 295, 195 290, 205 280 Z" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="160" cy="115" r="45" fill="#84cc16" stroke="#ffffff" stroke-width="6"/>
+                        <circle cx="130" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="190" cy="82" r="16" fill="#84cc16" stroke="#ffffff" stroke-width="4"/>
+                        <circle cx="130" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="190" cy="82" r="6" fill="#1e293b"/>
+                        <circle cx="133" cy="80" r="2" fill="#ffffff"/>
+                        <circle cx="193" cy="80" r="2" fill="#ffffff"/>
+                        <ellipse cx="138" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <ellipse cx="182" cy="122" rx="7" ry="5" fill="#f43f5e" opacity="0.4"/>
+                        <path d="M 145 125 Q 160 140 175 125" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            `,
+            threeTadpoles: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="20" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">THREE TADPOLES</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <g transform="translate(50, 100)">
+                            <path d="M 25 35 Q 10 25 0 45 Q 10 65 25 55 Z" fill="#365314"/>
+                            <ellipse cx="45" cy="45" rx="24" ry="20" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                            <circle cx="38" cy="39" r="5" fill="#fef08a"/>
+                            <circle cx="38" cy="39" r="2.5" fill="#1e293b"/>
+                        </g>
+                        <g transform="translate(140, 120)">
+                            <path d="M 22 30 Q 8 20 0 38 Q 8 56 22 46 Z" fill="#365314"/>
+                            <ellipse cx="40" cy="38" rx="20" ry="17" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                            <circle cx="34" cy="33" r="4.5" fill="#fef08a"/>
+                            <circle cx="34" cy="33" r="2" fill="#1e293b"/>
+                        </g>
+                        <g transform="translate(95, 200)">
+                            <path d="M 20 28 Q 7 18 0 35 Q 7 52 20 42 Z" fill="#365314"/>
+                            <ellipse cx="36" cy="35" rx="18" ry="15" fill="#65a30d" stroke="#ffffff" stroke-width="3"/>
+                            <circle cx="30" cy="30" r="4" fill="#fef08a"/>
+                            <circle cx="30" cy="30" r="1.8" fill="#1e293b"/>
+                        </g>
+                    </g>
+                </svg>
+            `,
+            oneTadpole: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">ONE TADPOLE</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <g transform="translate(85, 140)">
+                            <path d="M 40 45 Q 15 30 0 55 Q 15 80 40 65 Z" fill="#365314"/>
+                            <ellipse cx="70" cy="55" rx="35" ry="30" fill="#65a30d" stroke="#ffffff" stroke-width="4"/>
+                            <circle cx="60" cy="47" r="7" fill="#fef08a"/>
+                            <circle cx="60" cy="47" r="3.5" fill="#1e293b"/>
+                        </g>
+                    </g>
+                </svg>
+            `,
+            egg: `
+                <svg viewBox="0 0 340 340" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.2"/>
+                        </filter>
+                    </defs>
+                    <g filter="url(#sh)">
+                        <path d="M 120 40 C 180 20, 240 30, 275 80 C 310 130, 315 190, 290 240 C 265 290, 210 320, 150 315 C 90 310, 45 270, 35 210 C 25 150, 60 60, 120 40 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="8"/>
+                        <g transform="translate(10, 0)">
+                            <rect x="15" y="8" width="290" height="52" rx="26" fill="#1e293b" stroke="#ffffff" stroke-width="5"/>
+                            <text x="160" y="43" fill="#ffffff" font-size="22" font-weight="900" text-anchor="middle" font-family="system-ui, sans-serif">FROG EGG</text>
+                            <polygon points="150,60 170,60 160,76" fill="#1e293b"/>
+                        </g>
+                        <circle cx="170" cy="180" r="75" fill="#f0f9ff" stroke="#38bdf8" stroke-width="6"/>
+                        <circle cx="170" cy="180" r="45" fill="#14532d"/>
+                        <g transform="translate(145, 155)">
+                            <path d="M 25 30 Q 10 20 0 38 Q 10 56 25 46 Z" fill="#365314"/>
+                            <ellipse cx="42" cy="38" rx="18" ry="15" fill="#65a30d" stroke="#ffffff" stroke-width="2.5"/>
+                            <circle cx="36" cy="34" r="4" fill="#fef08a"/>
+                            <circle cx="36" cy="34" r="1.8" fill="#1e293b"/>
+                        </g>
+                    </g>
+                </svg>
+            `
+        };
+
+        let questions = JSON.parse(localStorage.getItem('be_verb_quiz_questions')) || [
+            { text: "1. I ( ) a Japanese boy.", options: ["am", "are", "is"], full: "I am a Japanese boy." },
+            { text: "2. You ( ) a student.", options: ["am", "are", "is"], full: "You are a student." },
+            { text: "3. They ( ) teachers.", options: ["am", "are", "is"], full: "They are teachers." },
+            { text: "4. He ( ) an English teacher.", options: ["am", "are", "is"], full: "He is an English teacher." },
+            { text: "5. Alex ( ) an American boy.", options: ["am", "are", "is"], full: "Alex is an American boy." },
+            { text: "6. His name ( ) Kotaro.", options: ["am", "are", "is"], full: "His name is Kotaro." },
+            { text: "7. You and Peter ( ) good friends.", options: ["am", "are", "is"], full: "You and Peter are good friends." },
+            { text: "8. Your father ( ) a doctor.", options: ["am", "are", "is"], full: "Your father is a doctor." },
+            { text: "9. My father ( ) a teacher.", options: ["am", "are", "is"], full: "My father is a teacher." },
+            { text: "10. Her sister ( ) a pianist.", options: ["am", "are", "is"], full: "Her sister is a pianist." },
+            { text: "11. You and I ( ) students.", options: ["am", "are", "is"], full: "You and I are students." },
+            { text: "12. They ( ) brothers.", options: ["am", "are", "is"], full: "They are brothers." },
+            { text: "13. My name ( ) Jane.", options: ["am", "are", "is"], full: "My name is Jane." },
+            { text: "14. Nanako and I ( ) good friends.", options: ["am", "are", "is"], full: "Nanako and I are good friends." },
+            { text: "15. Mika and Rona ( ) my friends.", options: ["am", "are", "is"], full: "Mika and Rona are my friends." },
+            { text: "16. My doll ( ) very pretty.", options: ["am", "are", "is"], full: "My doll is very pretty." },
+            { text: "17. That ( ) our school.", options: ["am", "are", "is"], full: "That is our school." },
+            { text: "18. It ( ) my father's car.", options: ["am", "are", "is"], full: "It is my father's car." },
+            { text: "19. That boy ( ) Akira.", options: ["am", "are", "is"], full: "That boy is Akira." },
+            { text: "20. Ann ( ) Lucy's sister.", options: ["am", "are", "is"], full: "Ann is Lucy's sister." },
+            { text: "21. ( ) you Mr. Brown's student?", options: ["Am", "Are", "Is"], full: "Are you Mr. Brown's student?" },
+            { text: "22. ( ) Billy an American student?", options: ["Am", "Are", "Is"], full: "Is Billy an American student?" },
+            { text: "23. ( ) I a doctor or a teacher?", options: ["Am", "Are", "Is"], full: "Am I a doctor or a teacher?" },
+            { text: "24. ( ) this your hat?", options: ["Am", "Are", "Is"], full: "Is this your hat?" },
+            { text: "25. ( ) Mr. Green your teacher?", options: ["Am", "Are", "Is"], full: "Is Mr. Green your teacher?" },
+            { text: "26. Who ( ) that boy?", options: ["am", "are", "is"], full: "Who is that boy?" },
+            { text: "27. Whose dolls ( ) they?", options: ["am", "are", "is"], full: "Whose dolls are they?" },
+            { text: "28. What ( ) this?", options: ["am", "are", "is"], full: "What is this?" },
+            { text: "29. What ( ) they?", options: ["am", "are", "is"], full: "What are they?" },
+            { text: "30. Who ( ) those boys?", options: ["am", "are", "is"], full: "Who are those boys?" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let studentClass = "";
+        let answered = false;
+        
+        const TEACHER_PASSWORD = "teacher123";
+
+        // DOM Elements
+        const loginScreen = document.getElementById("login-screen");
+        const teacherLoginScreen = document.getElementById("teacher-login-screen");
+        const teacherDashboardScreen = document.getElementById("teacher-dashboard-screen");
+        const quizScreen = document.getElementById("quiz-screen");
+        const resultsScreen = document.getElementById("results-screen");
+
+        const loginForm = document.getElementById("login-form");
+        const teacherLoginForm = document.getElementById("teacher-login-form");
+        const questionEditForm = document.getElementById("question-edit-form");
+
+        const progressText = document.getElementById("progress-text");
+        const currentScoreSpan = document.getElementById("current-score");
+        const questionPrompt = document.getElementById("question-prompt");
+        const optionsContainer = document.getElementById("options-container");
+        const studentSentenceInput = document.getElementById("student-sentence-input");
+        const submitAnswerBtn = document.getElementById("submit-answer-btn");
+        const feedbackDiv = document.getElementById("feedback");
+        const nextContainer = document.getElementById("next-container");
+        const nextBtn = document.getElementById("next-btn");
+
+        const resultNameClass = document.getElementById("result-name-class");
+        const finalScoreSpan = document.getElementById("final-score");
+        const finalTotalSpan = document.getElementById("final-total");
+        const frogStickerContainer = document.getElementById("frog-sticker-container");
+        const frogRewardBox = document.getElementById("frog-reward-box");
+        const frogDesc = document.getElementById("frog-desc");
+        const restartBtn = document.getElementById("restart-btn");
+
+        // Navigation handlers
+        document.getElementById("goto-teacher-portal-btn").addEventListener("click", () => {
+            loginScreen.classList.remove("active");
+            teacherLoginScreen.classList.add("active");
+        });
+
+        document.getElementById("back-to-login-btn").addEventListener("click", () => {
+            teacherLoginScreen.classList.remove("active");
+            loginScreen.classList.add("active");
+            teacherLoginForm.reset();
+        });
+
+        document.getElementById("back-to-home-from-portal").addEventListener("click", () => {
+            teacherDashboardScreen.classList.remove("active");
+            loginScreen.classList.add("active");
+            resetQuestionForm();
+        });
+
+        document.getElementById("logout-teacher-btn").addEventListener("click", () => {
+            teacherDashboardScreen.classList.remove("active");
+            loginScreen.classList.add("active");
+            resetQuestionForm();
+        });
+
+        teacherLoginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const pass = document.getElementById("teacher-password").value;
+            if (pass === TEACHER_PASSWORD) {
+                teacherLoginScreen.classList.remove("active");
+                teacherDashboardScreen.classList.add("active");
+                renderQuestionList();
+                teacherLoginForm.reset();
+            } else {
+                alert("Incorrect password! Please try again.");
+                document.getElementById("teacher-password").value = "";
+            }
+        });
+
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            studentName = document.getElementById("student-name").value.trim();
+            studentClass = document.getElementById("student-class").value.trim();
+            
+            if(studentName && studentClass) {
+                if (questions.length === 0) {
+                    alert("No questions available in the quiz! Please contact your teacher.");
+                    return;
+                }
+                loginScreen.classList.remove("active");
+                quizScreen.classList.add("active");
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+            }
+        });
+
+        function loadQuestion() {
+            answered = false;
+            studentSentenceInput.value = "";
+            studentSentenceInput.disabled = false;
+            submitAnswerBtn.style.display = "block";
+            feedbackDiv.className = "feedback-container";
+            feedbackDiv.innerHTML = "";
+            nextContainer.classList.remove("show");
+
+            const q = questions[currentQuestionIndex];
+            progressText.innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            currentScoreSpan.innerText = score;
+            
+            questionPrompt.innerHTML = `${q.text.replace('( )', `(<span style="color:var(--primary-color);">...</span>)`)}`;
+
+            optionsContainer.innerHTML = "";
+            if (q.options && q.options.length > 0) {
+                q.options.forEach(opt => {
+                    const tag = document.createElement("div");
+                    tag.className = "option-tag";
+                    tag.innerText = opt;
+                    optionsContainer.appendChild(tag);
+                });
+            }
+        }
+
+        submitAnswerBtn.addEventListener("click", () => {
+            if (answered) return;
+            const studentTyped = studentSentenceInput.value.trim();
+            if (!studentTyped) {
+                alert("Please type your complete sentence answer before submitting.");
+                return;
+            }
+
+            answered = true;
+            submitAnswerBtn.style.display = "none";
+            studentSentenceInput.disabled = true;
+
+            const q = questions[currentQuestionIndex];
+            const normalize = (str) => str.replace(/\s+/g, ' ').trim().toLowerCase();
+            const isCorrect = (normalize(studentTyped) === normalize(q.full));
+
+            if (isCorrect) {
+                score++;
+                currentScoreSpan.innerText = score;
+                feedbackDiv.className = "feedback-container feedback-correct show";
+                feedbackDiv.innerHTML = `✅ Correct! Perfect sentence:<br><strong>${q.full}</strong>`;
+            } else {
+                feedbackDiv.className = "feedback-container feedback-incorrect show";
+                feedbackDiv.innerHTML = `❌ Incorrect. The correct complete sentence is:<br><strong>${q.full}</strong>`;
+            }
+
+            nextContainer.classList.add("show");
+        });
+
+        studentSentenceInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter" && !answered) {
+                submitAnswerBtn.click();
+            }
+        });
+
+        nextBtn.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizScreen.classList.remove("active");
+            resultsScreen.classList.add("active");
+
+            resultNameClass.innerText = `${studentName} (Class: ${studentClass})`;
+            finalScoreSpan.innerText = score;
+            finalTotalSpan.innerText = questions.length;
+
+            // Trigger Pop-out Animation
+            frogRewardBox.classList.remove("pop-out-anim");
+            void frogRewardBox.offsetWidth; // Force reflow
+            frogRewardBox.classList.add("pop-out-anim");
+
+            let svgMarkup = "";
+            let desc = "";
+            const isHighScore = score >= 20;
+
+            if (score === 30) {
+                svgMarkup = FROG_SVGS.king;
+                desc = "Flawless mastery! Outstanding work!";
+            } else if (score >= 25) {
+                svgMarkup = FROG_SVGS.queen;
+                desc = "Fantastic work! Excellent command!";
+            } else if (score >= 20) {
+                svgMarkup = FROG_SVGS.ok;
+                desc = "Good job! Solid grasp of the basics!";
+            } else if (score >= 10) {
+                svgMarkup = FROG_SVGS.baby;
+                desc = "Keep practicing step by step.";
+            } else if (score >= 5) {
+                svgMarkup = FROG_SVGS.threeTadpoles;
+                desc = "Getting there! Review and try again!";
+            } else if (score >= 1) {
+                svgMarkup = FROG_SVGS.oneTadpole;
+                desc = "Don't give up! Practice makes perfect!";
+            } else {
+                svgMarkup = FROG_SVGS.egg;
+                desc = "Time to review the rules and try again.";
+            }
+
+            frogStickerContainer.innerHTML = svgMarkup;
+            frogDesc.innerText = desc;
+
+            if (isHighScore) {
+                triggerConfetti();
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 80,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 }
+                    });
+                }, 300);
+
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 80,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 }
+                    });
+                }, 600);
+            }
+        }
+
+        restartBtn.addEventListener("click", () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultsScreen.classList.remove("active");
+            loginScreen.classList.add("active");
+            document.getElementById("login-form").reset();
+        });
+
+        // Teacher Portal CRUD
+        function renderQuestionList() {
+            const listDiv = document.getElementById("question-list-div");
+            document.getElementById("total-q-count").innerText = questions.length;
+            listDiv.innerHTML = "";
+
+            if (questions.length === 0) {
+                listDiv.innerHTML = `<p style="text-align:center; color:#718096; padding:15px;">No questions found. Add one above!</p>`;
+                return;
+            }
+
+            questions.forEach((q, index) => {
+                const row = document.createElement("div");
+                row.className = "question-item-row";
+                row.innerHTML = `
+                    <span><strong>${index + 1}.</strong> ${q.text} (Full: <em>${q.full}</em>)</span>
+                    <div class="action-btns">
+                        <button class="edit-q-btn" onclick="editQuestion(${index})">Edit</button>
+                        <button class="del-q-btn" onclick="deleteQuestion(${index})">Delete</button>
+                    </div>
+                `;
+                listDiv.appendChild(row);
+            });
+        }
+
+        questionEditForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const editIndex = parseInt(document.getElementById("edit-index").value);
+            const text = document.getElementById("input-q-text").value.trim();
+            const optionsStr = document.getElementById("input-q-options").value.trim();
+            const full = document.getElementById("input-q-full").value.trim();
+            const options = optionsStr.split(",").map(o => o.trim());
+
+            const newQ = { text, options, full };
+
+            if (editIndex === -1) {
+                questions.push(newQ);
+            } else {
+                questions[editIndex] = newQ;
+            }
+
+            localStorage.setItem('be_verb_quiz_questions', JSON.stringify(questions));
+            resetQuestionForm();
+            renderQuestionList();
+            alert("Question saved successfully!");
+        });
+
+        window.editQuestion = function(index) {
+            const q = questions[index];
+            document.getElementById("edit-index").value = index;
+            document.getElementById("input-q-text").value = q.text;
+            document.getElementById("input-q-options").value = q.options ? q.options.join(", ") : "";
+            document.getElementById("input-q-full").value = q.full;
+            
+            document.getElementById("form-mode-title").innerText = `Edit Question #${index + 1}`;
+            document.getElementById("save-question-btn").innerText = "Update Question";
+            document.getElementById("cancel-edit-btn").style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.deleteQuestion = function(index) {
+            if (confirm(`Are you sure you want to delete question #${index + 1}?`)) {
+                questions.splice(index, 1);
+                localStorage.setItem('be_verb_quiz_questions', JSON.stringify(questions));
+                renderQuestionList();
+            }
+        }
+
+        document.getElementById("cancel-edit-btn").addEventListener("click", () => {
+            resetQuestionForm();
+        });
+
+        function resetQuestionForm() {
+            document.getElementById("edit-index").value = "-1";
+            questionEditForm.reset();
+            document.getElementById("form-mode-title").innerText = "Add New Question";
+            document.getElementById("save-question-btn").innerText = "Save Question";
+            document.getElementById("cancel-edit-btn").style.display = "none";
+        }
+    </script>
+</body>
+</html>
