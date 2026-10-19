@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Challenge</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=MURECHO:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Outfit', 'MURECHO', sans-serif;
+            background-color: #ffffff;
+            user-select: none;
+        }
+
+        .sketch-box {
+            border: 3px solid #0d172a;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 2px 2px 0px #0d172a;
+        }
+
+        .sketch-button {
+            border: 2px solid #0d172a;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 2px 2px 0px #0d172a;
+            transition: all 0.1s ease;
+        }
+
+        .sketch-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #0d172a;
+        }
+
+        .tile-box {
+            width: 44px;
+            height: 58px;
+            border: 3px solid #0d172a;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            background-color: #ffffff;
+            color: #0d172a;
+            box-shadow: 2px 2px 0px rgba(13, 23, 42, 0.15);
+            transition: all 0.12s ease;
+        }
+
+        .tile-box.filled {
+            background-color: #eff6ff;
+            border-color: #0284c7;
+            color: #0369a1;
+        }
+
+        .tile-box.space {
+            width: 20px;
+            border: none;
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .unit-tab {
+            border: 2px solid #0d172a;
+            border-radius: 6px;
+            font-weight: 800;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+
+        .unit-tab.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px #0d172a;
+        }
+
+        .unit-tab.inactive {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        @keyframes timerPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); color: #dc2626; }
+            100% { transform: scale(1); }
+        }
+
+        .timer-warning {
+            animation: timerPulse 0.5s infinite;
+        }
+
+        @keyframes bounceOnce {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .animate-bounce-once {
+            animation: bounceOnce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-900 flex flex-col justify-between p-3 md:p-8">
+
+    <!-- STUDENT LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="sketch-box bg-white p-6 md:p-8 max-w-md w-full text-center space-y-5 relative">
+            <!-- Direct Teacher Portal button at Login screen -->
+            <button onclick="openTeacherPortalPrompt()" class="absolute top-4 right-4 text-xs font-black text-slate-700 hover:text-blue-600 border-2 border-slate-900 px-2.5 py-1 rounded-lg sketch-button bg-slate-50 flex items-center gap-1">
+                <i class="fa-solid fa-lock text-slate-600"></i> Teacher Portal
+            </button>
+
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto border-2 border-slate-900 text-2xl mt-2">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900">Student Login</h2>
+            <p class="text-sm text-slate-600">Please enter your details to access your Word Challenge lobby.</p>
+            
+            <form id="loginForm" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-slate-700">Class / Section</label>
+                    <input type="text" id="inputClass" required placeholder="e.g. Class 1-A" 
+                           class="w-full p-3 border-2 border-slate-900 rounded-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-1 text-slate-700">Student Name</label>
+                    <input type="text" id="inputName" required placeholder="e.g. Taro Yamada" 
+                           class="w-full p-3 border-2 border-slate-900 rounded-lg font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-black rounded-lg sketch-button hover:bg-blue-700">
+                    ENTER LOBBY <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SEGMENT LOBBY SCREEN -->
+    <div id="lobbyScreen" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-40 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="sketch-box bg-white p-6 md:p-8 max-w-4xl w-full space-y-6 my-auto">
+            <div class="flex items-center justify-between border-b-2 border-slate-200 pb-4">
+                <div>
+                    <span id="lobbyBadgeClass" class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded font-black">--</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-900 mt-1">Select a Segment</h2>
+                </div>
+                <div class="flex items-center gap-4 text-right">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500">Player</p>
+                        <p id="lobbyBadgeName" class="font-black text-slate-900 text-sm">--</p>
+                        <button onclick="openLoginModal()" class="text-xs text-blue-600 font-bold underline hover:text-blue-800">Switch Student</button>
+                    </div>
+                    <button onclick="openTeacherPortalPrompt()" class="text-xs font-black text-slate-900 hover:text-blue-600 border-2 border-slate-900 px-3 py-1.5 rounded-lg sketch-button">
+                        <i class="fa-solid fa-lock text-slate-600 mr-1"></i> Teacher Portal
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-600 font-bold uppercase tracking-wider">Click any segment below to start the challenge (Words shuffle automatically every time):</p>
+
+            <div id="lobbyUnitsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[55vh] overflow-y-auto pr-1">
+                <!-- Dynamically populated segment selection cards -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="max-w-6xl mx-auto w-full flex-1 flex flex-col justify-between">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b-2 border-slate-200 pb-4">
+            <div class="text-left w-full sm:w-1/3">
+                <p class="text-xs font-bold text-slate-900 tracking-tight">prepared by: Dr. George Cabrera</p>
+                <div id="studentBadge" class="hidden items-center gap-2 mt-1">
+                    <span id="displayClass" class="bg-slate-200 text-slate-800 text-xs px-2 py-0.5 rounded font-black">--</span>
+                    <span id="displayName" class="font-black text-slate-900 text-sm">--</span>
+                    <button onclick="openLobbyFromQuiz()" class="text-xs text-blue-600 font-bold underline ml-1 hover:text-blue-800">(Change Segment)</button>
+                </div>
+            </div>
+
+            <!-- TOP-MIDDLE: SCORE BOX, LAST SCORE & BEST SCORE -->
+            <div class="flex flex-col items-center justify-center w-full sm:w-1/3">
+                <span class="text-xs font-black text-slate-900 uppercase tracking-wider mb-1">Score / Last / Best</span>
+                <div class="sketch-box w-64 h-16 flex items-center justify-center bg-white gap-2 px-2">
+                    <span id="scoreDisplay" class="text-lg font-black text-slate-900 tracking-wider">0 / 0</span>
+                    <span class="text-slate-300 font-black">|</span>
+                    <div class="text-center">
+                        <span class="block text-[9px] uppercase font-bold text-blue-600 leading-none">Last</span>
+                        <span id="lastScoreDisplay" class="text-base font-black text-blue-600 leading-none">0</span>
+                    </div>
+                    <span class="text-slate-300 font-black">|</span>
+                    <div class="text-center">
+                        <span class="block text-[9px] uppercase font-bold text-amber-600 leading-none">Best</span>
+                        <span id="bestScoreDisplay" class="text-base font-black text-amber-600 leading-none">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-right w-full sm:w-1/3 flex justify-end gap-3">
+                <button onclick="openLobby()" class="text-sm font-black text-slate-900 hover:text-blue-600 transition flex items-center gap-1.5 border-b-2 border-slate-900 pb-0.5">
+                    <i class="fa-solid fa-list text-blue-600"></i> Segments Lobby
+                </button>
+                <button onclick="openTeacherPortalPrompt()" class="text-sm font-black text-slate-900 hover:text-blue-600 transition flex items-center gap-1.5 border-b-2 border-slate-900 pb-0.5">
+                    <i class="fa-solid fa-lock text-slate-600"></i> Teacher Portal
+                </button>
+            </div>
+        </header>
+
+        <!-- SEGMENT NAVIGATION RIBBON -->
+        <div class="my-4 overflow-x-auto py-1">
+            <div class="flex items-center gap-2 min-w-max justify-center" id="unitTabsContainer">
+                <!-- Segment buttons dynamically rendered here -->
+            </div>
+        </div>
+
+        <!-- MAIN INTERACTIVE DISPLAY AREA -->
+        <main class="my-auto space-y-6 max-w-4xl mx-auto w-full">
+            
+            <!-- TIMER & SEGMENT PROGRESS BAR -->
+            <div class="flex items-center gap-4 px-2">
+                <div class="flex-1 bg-slate-100 h-3 rounded-full overflow-hidden border-2 border-slate-900">
+                    <div id="unitProgressBar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <div class="sketch-box px-3 py-1 flex items-center gap-2 bg-amber-50 min-w-[90px] justify-center">
+                    <i class="fa-solid fa-hourglass-half text-amber-600 text-sm"></i>
+                    <span id="timerDisplay" class="font-black text-slate-900 text-lg">15s</span>
+                </div>
+            </div>
+
+            <!-- WORD CHALLENGE BANNER & JAPANESE PROMPT -->
+            <div class="text-center space-y-2">
+                <h1 id="currentSegmentTitle" class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-widest">word challenge</h1>
+                <div class="sketch-box w-full py-8 px-6 flex items-center justify-center min-h-[120px] bg-white">
+                    <p id="japanesePrompt" class="text-2xl md:text-4xl font-black text-slate-900 tracking-wide">
+                        --
+                    </p>
+                </div>
+            </div>
+
+            <!-- ANSWER AREA & LETTER SLOTS -->
+            <div class="text-center space-y-2">
+                <h2 class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-widest">answer</h2>
+                <div class="sketch-box w-full py-8 px-4 flex flex-wrap items-center justify-center gap-2 min-h-[120px] bg-white relative cursor-pointer" onclick="focusHiddenInput()">
+                    <div id="tileContainer" class="flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
+                        <!-- Letter tiles generated dynamically -->
+                    </div>
+
+                    <!-- Invisible Input handling Enter key submissions -->
+                    <input type="text" id="keyboardInput" class="absolute opacity-0 inset-0 w-full h-full cursor-pointer" autocomplete="off" spellcheck="false" autofocus>
+                </div>
+                <p class="text-xs font-bold text-slate-400">Type your answer and press <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-600 font-mono">Enter</kbd> to submit</p>
+            </div>
+
+        </main>
+
+        <!-- NAVIGATION / CONTROLS -->
+        <footer class="mt-6 flex items-center justify-center gap-3 max-w-2xl mx-auto w-full px-4">
+            <button onclick="restartCurrentUnit()" class="sketch-button bg-amber-400 hover:bg-amber-500 text-slate-900 px-6 py-3 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Restart Segment (Shuffle)
+            </button>
+            <button onclick="openLobby()" class="sketch-button bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-list"></i> Select Other Segment
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- CONGRATULATORY TROPHY POPUP MODAL -->
+    <div id="trophyModal" class="hidden fixed inset-0 bg-slate-900/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="sketch-box bg-white p-8 max-w-md w-full text-center space-y-6 animate-bounce-once">
+            <div class="relative w-28 h-28 mx-auto flex items-center justify-center bg-amber-100 rounded-full border-4 border-slate-900 shadow-inner">
+                <i class="fa-solid fa-trophy text-6xl text-amber-500 animate-pulse"></i>
+                <i class="fa-solid fa-star text-yellow-400 text-xl absolute top-2 right-2"></i>
+                <i class="fa-solid fa-star text-yellow-400 text-xl absolute bottom-2 left-2"></i>
+            </div>
+
+            <div>
+                <span class="text-xs font-black tracking-widest text-blue-600 uppercase">Segment Mastered!</span>
+                <h2 class="text-3xl font-black text-slate-900 mt-1">CONGRATULATIONS!</h2>
+                <p id="trophyMsg" class="text-slate-600 mt-2 font-bold">You hurdled this segment successfully!</p>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border-2 border-slate-900 text-left space-y-1 text-sm font-semibold">
+                <p class="text-slate-700"><strong>Student:</strong> <span id="modalStudentName">--</span></p>
+                <p class="text-slate-700"><strong>Class:</strong> <span id="modalClassName">--</span></p>
+                <p class="text-slate-700"><strong>Result:</strong> <span class="text-emerald-600 font-bold">Passed with Flying Colors 🏆</span></p>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="closeTrophyModal()" class="w-1/2 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl sketch-button text-sm">
+                    NEXT SEGMENT <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+                <button onclick="returnToLobbyFromModal()" class="w-1/2 py-3 bg-slate-800 hover:bg-slate-900 text-white font-black rounded-xl sketch-button text-sm">
+                    SEGMENTS LOBBY <i class="fa-solid fa-list ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MISTAKE / SUDDEN-DEATH RESTART MODAL -->
+    <div id="mistakeModal" class="hidden fixed inset-0 bg-red-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="sketch-box bg-white p-6 max-w-sm w-full text-center space-y-4 animate-bounce-once">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto border-2 border-slate-900 text-3xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900" id="mistakeTitle">Incorrect!</h3>
+            <p class="text-slate-600 text-xs font-bold leading-relaxed">
+                Sudden Death Rule: Making a mistake sends you back to the start of this segment!
+            </p>
+            
+            <div class="bg-amber-50 border-2 border-slate-900 p-3 rounded-lg text-left text-xs font-bold space-y-1">
+                <p class="text-slate-700">Correct Answer: <span id="correctWordSpan" class="font-black text-emerald-600">--</span></p>
+                <p class="text-slate-700">Your Answer: <span id="yourEntrySpan" class="line-through text-red-600">--</span></p>
+            </div>
+
+            <button onclick="confirmResetUnit()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg sketch-button">
+                RESTART SEGMENT <i class="fa-solid fa-rotate-right ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- TEACHER PORTAL AUTH MODAL -->
+    <div id="teacherAuthModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="sketch-box bg-white p-6 max-w-sm w-full text-center space-y-4">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto border-2 border-slate-900 text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-900">Teacher Login</h3>
+            <p class="text-xs text-slate-500 font-bold">Please enter the passcode to continue.</p>
+
+            <input type="password" id="teacherPasscodeCode" placeholder="Enter Passcode" class="w-full p-2.5 border-2 border-slate-900 rounded-lg text-center font-black text-lg focus:outline-none">
+            
+            <div class="flex gap-2">
+                <button onclick="closeTeacherAuthModal()" class="w-1/2 py-2 bg-slate-200 text-slate-800 font-bold rounded-lg border-2 border-slate-900">Cancel</button>
+                <button onclick="authenticateTeacherPortal()" class="w-1/2 py-2 bg-slate-900 text-white font-bold rounded-lg sketch-button">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER PORTAL MODAL -->
+    <div id="teacherPortal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+        <div class="sketch-box bg-white w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user text-amber-400 text-xl"></i>
+                    <h2 class="text-xl font-black tracking-wide">Teacher Portal & Content Management</h2>
+                </div>
+                <button onclick="toggleTeacherPortal()" class="text-slate-300 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+                <div class="bg-slate-50 p-4 rounded-xl border-2 border-slate-900 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 uppercase mb-1">Time Limit Per Word</label>
+                        <select id="teacherTimerSelect" class="w-full p-2 border-2 border-slate-900 rounded-lg font-bold bg-white" onchange="updateTimerSetting(this.value)">
+                            <option value="5">5 Seconds (Speed Trial)</option>
+                            <option value="10">10 Seconds (Fast)</option>
+                            <option value="15" selected>15 Seconds (Standard)</option>
+                            <option value="20">20 Seconds (Relaxed)</option>
+                            <option value="0">No Time Limit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 uppercase mb-1">Select Segment to Edit</label>
+                        <select id="teacherUnitSelect" class="w-full p-2 border-2 border-slate-900 rounded-lg font-bold bg-white" onchange="renderTeacherVocabularyTable()">
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 uppercase mb-1">Portal Passcode</label>
+                        <button onclick="changeTeacherPasscode()" class="w-full p-2 bg-slate-200 hover:bg-slate-300 border-2 border-slate-900 rounded-lg font-bold text-slate-800 text-xs text-center">
+                            <i class="fa-solid fa-lock-open mr-1"></i> Change Passcode
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sketch-box p-4 bg-blue-50/60 space-y-3">
+                    <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-blue-600"></i> Add Word Entry
+                    </h3>
+                    <form id="addWordForm" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" id="newEnglishWord" placeholder="English Word (e.g. apple)" required
+                               class="p-2 border-2 border-slate-900 rounded-lg font-bold text-sm">
+                        <input type="text" id="newJapaneseMeaning" placeholder="Japanese Meaning (e.g. りんご)" required
+                               class="p-2 border-2 border-slate-900 rounded-lg font-bold text-sm">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-black py-2 rounded-lg sketch-button text-xs uppercase tracking-wider">
+                            Add to Segment
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xs font-black text-slate-900 uppercase">Vocabulary Items in Segment</h3>
+                        <span id="vocabCountBadge" class="text-xs bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-black">0 entries</span>
+                    </div>
+                    <div class="border-2 border-slate-900 rounded-xl overflow-hidden max-h-64 overflow-y-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead class="bg-slate-900 text-white sticky top-0">
+                                <tr>
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">English Word</th>
+                                    <th class="p-3">Japanese Meaning</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherVocabTable" class="divide-y divide-slate-200 bg-white font-medium">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-4 border-t border-slate-200">
+                    <div class="flex gap-2">
+                        <button onclick="exportVocabularyData()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-bold px-3 py-2 rounded sketch-button">
+                            <i class="fa-solid fa-download mr-1"></i> Export Data
+                        </button>
+                    </div>
+                    <button onclick="resetVocabularyToDefault()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold px-3 py-2 rounded border border-red-300">
+                        <i class="fa-solid fa-trash-arrow-up mr-1"></i> Reset All Segments to Default
+                    </button>
+                </div>
+
+            </div>
+            
+            <div class="p-4 bg-slate-100 border-t-2 border-slate-900 text-right">
+                <button onclick="toggleTeacherPortal()" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-lg font-bold sketch-button">
+                    Close Portal
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT & UPDATED VOCABULARY DATA -->
+    <script>
+        const DEFAULT_VOCABULARY = {
+            "unit0": { name: "Unit 0", words: [
+                { word: "discover", meaning: "…を発見する" },
+                { word: "side", meaning: "側、面" },
+                { word: "finally", meaning: "ついに、やっと" },
+                { word: "musical", meaning: "ミュージカル" },
+                { word: "actor", meaning: "俳優" },
+                { word: "into", meaning: "…に熱中して" }
+            ]},
+            "unit1_1": { name: "Unit 1-1", words: [
+                { word: "fashion", meaning: "（服装・行動様式などの）人気のもの、ファッション" },
+                { word: "regional", meaning: "地方の、地域の、局地的な、地方特有の" },
+                { word: "been", meaning: "beの過去分詞" },
+                { word: "have never been to", meaning: "…に行ったことがない" },
+                { word: "have not been to", meaning: "…に行ったことがない" },
+                { word: "pop", meaning: "大衆的な" },
+                { word: "have", meaning: "［現在完了形を作る］" },
+                { word: "never", meaning: "今までに一度も…しない" }
+            ]},
+            "unit1_2": { name: "Unit 1-2", words: [
+                { word: "foreigner", meaning: "外国人" },
+                { word: "ever", meaning: "［疑問文で］今まで、かつて" },
+                { word: "have been to", meaning: "…に行ったことがある" },
+                { word: "haven’t", meaning: "have not" },
+                { word: "hear", meaning: "…を耳にする、聞いて知る" }
+            ]},
+            "unit1_rt1": { name: "Unit 1-RT1", words: [
+                { word: "global", meaning: "全世界の、世界的な、地球上の" },
+                { word: "genre", meaning: "（ 文学・芸術作品などの）ジャンル、部門、分野" },
+                { word: "adventure", meaning: "冒険、冒険心" },
+                { word: "adult", meaning: "おとな、（法律上の）成人、成長した動物" },
+                { word: "quality", meaning: "質、品質、良質" },
+                { word: "animation", meaning: "アニメーション、動画" },
+                { word: "drawing", meaning: "絵、図、スケッチ" },
+                { word: "delicate", meaning: "上品な、優美な、繊細な" },
+                { word: "addition", meaning: "足し算、加えること、加えられたもの［人］" },
+                { word: "match", meaning: "…と調和する、…に匹敵する" },
+                { word: "positive", meaning: "肯定の、前向きな" },
+                { word: "in addition", meaning: "そのうえ、さらに" },
+                { word: "go", meaning: "［go ＋ 形容詞で］（ある状態）になる" },
+                { word: "make", meaning: "（人・もの）を…の状態にする" },
+                { word: "more", meaning: "［動詞を修飾して］もっと" },
+                { word: "you", meaning: "人は（だれでも）［話し相手を含めた一般の人をさす。日本語に訳さない場合が多い］" }
+            ]},
+            "unit1_rt2": { name: "Unit 1-RT2", words: [
+                { word: "ignore", meaning: "…を無視する、見て見ないふりをする" },
+                { word: "existence", meaning: "存在すること、生存" },
+                { word: "root", meaning: "［rootsで］起源" },
+                { word: "drawn", meaning: "drawの過去分詞" },
+                { word: "express", meaning: "…を表現する、言い表す" },
+                { word: "movement", meaning: "動き" },
+                { word: "scroll", meaning: "巻物、（日本・中国などの）掛け軸" },
+                { word: "technique", meaning: "（芸術の）手法、テクニック" },
+                { word: "influence", meaning: "…に影響を及ぼす" },
+                { word: "advantage", meaning: "有利（であること）、有利な点、強み" },
+                { word: "taste", meaning: "（飲食物の）味、味覚" },
+                { word: "link", meaning: "…を（～と）つなぐ、連結する" },
+                { word: "entirely", meaning: "全く、すっかり" },
+                { word: "It is said that ....", meaning: "…であると言われている。" },
+                { word: "take advantage of", meaning: "…を利用する" },
+                { word: "around", meaning: "あちこち、めぐって" },
+                { word: "of", meaning: "【行為の主体】…が、…の、…による" },
+                { word: "said", meaning: "sayの過去分詞" },
+                { word: "to", meaning: "【所属・付着】…に、…へ" }
+            ]},
+            "unit2_1": { name: "Unit 2-1", words: [
+                { word: "already", meaning: "すでに、もう" },
+                { word: "essay", meaning: "随筆、評論、エッセー、（学校の）作文" },
+                { word: "yet", meaning: "［疑問文で］もう、すでに" },
+                { word: "ethical", meaning: "道義にかなった、道徳的な" },
+                { word: "designer", meaning: "デザイナー、設計者" },
+                { word: "interview", meaning: "…にインタビューする" },
+                { word: "message", meaning: "伝言、メッセージ" },
+                { word: "sleep", meaning: "眠る、寝ている" },
+                { word: "interview", meaning: "インタビュー、取材、（公式の）会見、面接（試験）、面談" },
+                { word: "just", meaning: "たった今" },
+                { word: "read", meaning: "readの過去分詞" },
+                { word: "yet", meaning: "［否定文で］まだ、今のところは" }
+            ]},
+            "unit2_2": { name: "Unit 2-2", words: [
+                { word: "accessory", meaning: "（車・カメラ・機械類の）付属品、（身につける）アクセサリー" },
+                { word: "recycle", meaning: "（廃品）を再生利用する、リサイクルする" },
+                { word: "eco-friendly", meaning: "環境にやさしい" },
+                { word: "become", meaning: "becomeの過去分詞" },
+                { word: "impact", meaning: "（強い）影響、衝撃、衝突" },
+                { word: "since", meaning: "…（して）以来" },
+                { word: "introduce", meaning: "…を導入する" },
+                { word: "How long", meaning: "どれくらい長く［長い］" },
+                { word: "design", meaning: "…を設計する" },
+                { word: "made", meaning: "makeの過去分詞" },
+                { word: "on", meaning: "【対象】…に対して、…に" }
+            ]},
+            "unit2_rt1": { name: "Unit 2-RT1", words: [
+                { word: "morally", meaning: "道徳上、道徳的に見て、倫理的に、品行方正に" },
+                { word: "clothing", meaning: "［単数あつかいで］衣類、衣料品" },
+                { word: "company", meaning: "会社" },
+                { word: "chemical", meaning: "化学物質" },
+                { word: "lead", meaning: "（…に）通じる" },
+                { word: "less", meaning: "もっと少ない" },
+                { word: "negative", meaning: "否定的な、よくない" },
+                { word: "animal-free", meaning: "（食品が）動物性原料を含んでいない" },
+                { word: "include", meaning: "…を含む、含める" },
+                { word: "vegan", meaning: "絶対菜食主義者（卵・チーズ・牛乳などをとらないベジタリアン）" },
+                { word: "leather", meaning: "革、なめし革、革製品" },
+                { word: "avoid", meaning: "…を避ける、よける" },
+                { word: "wool", meaning: "羊毛、毛糸、毛織物、ウール" },
+                { word: "fur", meaning: "毛皮、毛皮製品、毛皮の衣服、（ほ乳動物の）柔らかい毛" },
+                { word: "you’ve", meaning: "you have" },
+                { word: "avoid ing", meaning: "…することを避ける" },
+                { word: "vegan leather", meaning: "ヴィーガンレザー（非動物性の材料で作られた素材）" },
+                { word: "have", meaning: "［現在完了進行形を作る］" },
+                { word: "many", meaning: "多数（の人［もの］）" },
+                { word: "small", meaning: "少ない、わずかな" },
+                { word: "use", meaning: "使うこと、使用" }
+            ]},
+            "unit2_rt2": { name: "Unit 2-RT2", words: [
+                { word: "moreover", meaning: "なおそのうえに、さらに" },
+                { word: "worker", meaning: "働く人、労働者" },
+                { word: "developing", meaning: "発展途上の" },
+                { word: "condition", meaning: "状況" },
+                { word: "wage", meaning: "賃金、給料" },
+                { word: "working", meaning: "［名詞の前に用いて］働く" },
+                { word: "fair", meaning: "公平な、相当の" },
+                { word: "prohibit", meaning: "（法律・規則などが）…を禁止する" },
+                { word: "labor", meaning: "労働" },
+                { word: "responsible", meaning: "（人が）（物事に対して）責任がある" },
+                { word: "what to", meaning: "何を…すべきか" },
+                { word: "hour", meaning: "（決まった）時間、勤務［営業］時間、授業時間" },
+                { word: "low", meaning: "（値段・程度などが）低い、小さい、（地位・身分が）低い" },
+                { word: "the planet", meaning: "地球" }
+            ]},
+            "unit3_1": { name: "Unit 3-1", words: [
+                { word: "danger", meaning: "危険（性）" },
+                { word: "extinction", meaning: "絶滅" },
+                { word: "challenge", meaning: "難問" },
+                { word: "human", meaning: "人間の、人間的な" },
+                { word: "endangered", meaning: "絶滅の危機にさらされている" },
+                { word: "survive", meaning: "生き残る" },
+                { word: "trouble", meaning: "困難、面倒、迷惑" },
+                { word: "be in danger of", meaning: "…の危険がある、危険にさらされている" },
+                { word: "be", meaning: "（…に）いる、ある" },
+                { word: "change", meaning: "変化" },
+                { word: "or", meaning: "［主に命令文のあとで］そうしなければ" }
+            ]},
+            "unit3_2": { name: "Unit 3-2", words: [
+                { word: "cheetah", meaning: "チーター" },
+                { word: "sea otter", meaning: "ラッコ" },
+                { word: "article", meaning: "記事" },
+                { word: "hear of", meaning: "…について聞く" },
+                { word: "want to ～", meaning: "…が～することを望む、…に～してほしい" },
+                { word: "heard", meaning: "hearの過去分詞" },
+                { word: "list", meaning: "表、リスト" }
+            ]},
+            "unit3_rt1": { name: "Unit 3-RT1", words: [
+                { word: "population", meaning: "人口、（動物の）個体数" },
+                { word: "rapidly", meaning: "速く、急速に" },
+                { word: "beginning", meaning: "最初の部分" },
+                { word: "century", meaning: "世紀、100年" },
+                { word: "shock", meaning: "…に衝撃［ショック］をあたえる" },
+                { word: "safely", meaning: "安全に" },
+                { word: "overhunting", meaning: "乱獲" },
+                { word: "oil", meaning: "油、石油" },
+                { word: "spill", meaning: "（液体・粉などの）こぼれ、流出" },
+                { word: "hunting", meaning: "狩り、さがし求めること" },
+                { word: "killer whale", meaning: "シャチ" },
+                { word: "as a result (of)", meaning: "（…の）結果として" },
+                { word: "decide to", meaning: "…しようと決心する" },
+                { word: "end", meaning: "…を終える" },
+                { word: "from", meaning: "【数量・順序】…から" },
+                { word: "help", meaning: "（人）が…するのを手伝う" },
+                { word: "increase", meaning: "増える、増加する、増大する" },
+                { word: "let", meaning: "（人）に…させる" },
+                { word: "the", meaning: "［単数名詞につけて種類全体を表す］…というもの the sea otter ラッコ" },
+                { word: "to", meaning: "【範囲・限界】…まで" }
+            ]},
+            "unit3_rt2": { name: "Unit 3-RT2", words: [
+                { word: "native", meaning: "（その土地に）固有の、原産の、生粋の" },
+                { word: "logging", meaning: "伐採" },
+                { word: "traffic accident", meaning: "交通事故" },
+                { word: "research", meaning: "研究、調査" },
+                { word: "categorize", meaning: "…を分類する、（…として）類別する" },
+                { word: "critically", meaning: "危機的に、危険な状態で、危うく" },
+                { word: "citizen", meaning: "市民" },
+                { word: "ecosystem", meaning: "生態系" },
+                { word: "human being", meaning: "人間（全体）" },
+                { word: "relate", meaning: "…を（～に）関係させる" },
+                { word: "action", meaning: "アクション、行動" },
+                { word: "decrease", meaning: "（…の）減少" }
+            ]},
+            "real_life_english_3": { name: "Real Life English 3", words: [
+                { word: "breed", meaning: "…を繁殖させる" },
+                { word: "release", meaning: "…を放す" },
+                { word: "reach", meaning: "…に達する、到着する" },
+                { word: "nowadays", meaning: "このごろは、今日では" },
+                { word: "continue", meaning: "…を続ける" },
+                { word: "wild", meaning: "野生" }
+            ]},
+            "stage_activity_1": { name: "Stage Activity 1", words: [
+                { word: "item", meaning: "品目" },
+                { word: "piece", meaning: "部分、断片" },
+                { word: "cloth", meaning: "布、服地" },
+                { word: "wrap", meaning: "…を包む" },
+                { word: "fold", meaning: "…を折る、折りたたむ" },
+                { word: "convenient", meaning: "便利な" },
+                { word: "instead", meaning: "そのかわりに" },
+                { word: "resource", meaning: "資源" },
+                { word: "a piece of", meaning: "1つ［1個、1本、1枚］の…" },
+                { word: "fold up", meaning: "…を折りたたむ" },
+                { word: "instead of", meaning: "…のかわりに" },
+                { word: "square", meaning: "正方形の" },
+                { word: "keep", meaning: "（ずっと）…を持っている、預かる" },
+                { word: "plastic bag", meaning: "ビニール袋" },
+                { word: "up", meaning: "しっかりと、きちんと" },
+                { word: "waste", meaning: "…をむだに使う" }
+            ]},
+            "lets_read_1_p46": { name: "Let’s Read 1(p.46)", words: [
+                { word: "lullaby", meaning: "子守歌" },
+                { word: "road", meaning: "道路、道" }
+            ]},
+            "lets_read_1_p47": { name: "Let’s Read 1(p.47)", words: [
+                { word: "bomb", meaning: "爆弾" },
+                { word: "lost", meaning: "loseの過去形" },
+                { word: "injure", meaning: "…を傷つける" },
+                { word: "shade", meaning: "陰、日陰" },
+                { word: "dead", meaning: "死んだ" },
+                { word: "weak", meaning: "弱い、かすかな" },
+                { word: "mommy", meaning: "お母さん、ママ［momよりは幼い言い方］" },
+                { word: "cry", meaning: "泣く" },
+                { word: "held", meaning: "holdの過去形" },
+                { word: "hold", meaning: "…を持つ、つかむ、抱く" },
+                { word: "real", meaning: "本当の、本物の" },
+                { word: "all right", meaning: "だいじょうぶな" },
+                { word: "some", meaning: "［ 数を表す語とともに用いて］約、およそ" },
+                { word: "sweet", meaning: "心地よい、やさしい" },
+                { word: "through", meaning: "【時間】…の間中" },
+                { word: "burn", meaning: "やけど" },
+                { word: "fall", meaning: "落ちる、降る" },
+                { word: "life", meaning: "生命、命、生き物" },
+                { word: "rest", meaning: "休む、眠る" },
+                { word: "right", meaning: "健康な、調子がいい" }
+            ]},
+            "lets_read_1_p48": { name: "Let’s Read 1(p.48)", words: [
+                { word: "tightly", meaning: "しっかりと" },
+                { word: "while", meaning: "（少しの）時間、（しばらくの）間" },
+                { word: "quietly", meaning: "静かに、落ち着いて" },
+                { word: "after a while", meaning: "しばらくして" },
+                { word: "move", meaning: "動く、引っこす" },
+                { word: "stop", meaning: "…をとめる、…（するの）をやめる" }
+            ]},
+            "lets_read_1_p49": { name: "Let’s Read 1(p.49)", words: [
+                { word: "nuclear", meaning: "核の、原子力の" },
+                { word: "peace", meaning: "平和" },
+                { word: "bright", meaning: "明るい" },
+                { word: "cloudless", meaning: "雲のない" },
+                { word: "death", meaning: "死" },
+                { word: "sky", meaning: "空、大空" },
+                { word: "U.S.", meaning: "アメリカ合衆国、米国" },
+                { word: "president", meaning: "大統領" },
+                { word: "meant", meaning: "meanの過去形" },
+                { word: "war", meaning: "戦争" },
+                { word: "courage", meaning: "勇気" },
+                { word: "pursue", meaning: "…を追い求める" },
+                { word: "worth", meaning: "…の価値がある" },
+                { word: "extend", meaning: "…を広げる" },
+                { word: "go through", meaning: "（人生・生活）を送る" },
+                { word: "worth ing", meaning: "…するだけの価値がある" },
+                { word: "every", meaning: "どの…もみな" },
+                { word: "himself", meaning: "彼自身、自ら" },
+                { word: "word", meaning: "語、単語、言葉" }
+            ]},
+            "unit4_1": { name: "Unit 4-1", words: [
+                { word: "prepared", meaning: "用意ができている、備えた" },
+                { word: "disaster", meaning: "災害" },
+                { word: "shelter", meaning: "避難所" },
+                { word: "store", meaning: "…を蓄える" },
+                { word: "case", meaning: "場合" },
+                { word: "extinguisher", meaning: "消火器" },
+                { word: "in case of", meaning: "…の場合には" },
+                { word: "call", meaning: "（…に）電話をかける" },
+                { word: "circle", meaning: "…を丸で囲む" },
+                { word: "fire", meaning: "火事、火災" },
+                { word: "number", meaning: "番号" },
+                { word: "How much", meaning: "どれくらいの量の" }
+            ]},
+            "unit4_2": { name: "Unit 4-2", words: [
+                { word: "done", meaning: "doの過去分詞" },
+                { word: "prepare", meaning: "（…の）準備をする、備える" },
+                { word: "emergency", meaning: "緊急事態" },
+                { word: "kit", meaning: "道具［用具］一式" },
+                { word: "recommend", meaning: "…をすすめる、…を推薦する" },
+                { word: "earthquake", meaning: "地震" },
+                { word: "hard", meaning: "難しい、困難な" },
+                { word: "link", meaning: "リンク、接続" }
+            ]},
+            "unit4_rt1_p54": { name: "Unit 4-RT1(p.54)", words: [
+                { word: "several", meaning: "いくつかの" },
+                { word: "bridge", meaning: "橋、かけ橋" },
+                { word: "between", meaning: "…（と～）の間で［に、の］" },
+                { word: "energetic", meaning: "精力的な、エネルギッシュな、活発な" },
+                { word: "encourage", meaning: "…を勇気づける、励ます" },
+                { word: "personality", meaning: "個性、性格、人格" },
+                { word: "hit", meaning: "hitの過去形" },
+                { word: "hit", meaning: "（災害・不幸などが）襲う" },
+                { word: "comfort", meaning: "…を慰める、元気づける" },
+                { word: "nearby", meaning: "近くの" },
+                { word: "safe", meaning: "安全な" },
+                { word: "all the time", meaning: "常に" },
+                { word: "kill", meaning: "…で死ぬ" }
+            ]},
+            "unit4_rt1_p55": { name: "Unit 4-RT1(p.55)", words: [
+                { word: "rode", meaning: "rideの過去形" },
+                { word: "bicycle", meaning: "自転車" },
+                { word: "toward", meaning: "…のほうへ、…に向かって" },
+                { word: "apartment", meaning: "アパート［マンション］の部屋" },
+                { word: "caught", meaning: "catchの過去形・過去分詞" },
+                { word: "tsunami", meaning: "津波" },
+                { word: "sudden", meaning: "突然の、不意の" },
+                { word: "news", meaning: "ニュース、知らせ" },
+                { word: "shortly", meaning: "まもなく、すぐに" },
+                { word: "corner", meaning: "コーナー" },
+                { word: "exchange", meaning: "交流、やりとり" },
+                { word: "program", meaning: "プログラム、計画、事業" },
+                { word: "support", meaning: "…を支援する、応援する" },
+                { word: "ordinary", meaning: "ふつうの" },
+                { word: "crisis", meaning: "危機、難局、（病気の）峠" },
+                { word: "be caught in", meaning: "…に巻き込まれる" },
+                { word: "bring together", meaning: "…を団結させる" },
+                { word: "keep on ing", meaning: "…し続ける" },
+                { word: "no longer", meaning: "もはや…ない" },
+                { word: "every year", meaning: "毎年" },
+                { word: "at", meaning: "【原因・理由】…によって" },
+                { word: "on", meaning: "（動作を）続けて、進行中で" },
+                { word: "work", meaning: "努力する、（…に）取り組む" }
+            ]},
+            "real_life_english_4": { name: "Real Life English 4", words: [
+                { word: "That is very kind of you.", meaning: "どうもご親切にありがとうございます。" },
+                { word: "would like to 〜", meaning: "…に～してほしい（のですが）" },
+                { word: "can", meaning: "【申し出】…しましょうか。" }
+            ]},
+            "unit5_1": { name: "Unit 5-1", words: [
+                { word: "internet", meaning: "インターネット" },
+                { word: "person", meaning: "人、個人" },
+                { word: "image", meaning: "像、肖像、印象" },
+                { word: "print", meaning: "…を印刷する" },
+                { word: "leader", meaning: "指導者、リーダー" },
+                { word: "greatly", meaning: "おおいに、非常に" },
+                { word: "born", meaning: "be born 生まれる" },
+                { word: "national", meaning: "国の" },
+                { word: "non-violence", meaning: "非暴力" },
+                { word: "on the internet", meaning: "インターネットで" },
+                { word: "note", meaning: "紙幣" },
+                { word: "on", meaning: "【手段】…で、…によって" }
+            ]},
+            "unit5_2": { name: "Unit 5-2", words: [
+                { word: "independence", meaning: "独立" },
+                { word: "violence", meaning: "暴力" },
+                { word: "fight", meaning: "たたかう" },
+                { word: "protest", meaning: "抗議する" },
+                { word: "tough", meaning: "困難な、難しい" },
+                { word: "human rights", meaning: "人権" },
+                { word: "go on", meaning: "…をする、始める" },
+                { word: "little", meaning: "ほとんど（ない）" },
+                { word: "more", meaning: "もっと多くのもの［こと］" },
+                { word: "right", meaning: "権利" },
+                { word: "who", meaning: "［関係代名詞］…である［する］ところの" }
+            ]},
+            "unit5_rt1_p64": { name: "Unit 5-RT1(p.64)", words: [
+                { word: "lawyer", meaning: "弁護士" },
+                { word: "British", meaning: "イギリス［英国］の、イギリス人の" },
+                { word: "discrimination", meaning: "差別" },
+                { word: "freely", meaning: "自由に" },
+                { word: "sidewalk", meaning: "歩道" },
+                { word: "accept", meaning: "…を受け入れる" },
+                { word: "law", meaning: "法律、法" },
+                { word: "unfair", meaning: "不公平な、不当な" },
+                { word: "stood", meaning: "standの過去形" },
+                { word: "arrest", meaning: "…を逮捕する" },
+                { word: "jail", meaning: "刑務所" },
+                { word: "non-violent", meaning: "非暴力の" },
+                { word: "effective", meaning: "効果的な" },
+                { word: "at that time", meaning: "その当時" },
+                { word: "at the time", meaning: "その当時には" },
+                { word: "go out", meaning: "外へ出る" },
+                { word: "even if", meaning: "たとえ…だとしても" },
+                { word: "British", meaning: "イギリス［英国］人" },
+                { word: "even", meaning: "［比較級を強調して］さらにいっそう" },
+                { word: "lead", meaning: "…を導く、…を先導する" },
+                { word: "movement", meaning: "（政治的・社会的な）運動" },
+                { word: "or", meaning: "［否定文で］…もまた（～ない）" },
+                { word: "rule", meaning: "支配、統治" },
+                { word: "sent", meaning: "sendの過去分詞" },
+                { word: "stand", meaning: "立ち上がる、起立する" }
+            ]},
+            "unit5_rt1_p65": { name: "Unit 5-RT1(p.65)", words: [
+                { word: "colony", meaning: "植民地" },
+                { word: "produce", meaning: "…を生産する、生じる" },
+                { word: "tax", meaning: "税、税金" },
+                { word: "expensive", meaning: "高価な、費用のかかる" },
+                { word: "follower", meaning: "信奉者、支持者" },
+                { word: "thousand", meaning: "1,000（の）" },
+                { word: "kilometer", meaning: "キロメートル" },
+                { word: "march", meaning: "行進、マーチ" },
+                { word: "peaceful", meaning: "平和な" },
+                { word: "legacy", meaning: "遺産" },
+                { word: "in those days", meaning: "そのころは、当時は" },
+                { word: "thousands of", meaning: "何千もの、多くの" },
+                { word: "way to", meaning: "…する方法" },
+                { word: "fight", meaning: "たたかい" },
+                { word: "protest", meaning: "抗議（運動）" },
+                { word: "put", meaning: "（罪・責任など）を課す" },
+                { word: "spread", meaning: "広がる、広まる" },
+                { word: "that", meaning: "［関係代名詞］…である［する］ところの" }
+            ]},
+            "real_life_english_5": { name: "Real Life English 5", words: [
+                { word: "text", meaning: "携帯電話などでメッセージをおくる" },
+                { word: "ban", meaning: "…を禁止する" },
+                { word: "electronic", meaning: "電子の" },
+                { word: "device", meaning: "装置" },
+                { word: "cross", meaning: "…を横切る、渡る" },
+                { word: "decision", meaning: "決定、結論" },
+                { word: "bother", meaning: "面倒" },
+                { word: "common", meaning: "ふつうの、よくある、共通の" },
+                { word: "choose to", meaning: "…することに決める" },
+                { word: "any", meaning: "［主に肯定文で］どんな…でも" }
+            ]},
+            "stage_activity_2": { name: "Stage Activity 2", words: [
+                { word: "report", meaning: "報告、レポート" },
+                { word: "position", meaning: "位置、ポジション" },
+                { word: "setter", meaning: "（バレーボールの）セッター" },
+                { word: "chance", meaning: "機会、チャンス" },
+                { word: "spiker", meaning: "（バレーボールの）スパイカー" },
+                { word: "teammate", meaning: "チームの仲間、チームメイト" },
+                { word: "get the most out of", meaning: "…を最大限に生かす" },
+                { word: "more", meaning: "それ以上の、あと…" },
+                { word: "most", meaning: "［動詞を修飾して］いちばん、最も" },
+                { word: "move", meaning: "…を感動させる" },
+                { word: "thought", meaning: "考え、意見" },
+                { word: "most", meaning: "最多数、最大量、最大限" }
+            ]},
+            "unit6_1": { name: "Unit 6-1", words: [
+                { word: "backpack", meaning: "バックパック" },
+                { word: "overseas", meaning: "外国へ［で］、海外へ［で］" },
+                { word: "unused", meaning: "未使用の" },
+                { word: "supply", meaning: "［suppliesで］必需品" },
+                { word: "abroad", meaning: "外国に［へ、で］、海外に［へ、で］" },
+                { word: "donate", meaning: "…を寄付する" },
+                { word: "this way", meaning: "このように" },
+                { word: "could", meaning: "canの過去形。【仮定法】…できるだろうに" },
+                { word: "run", meaning: "…を主催する" },
+                { word: "wish", meaning: "…であればよいのだが" }
+            ]},
+            "unit6_2": { name: "Unit 6-2", words: [
+                { word: "Afghanistan", meaning: "アフガニスタン" },
+                { word: "definitely", meaning: "もちろん、確かに" },
+                { word: "so far", meaning: "今まで（は）、これまで（は）" },
+                { word: "if", meaning: "【仮定法過去】（あり得ないことだが）もし…ならば" },
+                { word: "would", meaning: "【仮定法】…だろうに" }
+            ]},
+            "unit6_rt1_p80": { name: "Unit 6-RT1(p.80)", words: [
+                { word: "imagine", meaning: "…を想像する" },
+                { word: "illiterate", meaning: "読み書きのできない" },
+                { word: "son", meaning: "息子" },
+                { word: "daughter", meaning: "娘" },
+                { word: "ready", meaning: "用意ができて" },
+                { word: "air", meaning: "空気、空中" },
+                { word: "service", meaning: "サービス、公的事業" },
+                { word: "globe", meaning: "［the globeで］地球" },
+                { word: "connect", meaning: "…を結びつける、つなぐ" },
+                { word: "border", meaning: "国境" },
+                { word: "encourage to", meaning: "…に～するよう促す" },
+                { word: "most of", meaning: "…の大部分" },
+                { word: "be ready for", meaning: "…の用意ができている" },
+                { word: "in the open air", meaning: "屋外で" },
+                { word: "another", meaning: "もう1つ［1人］、別のもの［人、こと］" },
+                { word: "most", meaning: "［most of ＋ 名詞で］…の大部分、ほとんど" },
+                { word: "open", meaning: "開いている、屋根のない" },
+                { word: "through", meaning: "【原因・手段】…によって、…のために" }
+            ]},
+            "unit6_rt1_p81": { name: "Unit 6-RT1(p.81)", words: [
+                { word: "depend", meaning: "頼る" },
+                { word: "trade", meaning: "貿易" },
+                { word: "survival", meaning: "存続、生き残ること" },
+                { word: "Brazil", meaning: "ブラジル" },
+                { word: "Thailand", meaning: "タイ" },
+                { word: "import", meaning: "…を輸入する" },
+                { word: "quite", meaning: "かなり、相当" },
+                { word: "coat", meaning: "上着、コート" },
+                { word: "Asian", meaning: "アジア（人）の" },
+                { word: "fact", meaning: "現実、事実" },
+                { word: "sold", meaning: "sellの過去分詞" },
+                { word: "exception", meaning: "例外" },
+                { word: "surround", meaning: "…を囲む" },
+                { word: "daily", meaning: "日常の" },
+                { word: "relationship", meaning: "関係、結びつき" },
+                { word: "interdependent", meaning: "相互に依存している" },
+                { word: "beyond", meaning: "…をこえたところに［へ」" },
+                { word: "depend on", meaning: "…に頼る" },
+                { word: "in fact", meaning: "実際に、事実上" },
+                { word: "most", meaning: "たいていの、大部分の" },
+                { word: "no", meaning: "決して…ではない" },
+                { word: "overseas", meaning: "外国、国外" },
+                { word: "third", meaning: "3分の1（の）" }
+            ]},
+            "stage_activity_3": { name: "Stage Activity 3", words: [
+                { word: "mini debate", meaning: "ミニディベート" },
+                { word: "disagree", meaning: "意見が合わない" },
+                { word: "judge", meaning: "審判員" },
+                { word: "the United States", meaning: "アメリカ合衆国" },
+                { word: "variety", meaning: "さまざまな～、いろいろな～、…な種類の～" },
+                { word: "amazing", meaning: "驚くべき" },
+                { word: "countryside", meaning: "いなか" },
+                { word: "seem", meaning: "…のように見える、思われる" },
+                { word: "for one thing", meaning: "1つには［理由を述べるときに用いる］" },
+                { word: "eat out", meaning: "外食する" },
+                { word: "not at all", meaning: "少しも…ない" },
+                { word: "has to", meaning: "…しなければならない" },
+                { word: "stand", meaning: "…をがまんする" },
+                { word: "great", meaning: "大きな、すごい" }
+            ]},
+            "stage_activity_3_p90": { name: "Stage Activity 3(p.90)", words: [
+                { word: "announce", meaning: "…を発表する" },
+                { word: "winner", meaning: "勝者" },
+                { word: "debate", meaning: "討論、ディベート" },
+                { word: "move on", meaning: "（次の課題などへ）移る、進む" }
+            ]},
+            "lets_read_2_p92": { name: "Let’s Read 2(p.92)", words: [
+                { word: "electricity", meaning: "電気、電力" },
+                { word: "cut", meaning: "cutの過去分詞" },
+                { word: "happen", meaning: "起こる、生じる" },
+                { word: "charge", meaning: "…を充電する" },
+                { word: "chart", meaning: "図表" },
+                { word: "coal", meaning: "石炭" },
+                { word: "natural gas", meaning: "天然ガス" },
+                { word: "relatively", meaning: "比較的" },
+                { word: "cheap", meaning: "（品物・料金が）安い" },
+                { word: "furthermore", meaning: "そのうえ、さらに" },
+                { word: "run out of", meaning: "…を使い果たす" },
+                { word: "out", meaning: "なくなって、消えて" },
+                { word: "release", meaning: "…を放出する" },
+                { word: "run", meaning: "…を使い果たす" }
+            ]},
+            "lets_read_2_p93": { name: "Let’s Read 2(p.93)", words: [
+                { word: "energy", meaning: "エネルギー" },
+                { word: "control", meaning: "…を管理する" },
+                { word: "radiation", meaning: "放射能" },
+                { word: "handle", meaning: "…を処理する" },
+                { word: "sunshine", meaning: "日光" },
+                { word: "wind", meaning: "風" },
+                { word: "steam", meaning: "蒸気" },
+                { word: "wave", meaning: "波" },
+                { word: "renewable", meaning: "再生可能な" },
+                { word: "dangerous", meaning: "危険な" },
+                { word: "dam", meaning: "ダム" },
+                { word: "damage", meaning: "…に損害を与える" },
+                { word: "progress", meaning: "進歩する" },
+                { word: "Denmark", meaning: "デンマーク" },
+                { word: "quarter", meaning: "4分の1" },
+                { word: "Iceland", meaning: "アイスランド" },
+                { word: "heat", meaning: "熱" },
+                { word: "solve", meaning: "…を解決する" },
+                { word: "nuclear power", meaning: "原子力" },
+                { word: "nuclear waste", meaning: "核廃棄物" },
+                { word: "water power", meaning: "水力" },
+                { word: "wind power", meaning: "風力" },
+                { word: "power", meaning: "力、能力" }
+            ]},
+            "lets_read_2_p94": { name: "Let’s Read 2(p.94)", words: [
+                { word: "Azerbaijan", meaning: "アゼルバイジャン" },
+                { word: "invent", meaning: "…を発明する" },
+                { word: "lamp", meaning: "明かり、ランプ" },
+                { word: "second", meaning: "秒" },
+                { word: "liter", meaning: "リットル" },
+                { word: "rainwater", meaning: "雨水" },
+                { word: "battery", meaning: "電池、バッテリー" },
+                { word: "sustainable", meaning: "持続可能な" },
+                { word: "consumer", meaning: "消費者" },
+                { word: "inventor", meaning: "発明家" },
+                { word: "power", meaning: "動力、電力" }
+            ]},
+            "lets_read_3_p96": { name: "Let’s Read 3(p.96)", words: [
+                { word: "probably", meaning: "十中八九、たぶん" },
+                { word: "count", meaning: "数える" },
+                { word: "author", meaning: "著者、作家" },
+                { word: "Germany", meaning: "ドイツ" },
+                { word: "art school", meaning: "美術学校" },
+                { word: "graphic designer", meaning: "グラフィックデザイナー" },
+                { word: "color", meaning: "…に色をつける、（葉などが）色づく、（顔を）赤らめる" },
+                { word: "drawing", meaning: "絵をかくこと" },
+                { word: "line", meaning: "境界（線）" },
+                { word: "outside", meaning: "…の外側で［に、へ］" }
+            ]},
+            "lets_read_3_p97": { name: "Let’s Read 3(p.97)", words: [
+                { word: "believe", meaning: "…だと思う、信じる" },
+                { word: "publish", meaning: "…を出版する、発行する" },
+                { word: "printer", meaning: "印刷工、印刷業者" },
+                { word: "unusual", meaning: "ふつうでない" },
+                { word: "think outside the box", meaning: "自由で独創的な考え方をする" },
+                { word: "come up with", meaning: "（考えなど）を思いつく" },
+                { word: "so that", meaning: "とても…なので～だ" },
+                { word: "fun", meaning: "おもしろい、楽しい" }
+            ]},
+            "lets_read_3_p98": { name: "Let’s Read 3(p.98)", words: [
+                { word: "bestseller", meaning: "ベストセラー" },
+                { word: "worldwide", meaning: "世界中に、世界的に" },
+                { word: "toy", meaning: "おもちゃ" },
+                { word: "feature", meaning: "特色、特徴" },
+                { word: "cow", meaning: "ウシ" },
+                { word: "deliver", meaning: "…を届ける" },
+                { word: "reader", meaning: "読者" },
+                { word: "colorfulness", meaning: "色の鮮やかさ" },
+                { word: "represent", meaning: "…を象徴する、表現する" },
+                { word: "colorless", meaning: "無色の" },
+                { word: "paint", meaning: "…にペンキを塗る、（もの）を…色に塗る" },
+                { word: "inspire", meaning: "（人）を奮い立たせる" },
+                { word: "play with", meaning: "…で遊ぶ" },
+                { word: "inspire ... to 〜", meaning: "～するように…を元気づける、激励する" },
+                { word: "any", meaning: "［否定文などで］少しの…も（～ない）、何も［だれも］（～ない）" },
+                { word: "inside", meaning: "…の中に、内部に" },
+                { word: "stay", meaning: "とどまる、いる" },
+                { word: "wrong", meaning: "まちがった" }
+            ]},
+            "lets_read_3_p99": { name: "Let’s Read 3(p.99)", words: [
+                { word: "until", meaning: "…まで（ずっと）、［否定文で］…までは（～しない）" },
+                { word: "imagination", meaning: "想像力" },
+                { word: "gallery", meaning: "美術館" },
+                { word: "studio", meaning: "アトリエ" },
+                { word: "theater", meaning: "劇場" },
+                { word: "fill", meaning: "…を満たす" },
+                { word: "visitor", meaning: "訪問客、見学者" },
+                { word: "although", meaning: "…だけれども、…だが、…にもかかわらず" },
+                { word: "anymore", meaning: "今ではもう…（でない）" },
+                { word: "spirit", meaning: "精神、心、霊魂、幽霊" },
+                { word: "unfold", meaning: "（たたんだ物）を広げる、開く" },
+                { word: "wing", meaning: "羽" },
+                { word: "pass away", meaning: "亡くなる" },
+                { word: "fill with 〜", meaning: "…を～で満たす" },
+                { word: "not only ... but (also) ～", meaning: "…だけでなく～もまた" },
+                { word: "built", meaning: "buildの過去形" },
+                { word: "grow", meaning: "成長する、増加する" },
+                { word: "hope", meaning: "希望、見こみ" },
+                { word: "pass", meaning: "なくなる、消える" }
+            ]}
+        };
+
+        let currentSegmentKey = "unit0";
+        let activeWordList = [];
+        let wordIndex = 0;
+        let timerSeconds = 15;
+        let timeRemaining = 15;
+        let timerInterval = null;
+        let currentUserInput = "";
+        let teacherPasscodes = ["admin", "teacher123"];
+        let studentProfile = { name: "", className: "" };
+        let vocabularyStore = {};
+        let unitBestScores = {};
+        let unitLastScores = {};
+
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playVictorySound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const bufferSize = audioCtx.sampleRate * 0.05;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            for (let i = 0; i < 22; i++) {
+                const strikeTime = now + (i * 0.07);
+                const whiteNoise = audioCtx.createBufferSource();
+                whiteNoise.buffer = noiseBuffer;
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 320 + Math.random() * 80;
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.1 + (i / 22) * 0.35, strikeTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, strikeTime + 0.05);
+
+                whiteNoise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                whiteNoise.start(strikeTime);
+            }
+
+            const fanfareTime = now + 1.6;
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, fanfareTime + (idx * 0.12));
+                gain.gain.setValueAtTime(0.3, fanfareTime + (idx * 0.12));
+                gain.gain.exponentialRampToValueAtTime(0.001, fanfareTime + (idx * 0.12) + 0.6);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(fanfareTime + (idx * 0.12));
+                osc.stop(fanfareTime + (idx * 0.12) + 0.65);
+            });
+        }
+
+        function playErrorSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStore();
+            renderUnitTabs();
+
+            const keyboardInput = document.getElementById('keyboardInput');
+            keyboardInput.addEventListener('input', handleTileInput);
+            keyboardInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitCurrentAnswer();
+                }
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                studentProfile.name = document.getElementById('inputName').value.trim();
+                studentProfile.className = document.getElementById('inputClass').value.trim();
+                saveStudentProfile();
+                document.getElementById('loginModal').classList.add('hidden');
+                updateStudentBadge();
+                openLobby();
+            });
+
+            document.getElementById('addWordForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                addNewWordToTeacherUnit();
+            });
+
+            if (studentProfile.name && studentProfile.className) {
+                updateStudentBadge();
+                openLobby();
+            } else {
+                openLoginModal();
+            }
+        });
+
+        function loadStore() {
+            const storedVocab = localStorage.getItem('wc_vocabulary');
+            if (storedVocab) {
+                try { vocabularyStore = JSON.parse(storedVocab); } 
+                catch(e) { vocabularyStore = JSON.parse(JSON.stringify(DEFAULT_VOCABULARY)); }
+            } else {
+                vocabularyStore = JSON.parse(JSON.stringify(DEFAULT_VOCABULARY));
+            }
+
+            const storedScores = localStorage.getItem('wc_best_scores');
+            if (storedScores) {
+                try { unitBestScores = JSON.parse(storedScores); } catch(e) { unitBestScores = {}; }
+            }
+
+            const storedLastScores = localStorage.getItem('wc_last_scores');
+            if (storedLastScores) {
+                try { unitLastScores = JSON.parse(storedLastScores); } catch(e) { unitLastScores = {}; }
+            }
+
+            const storedTimer = localStorage.getItem('wc_timer');
+            if (storedTimer !== null) {
+                timerSeconds = parseInt(storedTimer, 10);
+            }
+            document.getElementById('teacherTimerSelect').value = timerSeconds;
+
+            const storedPass = localStorage.getItem('wc_passcodes');
+            if (storedPass) {
+                try { teacherPasscodes = JSON.parse(storedPass); } catch(e){}
+            }
+
+            const savedProfile = localStorage.getItem('wc_student');
+            if (savedProfile) {
+                try { studentProfile = JSON.parse(savedProfile); } catch(e){}
+            }
+        }
+
+        function saveVocabularyStore() {
+            localStorage.setItem('wc_vocabulary', JSON.stringify(vocabularyStore));
+        }
+
+        function saveBestScores() {
+            localStorage.setItem('wc_best_scores', JSON.stringify(unitBestScores));
+        }
+
+        function saveLastScores() {
+            localStorage.setItem('wc_last_scores', JSON.stringify(unitLastScores));
+        }
+
+        function saveStudentProfile() {
+            localStorage.setItem('wc_student', JSON.stringify(studentProfile));
+        }
+
+        function openLoginModal() {
+            document.getElementById('lobbyScreen').classList.add('hidden');
+            document.getElementById('inputName').value = studentProfile.name || '';
+            document.getElementById('inputClass').value = studentProfile.className || '';
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function openLobby() {
+            clearInterval(timerInterval);
+            document.getElementById('lobbyBadgeName').textContent = studentProfile.name || 'Student';
+            document.getElementById('lobbyBadgeClass').textContent = studentProfile.className || 'Class';
+            renderLobbyUnitsGrid();
+            document.getElementById('lobbyScreen').classList.remove('hidden');
+        }
+
+        function openLobbyFromQuiz() {
+            openLobby();
+        }
+
+        function renderLobbyUnitsGrid() {
+            const container = document.getElementById('lobbyUnitsGrid');
+            container.innerHTML = '';
+
+            for (const [key, segData] of Object.entries(vocabularyStore)) {
+                const words = segData.words || [];
+                const best = unitBestScores[key] || 0;
+                const last = unitLastScores[key] || 0;
+                const total = words.length;
+                const isCompleted = best >= total && total > 0;
+
+                const card = document.createElement('div');
+                card.className = `sketch-box p-3 bg-white flex items-center justify-between cursor-pointer hover:border-blue-600 transition-all ${isCompleted ? 'border-emerald-600 bg-emerald-50/20' : ''}`;
+                card.onclick = () => selectSegmentAndStart(key);
+
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="bg-slate-900 text-white text-[11px] px-2 py-0.5 rounded font-black">${segData.name}</span>
+                            ${isCompleted ? '<span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-trophy mr-0.5 text-amber-500"></i>Done</span>' : ''}
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold">${total} words</p>
+                    </div>
+                    <div class="flex gap-2 items-center text-right">
+                        <div>
+                            <span class="block text-[8px] uppercase font-bold text-blue-500">Last</span>
+                            <span class="text-xs font-black text-blue-600">${last}/${total}</span>
+                        </div>
+                        <div>
+                            <span class="block text-[8px] uppercase font-bold text-amber-500">Best</span>
+                            <span class="text-xs font-black text-amber-600">${best}</span>
+                        </div>
+                        ${isCompleted ? '<div class="text-amber-500 text-lg" title="Trophy Collected!"><i class="fa-solid fa-trophy"></i></div>' : '<div class="text-slate-300 text-base"><i class="fa-solid fa-trophy"></i></div>'}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function selectSegmentAndStart(segKey) {
+            document.getElementById('lobbyScreen').classList.add('hidden');
+            startSegment(segKey);
+        }
+
+        function updateStudentBadge() {
+            if (studentProfile.name) {
+                document.getElementById('studentBadge').classList.remove('hidden');
+                document.getElementById('studentBadge').classList.add('flex');
+                document.getElementById('displayName').textContent = studentProfile.name;
+                document.getElementById('displayClass').textContent = studentProfile.className;
+            }
+        }
+
+        function focusHiddenInput() {
+            document.getElementById('keyboardInput').focus();
+        }
+
+        function renderUnitTabs() {
+            const container = document.getElementById('unitTabsContainer');
+            container.innerHTML = '';
+
+            for (const [key, segData] of Object.entries(vocabularyStore)) {
+                const btn = document.createElement('button');
+                btn.className = `unit-tab ${key === currentSegmentKey ? 'active' : 'inactive'}`;
+                
+                const best = unitBestScores[key] || 0;
+                const last = unitLastScores[key] || 0;
+                const total = (segData.words || []).length;
+                const isCompleted = best >= total && total > 0;
+                
+                btn.innerHTML = `<span class="flex items-center gap-1">${isCompleted ? '<i class="fa-solid fa-trophy text-amber-400 text-xs"></i>' : ''}${segData.name}</span><span class="text-[9px] opacity-90 font-normal">Score:${last} | Best:${best}</span>`;
+                btn.onclick = () => selectSegmentAndStart(key);
+                container.appendChild(btn);
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startSegment(segKey) {
+            currentSegmentKey = segKey;
+            wordIndex = 0;
+            const rawWords = (vocabularyStore[segKey] && vocabularyStore[segKey].words) ? vocabularyStore[segKey].words : [];
+            activeWordList = shuffleArray(rawWords);
+
+            renderUnitTabs();
+            loadCurrentWord();
+        }
+
+        function restartCurrentUnit() {
+            updateLastScoreTracker(wordIndex);
+            wordIndex = 0;
+            const rawWords = (vocabularyStore[currentSegmentKey] && vocabularyStore[currentSegmentKey].words) ? vocabularyStore[currentSegmentKey].words : [];
+            activeWordList = shuffleArray(rawWords);
+            loadCurrentWord();
+        }
+
+        function getCurrentWordObj() {
+            if (activeWordList.length === 0) return null;
+            return activeWordList[wordIndex];
+        }
+
+        function loadCurrentWord() {
+            clearInterval(timerInterval);
+            currentUserInput = "";
+            const inputEl = document.getElementById('keyboardInput');
+            inputEl.value = "";
+
+            const wordObj = getCurrentWordObj();
+            const totalWords = activeWordList.length;
+            const bestScore = unitBestScores[currentSegmentKey] || 0;
+            const lastScore = unitLastScores[currentSegmentKey] || 0;
+            const segInfo = vocabularyStore[currentSegmentKey] || { name: "Segment" };
+
+            document.getElementById('currentSegmentTitle').textContent = segInfo.name;
+            document.getElementById('scoreDisplay').textContent = `${wordIndex + 1} / ${totalWords}`;
+            document.getElementById('lastScoreDisplay').textContent = `${lastScore}`;
+            document.getElementById('bestScoreDisplay').textContent = `${bestScore}`;
+            
+            const pct = totalWords > 0 ? (wordIndex / totalWords) * 100 : 0;
+            document.getElementById('unitProgressBar').style.width = `${pct}%`;
+
+            if (!wordObj) {
+                document.getElementById('japanesePrompt').textContent = "Segment Empty";
+                document.getElementById('tileContainer').innerHTML = "";
+                return;
+            }
+
+            document.getElementById('japanesePrompt').textContent = wordObj.meaning;
+            renderAnswerTiles(wordObj.word, "");
+            startTimer();
+            setTimeout(() => inputEl.focus(), 80);
+        }
+
+        function renderAnswerTiles(targetWord, inputVal) {
+            const container = document.getElementById('tileContainer');
+            container.innerHTML = '';
+
+            const targetChars = targetWord.split('');
+            const inputChars = inputVal.split('');
+
+            targetChars.forEach((char, idx) => {
+                if (char === ' ') {
+                    const spaceDiv = document.createElement('div');
+                    spaceDiv.className = 'tile-box space';
+                    container.appendChild(spaceDiv);
+                } else {
+                    const tile = document.createElement('div');
+                    const typedChar = inputChars[idx] || '';
+                    tile.className = `tile-box ${typedChar ? 'filled' : ''}`;
+                    tile.textContent = typedChar;
+                    container.appendChild(tile);
+                }
+            });
+        }
+
+        function handleTileInput(e) {
+            const wordObj = getCurrentWordObj();
+            if (!wordObj) return;
+
+            const targetWord = wordObj.word;
+            let val = e.target.value;
+
+            if (val.length > targetWord.length) {
+                val = val.substring(0, targetWord.length);
+                e.target.value = val;
+            }
+
+            currentUserInput = val;
+            renderAnswerTiles(targetWord, currentUserInput);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.classList.remove('timer-warning');
+
+            if (timerSeconds <= 0) {
+                timerDisplay.textContent = "∞";
+                return;
+            }
+
+            timeRemaining = timerSeconds;
+            timerDisplay.textContent = `${timeRemaining}s`;
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timerDisplay.textContent = `${timeRemaining}s`;
+
+                if (timeRemaining <= 4 && timeRemaining > 0) {
+                    timerDisplay.classList.add('timer-warning');
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            playErrorSound();
+            const wordObj = getCurrentWordObj();
+            updateLastScoreTracker(wordIndex);
+            updateBestScoreTracker(wordIndex);
+            showMistakeModal("Time Out!", wordObj ? wordObj.word : "", currentUserInput || "(Time expired)");
+        }
+
+        function submitCurrentAnswer() {
+            initAudio();
+            const wordObj = getCurrentWordObj();
+            if (!wordObj) return;
+
+            // Normalize both curly and straight apostrophes so they match regardless of keyboard input
+            const normalizeApostrophes = (str) => str.trim().toLowerCase().replace(/['‘’]/g, "'");
+
+            const cleanTarget = normalizeApostrophes(wordObj.word);
+            const cleanUser = normalizeApostrophes(currentUserInput);
+
+            if (cleanUser === cleanTarget) {
+                wordIndex++;
+                updateLastScoreTracker(wordIndex);
+                updateBestScoreTracker(wordIndex);
+
+                if (wordIndex >= activeWordList.length) {
+                    clearInterval(timerInterval);
+                    document.getElementById('unitProgressBar').style.width = `100%`;
+                    triggerUnitCompletionCelebration();
+                } else {
+                    loadCurrentWord();
+                }
+            } else {
+                clearInterval(timerInterval);
+                playErrorSound();
+                updateLastScoreTracker(wordIndex);
+                updateBestScoreTracker(wordIndex);
+                showMistakeModal("Incorrect Answer!", wordObj.word, currentUserInput || "(Blank)");
+            }
+        }
+
+        function updateLastScoreTracker(currentReached) {
+            unitLastScores[currentSegmentKey] = currentReached;
+            saveLastScores();
+            renderUnitTabs();
+            document.getElementById('lastScoreDisplay').textContent = currentReached;
+        }
+
+        function updateBestScoreTracker(currentReached) {
+            const currentBest = unitBestScores[currentSegmentKey] || 0;
+            if (currentReached > currentBest) {
+                unitBestScores[currentSegmentKey] = currentReached;
+                saveBestScores();
+                renderUnitTabs();
+                document.getElementById('bestScoreDisplay').textContent = currentReached;
+            }
+        }
+
+        function showMistakeModal(title, correct, entry) {
+            document.getElementById('mistakeTitle').textContent = title;
+            document.getElementById('correctWordSpan').textContent = correct;
+            document.getElementById('yourEntrySpan').textContent = entry;
+            document.getElementById('mistakeModal').classList.remove('hidden');
+        }
+
+        function confirmResetUnit() {
+            document.getElementById('mistakeModal').classList.add('hidden');
+            restartCurrentUnit();
+        }
+
+        function triggerUnitCompletionCelebration() {
+            playVictorySound();
+            updateLastScoreTracker(activeWordList.length);
+            updateBestScoreTracker(activeWordList.length);
+
+            if (typeof confetti === 'function') {
+                const count = 200;
+                const defaults = { origin: { y: 0.7 } };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, { spread: 26, startVelocity: 55 });
+                fire(0.2, { spread: 60 });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            }
+
+            const segInfo = vocabularyStore[currentSegmentKey] || { name: "Segment" };
+            document.getElementById('trophyMsg').textContent = `You collected the Trophy for completing ${segInfo.name} 🏆!`;
+            document.getElementById('modalStudentName').textContent = studentProfile.name || 'Student';
+            document.getElementById('modalClassName').textContent = studentProfile.className || 'General Class';
+            document.getElementById('trophyModal').classList.remove('hidden');
+        }
+
+        function closeTrophyModal() {
+            document.getElementById('trophyModal').classList.add('hidden');
+            openLobby();
+        }
+
+        function returnToLobbyFromModal() {
+            document.getElementById('trophyModal').classList.add('hidden');
+            openLobby();
+        }
+
+        function openTeacherPortalPrompt() {
+            document.getElementById('teacherPasscodeCode').value = '';
+            document.getElementById('teacherAuthModal').classList.remove('hidden');
+        }
+
+        function closeTeacherAuthModal() {
+            document.getElementById('teacherAuthModal').classList.add('hidden');
+        }
+
+        function authenticateTeacherPortal() {
+            const inputPass = document.getElementById('teacherPasscodeCode').value.trim();
+            if (teacherPasscodes.includes(inputPass)) {
+                closeTeacherAuthModal();
+                toggleTeacherPortal();
+            } else {
+                alert("Incorrect passcode!");
+            }
+        }
+
+        function toggleTeacherPortal() {
+            const portal = document.getElementById('teacherPortal');
+            if (portal.classList.contains('hidden')) {
+                renderTeacherUnitSelect();
+                renderTeacherVocabularyTable();
+                portal.classList.remove('hidden');
+            } else {
+                portal.classList.add('hidden');
+            }
+        }
+
+        function renderTeacherUnitSelect() {
+            const select = document.getElementById('teacherUnitSelect');
+            select.innerHTML = '';
+            for (const [key, segData] of Object.entries(vocabularyStore)) {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = `${segData.name} (${(segData.words || []).length} words)`;
+                if (key === currentSegmentKey) opt.selected = true;
+                select.appendChild(opt);
+            }
+        }
+
+        function renderTeacherVocabularyTable() {
+            const segKey = document.getElementById('teacherUnitSelect').value;
+            const tbody = document.getElementById('teacherVocabTable');
+            tbody.innerHTML = '';
+
+            const segData = vocabularyStore[segKey] || { words: [] };
+            const words = segData.words || [];
+            document.getElementById('vocabCountBadge').textContent = `${words.length} entries`;
+
+            if (words.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">No entries in this segment yet. Add one above!</td></tr>`;
+                return;
+            }
+
+            words.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-white' : 'bg-slate-50';
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400 font-bold">${index + 1}</td>
+                    <td class="p-3 font-bold text-slate-900">${escapeHtml(item.word)}</td>
+                    <td class="p-3 text-slate-700 font-semibold">${escapeHtml(item.meaning)}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="deleteWordFromTeacherUnit('${segKey}', ${index})" class="text-red-600 hover:text-red-800 p-1 font-bold text-xs bg-red-50 rounded border border-red-200">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addNewWordToTeacherUnit() {
+            const segKey = document.getElementById('teacherUnitSelect').value;
+            const wordInput = document.getElementById('newEnglishWord');
+            const meaningInput = document.getElementById('newJapaneseMeaning');
+
+            const word = wordInput.value.trim();
+            const meaning = meaningInput.value.trim();
+
+            if (!word || !meaning) return;
+
+            if (vocabularyStore[segKey]) {
+                if (!vocabularyStore[segKey].words) vocabularyStore[segKey].words = [];
+                vocabularyStore[segKey].words.push({ word, meaning });
+                saveVocabularyStore();
+            }
+
+            wordInput.value = '';
+            meaningInput.value = '';
+
+            renderTeacherUnitSelect();
+            document.getElementById('teacherUnitSelect').value = segKey;
+            renderTeacherVocabularyTable();
+        }
+
+        function deleteWordFromTeacherUnit(segKey, index) {
+            if (vocabularyStore[segKey] && vocabularyStore[segKey].words && vocabularyStore[segKey].words[index]) {
+                vocabularyStore[segKey].words.splice(index, 1);
+                saveVocabularyStore();
+                renderTeacherUnitSelect();
+                document.getElementById('teacherUnitSelect').value = segKey;
+                renderTeacherVocabularyTable();
+            }
+        }
+
+        function updateTimerSetting(val) {
+            timerSeconds = parseInt(val, 10);
+            localStorage.setItem('wc_timer', timerSeconds);
+        }
+
+        function changeTeacherPasscode() {
+            const newPass = prompt("Enter new Passcode for Teacher Portal:");
+            if (newPass && newPass.trim() !== "") {
+                teacherPasscodes = [newPass.trim()];
+                localStorage.setItem('wc_passcodes', JSON.stringify(teacherPasscodes));
+                alert("Passcode updated successfully!");
+            }
+        }
+
+        function exportVocabularyData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(vocabularyStore, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "word_challenge_vocabulary.json");
+            dlAnchorElem.click();
+        }
+
+        function resetVocabularyToDefault() {
+            if (confirm("Reset all segments back to original default settings? Custom entries will be removed.")) {
+                vocabularyStore = JSON.parse(JSON.stringify(DEFAULT_VOCABULARY));
+                saveVocabularyStore();
+                renderTeacherUnitSelect();
+                renderTeacherVocabularyTable();
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+    </script>
+</body>
+</html>
