@@ -449,187 +449,733 @@
     <script>
         const DEFAULT_VOCABULARY = {
             "unit0": { name: "Unit 0", words: [
-                { word: "nice", meaning: "すてきな、よい" }, { word: "to", meaning: "【不定詞（名詞的）】…する［である］こと" }, { word: "meet", meaning: "…と知り合いになる" }, { word: "you", meaning: "あなた（たち）を［に］" }, { word: "good", meaning: "よい" }, { word: "morning", meaning: "朝、午前" }, { word: "I", meaning: "私は［が］" }, { word: "am", meaning: "…です、…だ (I)" }, { word: "hi", meaning: "やあ、こんにちは" }, { word: "my", meaning: "私の" }, { word: "name", meaning: "名前" }, { word: "is", meaning: "…です、…だ (三人称)" }, { word: "hello", meaning: "やあ、こんにちは" }, { word: "do", meaning: "［疑問文や応答を作る・一般動詞の時］" }, { word: "like", meaning: "…を好む、…が好きである" }, { word: "tennis", meaning: "テニス" }, { word: "yes", meaning: "はい、ええ、そうです" }, { word: "Nice to meet you.", meaning: "はじめまして。" }, { word: "Good morning.", meaning: "おはようございます。" }, { word: "you", meaning: "あなた（たち）は［が］" }
-            ]},
-            "sounds0": { name: "Sounds and Letters 0", words: [
-                { word: "apple", meaning: "リンゴ" }, { word: "bat", meaning: "バット" }, { word: "cat", meaning: "ネコ" }, { word: "dog", meaning: "イヌ" }, { word: "egg", meaning: "卵" }, { word: "flower", meaning: "花" }, { word: "gorilla", meaning: "ゴリラ" }, { word: "horse", meaning: "ウマ" }, { word: "ink", meaning: "インク" }, { word: "jump", meaning: "とぶ" }, { word: "koala", meaning: "コアラ" }, { word: "log", meaning: "丸太" }, { word: "monkey", meaning: "サル" }, { word: "net", meaning: "網、ネット" }, { word: "octopus", meaning: "タコ" }, { word: "pan", meaning: "平なべ" }, { word: "queen", meaning: "女王、王妃" }, { word: "rabbit", meaning: "ウサギ" }, { word: "snake", meaning: "ヘビ" }, { word: "tree", meaning: "木、樹木" }, { word: "umbrella", meaning: "傘" }, { word: "V sign", meaning: "ブイサイン" }, { word: "wolf", meaning: "オオカミ" }, { word: "fox", meaning: "キツネ" }, { word: "yo-yo", meaning: "（おもちゃの）ヨーヨー" }, { word: "zipper", meaning: "ジッパー、ファスナー" }, { word: "city", meaning: "市、都市、都会" }, { word: "gym", meaning: "体育館" }, { word: "apron", meaning: "エプロン" }, { word: "evening", meaning: "夕方、晩［ふつう日没から寝る時刻までをさす］" }, { word: "ice", meaning: "氷" }, { word: "ocean", meaning: "大洋、海" }, { word: "uniform", meaning: "制服、ユニフォーム" }, { word: "fan", meaning: "扇、うちわ、扇風機" }, { word: "pen", meaning: "ペン" }, { word: "ten", meaning: "10（の）" }, { word: "sun", meaning: "太陽、日" }, { word: "run", meaning: "走る、運行している" }, { word: "hat", meaning: "（ふちのある）帽子" }, { word: "hot", meaning: "熱い、暑い" }, { word: "cup", meaning: "カップ" }, { word: "cap", meaning: "（ふちがないか、ひさしのついた）帽子" }, { word: "map", meaning: "地図" }, { word: "mop", meaning: "モップ" }, { word: "cut", meaning: "…を切る、…の供給をとめる" }, { word: "TV", meaning: "テレビ（放送）" }, { word: "milk", meaning: "牛乳、ミルク" }, { word: "box", meaning: "箱" }, { word: "bag", meaning: "かばん、バッグ、ふくろ" }, { word: "desk", meaning: "机" }, { word: "bed", meaning: "ベッド" }
-            ]},
-            "grammar0": { name: "Grammar for Communication 0", words: [
-                { word: "red", meaning: "赤（い）" }, { word: "P.E.", meaning: "体育" }, { word: "play", meaning: "（競技・ゲームなどを）する、（曲・楽器などを）演奏する" }, { word: "soccer", meaning: "サッカー" }, { word: "have", meaning: "…を持っている、…がある、…がいる、…を飼っている" }, { word: "a", meaning: "1つの、1人の［数えられる名詞の前に置く。ふつう訳さない］" }, { word: "want", meaning: "…がほしい" }
+                { word: "same", meaning: "同じ、同一の" },
+                { word: "experience", meaning: "経験、体験" },
+                { word: "actually", meaning: "実は、本当は" },
+                { word: "ramen", meaning: "ラーメン" },
+                { word: "instant", meaning: "即座の、緊急の、（食べ物が）即席の" },
+                { word: "noodle", meaning: "ヌードル、めん" },
+                { word: "by the way", meaning: "ところで" },
+                { word: "experience", meaning: "…を経験する" }
             ]},
             "unit1_1": { name: "Unit 1・Part 1", words: [
-                { word: "call", meaning: "…を（～と）呼ぶ、名づける" }, { word: "South Africa", meaning: "南アフリカ共和国" }, { word: "love", meaning: "…が大好きである、…を愛している" }, { word: "everyone", meaning: "みなさん、みんな、だれでも" }, { word: "me", meaning: "私を［に］" }, { word: "from", meaning: "【起源・出所】…から、…出身の、…に由来する" }, { word: "Japanese", meaning: "日本の、日本人の、日本語の" }, { word: "sweet", meaning: "甘い菓子、キャンディー" }, { word: "and", meaning: "…と～" }, { word: "too", meaning: "…もまた、そのうえ" }, { word: "join", meaning: "…に加わる、参加する" }, { word: "the", meaning: "［状況や文脈から何をさすかわかる場合］その" }, { word: "club", meaning: "クラブ、部" }, { word: "Call me", meaning: "私を…と呼んでください。" }, { word: "want to", meaning: "…したい" }, { word: "number", meaning: "数、数字" }, { word: "one", meaning: "1つ［1人］（の）" }, { word: "two", meaning: "2（つの）" }, { word: "three", meaning: "3（つの）" }, { word: "four", meaning: "4（つの）" }, { word: "five", meaning: "5（つの）" }, { word: "six", meaning: "6（つの）" }, { word: "seven", meaning: "7（つの）" }, { word: "eight", meaning: "8（つの）" }, { word: "nine", meaning: "9（つの）" }, { word: "eleven", meaning: "11（の）" }, { word: "twelve", meaning: "12（の）" }, { word: "thirteen", meaning: "13（の）" }, { word: "fourteen", meaning: "14（の）" }, { word: "fifteen", meaning: "15（の）" }, { word: "sixteen", meaning: "16（の）" }, { word: "seventeen", meaning: "17（の）" }, { word: "eighteen", meaning: "18（の）" }, { word: "nineteen", meaning: "19（の）" }, { word: "twenty", meaning: "20（の）" }, { word: "thirty", meaning: "30（の）" }, { word: "forty", meaning: "40（の）" }, { word: "fifty", meaning: "50（の）" }, { word: "sixty", meaning: "60（の）" }, { word: "seventy", meaning: "70（の）" }, { word: "eighty", meaning: "80（の）" }, { word: "ninety", meaning: "90（の）" }, { word: "hundred", meaning: "100（の）" }, { word: "zero", meaning: "0（の）" }
+                { word: "golden", meaning: "金色の、すばらしい" },
+                { word: "holiday", meaning: "休日、休暇" },
+                { word: "Singapore", meaning: "シンガポール" },
+                { word: "flight", meaning: "飛ぶこと、飛行、（飛行機の）便、空の旅" },
+                { word: "arrive", meaning: "到着する" },
+                { word: "airport", meaning: "空港、飛行場" },
+                { word: "soon", meaning: "すぐに、まもなく" },
+                { word: "See you.", meaning: "またね。" },
+                { word: "be going to", meaning: "…するつもりだ" },
+                { word: "around", meaning: "…のあちこちに［で、を］" },
+                { word: "for", meaning: "【方向・行き先】…に、…へ" },
+                { word: "in", meaning: "【運動・方向】…の中へ、…に" },
+                { word: "leave", meaning: "去る、出発する" },
+                { word: "show", meaning: "…を案内する" }
             ]},
             "unit1_2": { name: "Unit 1・Part 2", words: [
-                { word: "fan", meaning: "ファン" }, { word: "often", meaning: "しばしば、よく" }, { word: "with", meaning: "【共同・同伴】…といっしょに" }, { word: "but", meaning: "しかし、けれども" }, { word: "rugby", meaning: "ラグビー" }, { word: "watch", meaning: "…を（注意して）見る" }, { word: "friend(s)", meaning: "友達" }, { word: "great", meaning: "すばらしい、とても楽しい" }, { word: "no", meaning: "いいえ、いや、だめだ" }, { word: "not", meaning: "…でない、…しない、…ではなく" }, { word: "oh", meaning: "まあ、あら、ああ、おや" }
+                { word: "will", meaning: "【単なる未来】…でしょう、…だろう" },
+                { word: "excited", meaning: "わくわくした" },
+                { word: "seafood", meaning: "シーフード" },
+                { word: "reservation", meaning: "予約" },
+                { word: "first", meaning: "第1に、最初に" },
+                { word: "will", meaning: "【意志】…するつもりだ" }
             ]},
-            "unit1_3": { name: "Unit 1・Part 3", words: [
-                { word: "draw", meaning: "（線画）をかく" }, { word: "an", meaning: "1つの、1人の［母音で始まる］" }, { word: "anime", meaning: "（日本の）アニメ" }, { word: "so", meaning: "だから、それで、では" }, { word: "about", meaning: "…について、…に関する" }, { word: "lesson", meaning: "授業、レッスン" }, { word: "comic", meaning: "マンガ" }, { word: "wow", meaning: "うわあ、わあ" }, { word: "are", meaning: "…です、…だ" }, { word: "in", meaning: "【従事・所属】…に所属して、参加して" }, { word: "art", meaning: "芸術、美術" }, { word: "how", meaning: "【状態】どんなようす［ぐあい］で" }, { word: "school", meaning: "学校" }, { word: "now", meaning: "今、現在は、今では、今すぐ" }, { word: "take", meaning: "…を利用する、…を受ける" }, { word: "swimming", meaning: "水泳" }
+            "unit1_read1": { name: "Unit 1・Read and Think 1", words: [
+                { word: "meter", meaning: "メートル" },
+                { word: "tall", meaning: "［身長・高さを表す名詞のあとに用いて］身長［高さ］が…ある" },
+                { word: "weigh", meaning: "…の重さがある" },
+                { word: "ton", meaning: "トン" },
+                { word: "found", meaning: "findの過去形" },
+                { word: "find", meaning: "…を見つける、発見する" },
+                { word: "language", meaning: "言語、言葉" },
+                { word: "dollar", meaning: "ドル" },
+                { word: "example", meaning: "例、実例" },
+                { word: "communicate", meaning: "連絡する、意思の疎通をする" },
+                { word: "for example", meaning: "例えば" },
+                { word: "Chinese", meaning: "中国語" },
+                { word: "different", meaning: "ちがう、異なる" },
+                { word: "of", meaning: "【主題】…について" },
+                { word: "shop", meaning: "買い物をする" }
+            ]},
+            "unit1_read2": { name: "Unit 1・Read and Think 2", words: [
+                { word: "painting", meaning: "（絵の具でかいた）絵、絵画" },
+                { word: "wall", meaning: "かべ" },
+                { word: "surprised", meaning: "驚いた、びっくりした" },
+                { word: "area", meaning: "区域、場所、地域" },
+                { word: "India", meaning: "インド" },
+                { word: "mosque", meaning: "モスク、イスラム教寺院" },
+                { word: "culture", meaning: "文化" },
+                { word: "with", meaning: "【携帯・所有】…を身につけて、…のある" }
             ]},
             "unit2_1": { name: "Unit 2・Part 1", words: [
-                { word: "class", meaning: "学級、組、クラス" }, { word: "our", meaning: "私たちの" }, { word: "Canada", meaning: "カナダ" }, { word: "America", meaning: "アメリカ（合衆国）" }, { word: "Ms.", meaning: "［女性をさして］…さん、先生" }, { word: "Mr.", meaning: "［男性をさして］…さん、先生" }, { word: "he", meaning: "彼は［が］" }, { word: "she", meaning: "彼女は［が］" }, { word: "new", meaning: "新しい、新任の" }, { word: "teacher", meaning: "先生、教師" }, { word: "on", meaning: "【所属】…の一員で、…に属して" }, { word: "team", meaning: "チーム、組" }, { word: "at", meaning: "【評価の対象】…は、…が、…に関しては" }, { word: "cool", meaning: "かっこいい" }
+                { word: "especially", meaning: "特に、とりわけ" },
+                { word: "order", meaning: "…を注文する" },
+                { word: "topping", meaning: "トッピング" },
+                { word: "various", meaning: "いろいろな" },
+                { word: "flavor", meaning: "（独特な）味、（香りもふくめた）風味" },
+                { word: "soy sauce", meaning: "しょうゆ" },
+                { word: "salt", meaning: "塩、食塩" },
+                { word: "and so on", meaning: "…など" },
+                { word: "so", meaning: "そのように、そう" },
+                { word: "when", meaning: "…するときに" }
             ]},
             "unit2_2": { name: "Unit 2・Part 2", words: [
-                { word: "Chinese", meaning: "中国の" }, { word: "cannot", meaning: "…できない" }, { word: "some", meaning: "いくつかの、いくらかの、少しの" }, { word: "parent", meaning: "親、親たち、両親" }, { word: "China", meaning: "中国" }, { word: "food", meaning: "食べ物" }, { word: "father", meaning: "父、お父さん" }, { word: "can", meaning: "【能力・可能】…することができる" }, { word: "make", meaning: "…を作る、得る" }, { word: "very", meaning: "非常に、とても、［否定文で］あまり（…でない）" }, { word: "well", meaning: "じょうずに、うまく、よく" }, { word: "that", meaning: "［すでに述べた事柄をさして］そのこと、それ" }, { word: "read", meaning: "（…を）読む、読んで知る" }, { word: "really", meaning: "本当ですか、へえ、そうなんだ" }, { word: "see", meaning: "（…が）わかる、理解する" }, { word: "I see.", meaning: "なるほど。わかった。" }
+                { word: "speech", meaning: "スピーチ、演説" },
+                { word: "sometime", meaning: "いつか、そのうち" },
+                { word: "if", meaning: "【条件・仮定】もし…ならば" },
+                { word: "add", meaning: "（ ～に）…を加える、足す" },
+                { word: "butter", meaning: "バター" },
+                { word: "would love to", meaning: "…したい（のですが）" },
+                { word: "can", meaning: "【許可】…してもよい" }
             ]},
-            "unit2_3": { name: "Unit 2・Part 3", words: [
-                { word: "excuse", meaning: "…を許す" }, { word: "oops", meaning: "おっと、うわっ、しまった" }, { word: "here", meaning: "さあ、ほら" }, { word: "welcome", meaning: "歓迎される" }, { word: "totem pole", meaning: "トーテムポール" }, { word: "thunderbird", meaning: "サンダーバード" }, { word: "your", meaning: "あなた（たち）の" }, { word: "thank", meaning: "…に感謝する" }, { word: "it", meaning: "それは［が］" }, { word: "bird", meaning: "鳥" }, { word: "Excuse me.", meaning: "すみません。失礼ですが。" }, { word: "Here you are.", meaning: "はい、どうぞ。" }, { word: "Thank you.", meaning: "ありがとう。" }, { word: "You are welcome.", meaning: "どういたしまして。" }
+            "unit2_read1": { name: "Unit 2・Read and Think 1", words: [
+                { word: "interested", meaning: "興味を持っている" },
+                { word: "forget", meaning: "（ …を）忘れる" },
+                { word: "kind", meaning: "種類" },
+                { word: "based", meaning: "…をベースにした" },
+                { word: "because", meaning: "…だから、…なので" },
+                { word: "thick", meaning: "濃い、どろっとした" },
+                { word: "recommended", meaning: "おすすめの" },
+                { word: "manufacturer", meaning: "製造業者、メーカー" },
+                { word: "early", meaning: "早く" },
+                { word: "be interested in", meaning: "…に興味がある" },
+                { word: "kind of", meaning: "…種類の～" },
+                { word: "stay", meaning: "…のままでいる" },
+                { word: "with", meaning: "【道具・手段】…で、…を使って" }
+            ]},
+            "unit2_read2": { name: "Unit 2・Read and Think 2", words: [
+                { word: "reflect", meaning: "（物事・考えなど）を反映する" },
+                { word: "climate", meaning: "気候" },
+                { word: "lives", meaning: "lifeの複数形" },
+                { word: "creativity", meaning: "創造性［力］、独創性［力］" },
+                { word: "chef", meaning: "シェフ、コック長" },
+                { word: "foreign", meaning: "外国（へ［から］）の" },
+                { word: "variation", meaning: "変化、変種" },
+                { word: "Italy", meaning: "イタリア" },
+                { word: "create", meaning: "…を創造する、つくり出す" },
+                { word: "sauce", meaning: "ソース" },
+                { word: "change", meaning: "変わる、変化する" },
+                { word: "come from", meaning: "…出身である、…から来ている" },
+                { word: "Here is", meaning: "これが…です。ここに…があります。…をどうぞ。 (単数)" },
+                { word: "Here are", meaning: "これが…です。ここに…があります。…をどうぞ。(複数)" },
+                { word: "name ... after", meaning: "～にちなんで（人など）を…と名づける" },
+                { word: "after", meaning: "…にならって、ちなんで" },
+                { word: "another", meaning: "もう1つ［1人］の" },
+                { word: "name", meaning: "（ 人など）に…という名前をつける" }
+            ]},
+            "scene2": { name: "Scene 2・Real Life English", words: [
+                { word: "traveler", meaning: "旅行者" },
+                { word: "resident", meaning: "住民、居住者" },
+                { word: "may", meaning: "【許可】…してもよい" },
+                { word: "ask", meaning: "…に（～を）たのむ" },
+                { word: "favor", meaning: "親切な行為" },
+                { word: "could", meaning: "canの過去形。【ていねいな依頼】Could you ...? …してくださいませんか。" },
+                { word: "menu", meaning: "メニュー" },
+                { word: "ask a favor", meaning: "…にお願いする" },
+                { word: "Say cheese!", meaning: "はい、チーズ！" },
+                { word: "May I", meaning: "…してもよいですか。" }
             ]},
             "unit3_1": { name: "Unit 3・Part 1", words: [
-                { word: "symbol", meaning: "シンボル、象徴、記号" }, { word: "for", meaning: "【代理・代表】…のかわりに、…に相当する" }, { word: "interesting", meaning: "おもしろい、興味深い" }, { word: "favorite", meaning: "いちばん好きな、お気に入りの" }, { word: "character", meaning: "登場人物" }, { word: "also", meaning: "…もまた、そのうえ" }, { word: "what", meaning: "何、どんなもの［こと］" }, { word: "family", meaning: "一族" }, { word: "who", meaning: "だれ、だれが" }, { word: "why", meaning: "なぜ、どうして" }, { word: "brave", meaning: "勇かんな、勇ましい" }, { word: "kind", meaning: "親切な、やさしい" }
+                { word: "career", meaning: "職業" },
+                { word: "information", meaning: "情報" },
+                { word: "international", meaning: "国際的な" },
+                { word: "nursery", meaning: "保育所、託児所" },
+                { word: "note", meaning: "メモ、覚え書き" },
+                { word: "own", meaning: "自分自身の、独自の" },
+                { word: "tag", meaning: "つけ札、下げ札、荷札" },
+                { word: "chopstick", meaning: "［ふつうchopsticksで］（食事用の）はし" },
+                { word: "picture book", meaning: "（主に子供用の）絵本、図鑑" },
+                { word: "nursery school", meaning: "保育園" },
+                { word: "park", meaning: "（自動車など）を駐車する" },
+                { word: "play", meaning: "遊ぶ" },
+                { word: "to", meaning: "【不定詞（副詞的）】…するために［目的を表す］" }
             ]},
             "unit3_2": { name: "Unit 3・Part 2", words: [
-                { word: "around", meaning: "…の近くに" }, { word: "after", meaning: "…のあとに［で］" }, { word: "online", meaning: "オンラインで" }, { word: "live", meaning: "住む、住んでいる、生きる、暮らす、ずっと残る" }, { word: "come", meaning: "来る" }, { word: "by", meaning: "【手段・方法・原因】…によって" }, { word: "walk", meaning: "（…を）歩く、歩いていく［くる］" }, { word: "when", meaning: "いつ、どんなときに" }, { word: "study", meaning: "（…を）勉強する、研究する" }, { word: "after school", meaning: "放課後（に）" }, { word: "week", meaning: "週、1週間" }
+                { word: "chose", meaning: "chooseの過去形" },
+                { word: "choose", meaning: "…を選ぶ" },
+                { word: "colorful", meaning: "色彩に富んだ" },
+                { word: "illustration", meaning: "例、挿絵、図、イラスト、（図・例などによる）説明" },
+                { word: "How about", meaning: "［提案・勧誘］…どうですか。" },
+                { word: "to", meaning: "【不定詞（副詞的）】…して［原因を表す］" }
             ]},
-            "unit3_3": { name: "Unit 3・Part 3", words: [
-                { word: "hallway", meaning: "ろうか" }, { word: "win", meaning: "（…に）勝つ" }, { word: "next", meaning: "次の、今度の、となりの" }, { word: "lick", meaning: "運、幸運" }, { word: "near", meaning: "…の近くに［で］" }, { word: "where", meaning: "どこに［で、へ］" }, { word: "practice", meaning: "（…を）練習する" }, { word: "hard", meaning: "熱心に、一生懸命に" }, { word: "go", meaning: "行く" }, { word: "park", meaning: "公園、遊園地" }, { word: "station", meaning: "駅" }, { word: "under", meaning: "…の下に［で］、…のもとに" }, { word: "Good luck.", meaning: "幸運を祈ります。がんばって。" }
+            "unit3_read1": { name: "Unit 3・Read and Think 1", words: [
+                { word: "pretty", meaning: "かわいい、きれいな" },
+                { word: "taught", meaning: "teachの過去形" },
+                { word: "important", meaning: "重要な、大切な" },
+                { word: "moon", meaning: "（天体の）月" },
+                { word: "lay", meaning: "lieの過去形" },
+                { word: "lie", meaning: "位置する、ある" },
+                { word: "leaf", meaning: "（草木の）葉" },
+                { word: "pop", meaning: "ポンと鳴る音" },
+                { word: "tiny", meaning: "ごく小さい" },
+                { word: "caterpillar", meaning: "イモムシ、毛虫" },
+                { word: "pear", meaning: "西洋ナシ、西洋ナシの木" },
+                { word: "plum", meaning: "西洋スモモ、プラム" },
+                { word: "come up", meaning: "のぼる" },
+                { word: "come out of", meaning: "…から出てくる" },
+                { word: "light", meaning: "光" },
+                { word: "start", meaning: "（…を）始める" },
+                { word: "to", meaning: "【不定詞（形容詞的）】…するための、…すべき" }
             ]},
-            "sounds3": { name: "Sounds and Letters 3", words: [
-                { word: "water", meaning: "水" }, { word: "T-shirt", meaning: "Tシャツ" }, { word: "star", meaning: "星" }, { word: "round", meaning: "丸い" }, { word: "baseball", meaning: "野球" }, { word: "summer", meaning: "夏" }, { word: "winter", meaning: "冬" }, { word: "house", meaning: "家" }, { word: "town", meaning: "町" }, { word: "sound", meaning: "音" }, { word: "mother", meaning: "母" }, { word: "enjoy", meaning: "楽しむ" }, { word: "fall", meaning: "秋" }, { word: "party", meaning: "パーティー" }, { word: "bake", meaning: "焼く" }, { word: "ball", meaning: "ボール" }, { word: "birthday", meaning: "誕生日" }
-            ]},
-            "unit4_1": { name: "Unit 4・Part 1", words: [
-                { word: "New Zealand", meaning: "ニュージーランド" }, { word: "puppy", meaning: "子イヌ" }, { word: "of", meaning: "【部分】…の中の［で］、…の" }, { word: "someday", meaning: "いつか" }, { word: "lot", meaning: "たくさん" }, { word: "they", meaning: "彼らは［が］、彼女らは［が］、それらは［が］" }, { word: "animal(s)", meaning: "動物" }, { word: "visit", meaning: "（人・場所）を訪ねる" }, { word: "Japan", meaning: "日本" }, { word: "many", meaning: "たくさんの、多くの" }, { word: "one of", meaning: "…の1つ［1人］" }, { word: "a lot of", meaning: "たくさんの、多数の" }, { word: "How many ...?", meaning: "どれくらい多くの、いくつの" }
-            ]},
-            "unit4_2": { name: "Unit 4・Part 2", words: [
-                { word: "noon", meaning: "正午、真昼" }, { word: "last", meaning: "最後の、最終の" }, { word: "like", meaning: "…のような［に］、…に似た、…らしい" }, { word: "o’clock", meaning: "…時" }, { word: "netball", meaning: "ネットボール" }, { word: "time", meaning: "時刻" }, { word: "afternoon", meaning: "午後" }, { word: "sport", meaning: "スポーツ" }, { word: "am", meaning: "午前" }, { word: "pm", meaning: "午後" }, { word: "basketball", meaning: "バスケットボール" }, { word: "Sounds ....", meaning: "…そうですね。" }
-            ]},
-            "unit4_3": { name: "Unit 4・Part 3", words: [
-                { word: "front", meaning: "前、正面" }, { word: "be", meaning: "...である、 ...になる" }, { word: "nervous", meaning: "緊張して" }, { word: "worry", meaning: "心配する、悩む" }, { word: "yourself", meaning: "あなた自身を［に］" }, { word: "sheep", meaning: "ヒツジ" }, { word: "kiwi", meaning: "キーウィ［動物名］" }, { word: "right", meaning: "正しい、正確な" }, { word: "turn", meaning: "順番、番" }, { word: "please", meaning: "どうぞ、お願いします、すみませんが" }, { word: "look", meaning: "見る、目を向ける" }, { word: "enjoy oneself", meaning: "楽しむ、楽しく過ごす" }, { word: "look at", meaning: "…を見る" }
-            ]},
-            "sounds4": { name: "Sounds and Letters 4", words: [
-                { word: "fun", meaning: "楽しいこと" }, { word: "long", meaning: "長い" }, { word: "song", meaning: "歌" }, { word: "fine", meaning: "（人が）元気な" }, { word: "pet", meaning: "ペット、愛がん動物" }, { word: "stop", meaning: "とまる、停止する" }, { word: "eat", meaning: "…を食べる、食事をする" }, { word: "sad", meaning: "悲しい" }, { word: "eel", meaning: "ウナギ" }, { word: "gift", meaning: "贈り物" }, { word: "man", meaning: "男性、男の人" }, { word: "bench", meaning: "ベンチ" }, { word: "picture", meaning: "絵、絵画、写真" }, { word: "basket", meaning: "かご、ざる、バスケット" }, { word: "kitchen", meaning: "台所、キッチン" }, { word: "table", meaning: "テーブル" }, { word: "all", meaning: "全部、全員、全て、みな" }
+            "unit3_read2": { name: "Unit 3・Read and Think 2", words: [
+                { word: "learn", meaning: "（…を）学ぶ、習う" },
+                { word: "necessary", meaning: "必要な" },
+                { word: "adjust", meaning: "…を調節する" },
+                { word: "speed", meaning: "スピード、速度" },
+                { word: "story", meaning: "話、物語" },
+                { word: "difficult", meaning: "難しい、困難な" },
+                { word: "sentence", meaning: "文" },
+                { word: "clearly", meaning: "はっきりと" },
+                { word: "understand", meaning: "（…を）理解する、わかる" },
+                { word: "smile", meaning: "ほほえむ、微笑する" },
+                { word: "clap", meaning: "（手）をたたく、（人・演技など）に拍手する" },
+                { word: "glad", meaning: "うれしい" },
+                { word: "loud", meaning: "大きな声で" },
+                { word: "sincerely", meaning: "心から、本気で、誠実に" },
+                { word: "Thank you for ....", meaning: "…をありがとう。" },
+                { word: "again and again", meaning: "何度も何度も" },
+                { word: "from now on", meaning: "これからは、今後は" },
+                { word: "Sincerely yours", meaning: "（手紙の結びで）敬具" },
+                { word: "from", meaning: "【時間】…から" },
+                { word: "it", meaning: "［「It is ... （for ＋（人））＋ to ＋ 動詞の原形」で］（（人）が）～することは…です" },
+                { word: "now", meaning: "今、現在" },
+                { word: "on", meaning: "先へ、前へ" },
+                { word: "out", meaning: "はっきりと、大声で" },
+                { word: "second", meaning: "第2に、2番めに" }
             ]},
             "stage_act_1": { name: "Stage Activity 1", words: [
-                { word: "poster", meaning: "ポスター、広告" }, { word: "age", meaning: "年齢" }, { word: "movie", meaning: "映画" }, { word: "student", meaning: "学生、生徒" }, { word: "much", meaning: "［動詞を修飾して］おおいに、たいへん" }, { word: "starter", meaning: "先発メンバー" }, { word: "famous", meaning: "有名な" }, { word: "tell", meaning: "…に（～を）話す、教える" }, { word: "elementary school", meaning: "小学校" }, { word: "subject", meaning: "教科、科目" }, { word: "junior high school", meaning: "中学校" }, { word: "every", meaning: "毎…、…ごとに" }, { word: "big", meaning: "重要な、すごい" }, { word: "player", meaning: "競技者、選手" }, { word: "very much", meaning: "とても、たいへん" }, { word: "every day", meaning: "毎日" }, { word: "what", meaning: "何の、どんな" }, { word: "sound like", meaning: "…のように聞こえる、思える" }, { word: "be", meaning: "…である、…になる" }, { word: "favorite", meaning: "大好きなもの［人］" }
-            ]},
-            "unit5_1": { name: "Unit 5・Part 1", words: [
-                { word: "as", meaning: "…として" }, { word: "tour", meaning: "旅行、ツアー、見学" }, { word: "guide", meaning: "ガイド、案内人" }, { word: "write", meaning: "（…を）書く" }, { word: "blog", meaning: "ブログ" }, { word: "local", meaning: "（ある）地方の、地元の" }, { word: "beautiful", meaning: "美しい" }, { word: "spot", meaning: "地点、場所" }, { word: "his", meaning: "彼の" }, { word: "Honolulu", meaning: "ホノルル" }, { word: "Hawaii", meaning: "ハワイ" }, { word: "brother", meaning: "兄、弟、兄弟" }, { word: "year", meaning: "…歳、年齢" }, { word: "old", meaning: "…歳の、（作られてから）…年［月］になる" }, { word: "work", meaning: "働く、作業をする" }, { word: "nature", meaning: "自然" }
-            ]},
-            "unit5_2": { name: "Unit 5・Part 2", words: [
-                { word: "any", meaning: "［疑問文などで］いくらかの、何らかの" }, { word: "does", meaning: "［疑問文や応答を作る］" }, { word: "has", meaning: "haveの三人称単数現在形" }, { word: "there", meaning: "そこに［で、へ］" }, { word: "surf", meaning: "サーフィン［波乗り］をする" }, { word: "life", meaning: "生活、暮らし" }, { word: "question", meaning: "質問、疑問" }, { word: "weekend", meaning: "週末" }, { word: "swim", meaning: "泳ぐ" }, { word: "sometimes", meaning: "ときどき" }, { word: "dolphin", meaning: "イルカ" }
-            ]},
-            "unit5_read": { name: "Unit 5・Read and Think", words: [
-                { word: "cafe", meaning: "喫茶店、カフェ" }, { word: "website", meaning: "ウェブサイト" }, { word: "popular", meaning: "人気のある" }, { word: "owner", meaning: "所有者、持ち主" }, { word: "know", meaning: "（…を）知っている、わかる" }, { word: "patty", meaning: "パティ" }, { word: "fried", meaning: "油であげた、油でいためた" }, { word: "top", meaning: "表面、上部" }, { word: "wonderful", meaning: "すばらしい、すてきな" }, { word: "Maria", meaning: "マリア" }, { word: "loco moco", meaning: "ロコモコ" }, { word: "restaurant", meaning: "レストラン" }, { word: "friendly", meaning: "好意的な、親切な" }, { word: "dish", meaning: "料理、（料理の）1品" }, { word: "fried egg", meaning: "目玉焼き" }, { word: "on top of", meaning: "…の上に" }
-            ]},
-            "unit6_1": { name: "Unit 6・Part 1", words: [
-                { word: "him", meaning: "彼を［に］" }, { word: "say", meaning: "（…を）言う、…だと言う" }, { word: "everything", meaning: "何でも、全てのもの［こと］" }, { word: "show", meaning: "ショー" }, { word: "her", meaning: "彼女を［に］" }, { word: "performer", meaning: "演技者" }, { word: "U.K.", meaning: "英国" }, { word: "together", meaning: "いっしょに、ともに" }, { word: "let's", meaning: "…しよう" }, { word: "Why don’t we", meaning: "…しませんか。" }, { word: "to", meaning: "【対象・関連】…に（とって）" }, { word: "fine", meaning: "けっこうな" }, { word: "for", meaning: "【用途・適合】…するための、…に適した、…向けの" }, { word: "see", meaning: "…に会う" }
-            ]},
-            "unit6_2": { name: "Unit 6・Part 2", words: [
-                { word: "minute", meaning: "（時間の単位の）分" }, { word: "wait", meaning: "待つ" }, { word: "whose", meaning: "だれの、だれのもの" }, { word: "yours", meaning: "あなた（たち）のもの" }, { word: "mine", meaning: "私のもの" }, { word: "maybe", meaning: "たぶん、もしかすると" }, { word: "careful", meaning: "注意深い" }, { word: "crowded", meaning: "こみ合った、満員の" }, { word: "history", meaning: "歴史" }, { word: "still", meaning: "まだ、今でも" }, { word: "over", meaning: "…より多く、…をこえて" }, { word: "start", meaning: "始まる、出発する、開始する" }, { word: "ticket", meaning: "切符、チケット" }, { word: "Thanks", meaning: "ありがとう。" }, { word: "be careful with", meaning: "…のあつかいに気をつける" }, { word: "How old", meaning: "何歳で、作られてからどれくらいで" }, { word: "In", meaning: "【時間】…に、…の間に、…後に" }, { word: "thank", meaning: "感謝" }, { word: "with", meaning: "【関係・対象】…に関して、…について" }, { word: "here", meaning: "ここに［で、へ］" }, { word: "well", meaning: "［ためらったり、返事に詰まったりして］ええと、そうですね" }
-            ]},
-            "unit6_read": { name: "Unit 6・Read and Think", words: [
-                { word: "cushion", meaning: "クッション、ざぶとん" }, { word: "different", meaning: "いろいろな" }, { word: "role", meaning: "役、役割" }, { word: "use", meaning: "…を使う、利用する、消費する" }, { word: "only", meaning: "ただ…だけ" }, { word: "prop", meaning: "小道具" }, { word: "which", meaning: "どちら、どれ、どちらの人［もの］" }, { word: "or", meaning: "…かまたは～、…や～" }, { word: "casual", meaning: "カジュアルな、くだけた、ふだん着の" }, { word: "large", meaning: "多い、多数の" }, { word: "collection", meaning: "収集したもの、コレクション" }, { word: "hand", meaning: "手" }, { word: "towel", meaning: "タオル、手拭い" }, { word: "wear", meaning: "…を着ている、身につけている" }, { word: "clothes", meaning: "［複数あつかい］衣服" }, { word: "for", meaning: "【対象】…に対して" }, { word: "in", meaning: "【範囲】…において、…に関しては" }, { word: "play", meaning: "（役）を演じる" }
-            ]},
-            "scene2": { name: "Scene 2・Real Life English 2", words: [
-                { word: "open", meaning: "（ …を）開く、あける" }, { word: "close", meaning: "…を閉じる、終える" }, { word: "window", meaning: "窓" }, { word: "sure", meaning: "［返事で］もちろん、いいとも" }, { word: "problem", meaning: "問題" }, { word: "little", meaning: "［a littleで］少し" }, { word: "dark", meaning: "暗い" }, { word: "light", meaning: "明かり、電灯" }, { word: "just", meaning: "ただ…だけ、ほんの、ちょっと" }, { word: "moment", meaning: "瞬間、ちょっとの間" }, { word: "off", meaning: "（電気・ガス・水道などが）切れて、とまって" }, { word: "borrow", meaning: "…を借りる" }, { word: "help", meaning: "…を手伝う、助ける、…の役に立つ" }, { word: "homework", meaning: "宿題" }, { word: "No problem", meaning: "いいですよ。もちろん。" }, { word: "a little", meaning: "少し" }, { word: "turn on", meaning: "（スイッチ）を入れる、つける" }, { word: "help with", meaning: "…を～の面で手伝う" }, { word: "All right", meaning: "よろしい。わかった。了解した。" }, { word: "Just a moment", meaning: "ちょっと待って。" }, { word: "turn off", meaning: "（スイッチ）をとめる、消す" }, { word: "all", meaning: "全く、全て、すっかり" }, { word: "and", meaning: "そして、それから" }, { word: "can I", meaning: "【許可】…してもよいですか。" }, { word: "can you", meaning: "【依頼】 …してくれますか。" }, { word: "no", meaning: "1つ［1人］も…ない、少しも…ない" }, { word: "on", meaning: "（電気・ガス・水道などが）通じて、ついて、出て" }, { word: "this", meaning: "この" }, { word: "hers", meaning: "彼女のもの" }, { word: "its", meaning: "それの、その" }, { word: "us", meaning: "私たちを［に］" }, { word: "ours", meaning: "私たちのもの" }, { word: "their", meaning: "彼らの、彼女らの、それらの" }, { word: "them", meaning: "彼ら［彼女ら、それら］を［に］" }, { word: "theirs", meaning: "彼ら［彼女ら、それら］のもの" }, { word: "her", meaning: "彼女の" }, { word: "his", meaning: "彼のもの" }, { word: "of", meaning: "【行為の対象】…を、…の、…への" }
-            ]},
-            "unit7_1": { name: "Unit 7・Part 1", words: [
-                { word: "tomorrow", meaning: "明日（は）" }, { word: "plan", meaning: "計画、予定" }, { word: "free", meaning: "ひまな" }, { word: "mean", meaning: "…を意味する、…のことを言う" }, { word: "busy", meaning: "忙しい" }, { word: "talk", meaning: "話す、しゃべる" }, { word: "What’s up?", meaning: "どうしたのですか。" }, { word: "sound like", meaning: "…のように聞こえる、思える" }, { word: "look forward to", meaning: "…を楽しみに待つ" }, { word: "hello", meaning: "（電話で）もしもし" }, { word: "at", meaning: "【時刻・年齢】…に" }, { word: "online", meaning: "オンラインの" }
-            ]},
-            "unit7_2": { name: "Unit 7・Part 2", words: [
-                { word: "market", meaning: "市場" }, { word: "souvenir", meaning: "記念品、みやげ" }, { word: "place", meaning: "場所、ところ" }, { word: "appear", meaning: "現れる、姿を現す" }, { word: "those", meaning: "あれらの、それらの" }, { word: "buy", meaning: "…を買う" }, { word: "people", meaning: "人々" }, { word: "Welcome to", meaning: "…へようこそ。" }, { word: "also", meaning: "そのうえ、さらに" }, { word: "take", meaning: "（写真など）を撮る" }, { word: "welcome", meaning: "ようこそ、いらっしゃい" }, { word: "around", meaning: "…のまわりを回って" }, { word: "home", meaning: "故郷" }
-            ]},
-            "unit7_read": { name: "Unit 7・Read and Think", words: [
-                { word: "mom", meaning: "お母さん" }, { word: "dad", meaning: "お父さん" }, { word: "travel", meaning: "旅行する" }, { word: "angry", meaning: "怒った、腹を立てた" }, { word: "palace", meaning: "宮殿、王宮" }, { word: "exciting", meaning: "興奮させるような、わくわくさせるような" }, { word: "late", meaning: "遅い、おくれた、遅刻した" }, { word: "sorry", meaning: "すまなく思って" }, { word: "funny", meaning: "おかしな" }, { word: "OK", meaning: "よろしい、はい、わかった、それでは" }, { word: "I’m sorry", meaning: "ごめんなさい。すみません。" }, { word: "big", meaning: "大きい" }, { word: "excuse", meaning: "言い訳、弁解、口実" }, { word: "for", meaning: "【利益】…のために［の］" }, { word: "how", meaning: "【感嘆】なんと、なんて、どんなに" }, { word: "too", meaning: "あまりに、…すぎる" }, { word: "well", meaning: "［話を切り出したり、再び始めたりして］さて、ところで、それでは" }, { word: "what", meaning: "なんと、なんて" }
-            ]},
-            "scene3": { name: "Scene 3・Real Life English", words: [
-                { word: "pardon", meaning: "何とおっしゃいましたか。もう一度おっしゃってください。［聞き返すときに用いる]" }, { word: "along", meaning: "…に沿って" }, { word: "street", meaning: "通り、街路" }, { word: "traffic light", meaning: "交通信号" }, { word: "straight", meaning: "まっすぐに" }, { word: "factory", meaning: "工場" }, { word: "building", meaning: "建物、ビル" }, { word: "woman", meaning: "女性、女の人" }, { word: "hospital", meaning: "病院" }, { word: "left", meaning: "左に［へ］、左側に" }, { word: "right", meaning: "右に［へ］" }, { word: "museum", meaning: "博物館、美術館" }, { word: "post office", meaning: "郵便局" }, { word: "library", meaning: "図書館、図書室" }, { word: "look for", meaning: "…をさがす" }, { word: "Let’s see", meaning: "［考えながら］ええと。そうですね。" }, { word: "go along", meaning: "（通り・道）を進む" }, { word: "for", meaning: "【目的・用意】…のために、…を求めて" }, { word: "large", meaning: "大きい、広い" }, { word: "turn", meaning: "向く、曲がる" }
-            ]},
-            "unit8_1": { name: "Unit 8・Part 1", words: [
-                { word: "ethnic", meaning: "民族（特有）の" }, { word: "Africa", meaning: "アフリカ" }, { word: "Kenya", meaning: "ケニア" }, { word: "volunteer", meaning: "ボランティア" }, { word: "need", meaning: "困っている状態、貧困" }, { word: "teach", meaning: "…に（～を）教える" }, { word: "try", meaning: "（…を）試す、やってみる、努力する" }, { word: "best", meaning: "最もよいもの、最良の状態" }, { word: "respect", meaning: "…を尊敬する、尊重する" }, { word: "become", meaning: "…になる" }, { word: "cousin", meaning: "いとこ" }, { word: "children", meaning: "childの複数形" }, { word: "child", meaning: "子供" }, { word: "country", meaning: "国" }, { word: "always", meaning: "いつも、常に" }, { word: "in need", meaning: "困っている" }, { word: "do one’s best", meaning: "最善を尽くす" }, { word: "try to", meaning: "…しようと試みる、努力する" }, { word: "in", meaning: "【状態】…（の状態）で" }, { word: "some", meaning: "一部の、（中には）…もある" }
-            ]},
-            "unit8_2": { name: "Unit 8・Part 2", words: [
-                { word: "African", meaning: "アフリカ（人）の" }, { word: "reduce", meaning: "（サイズ・数量・程度など）を減らす、縮小する" }, { word: "waste", meaning: "ごみ、廃棄物" }, { word: "plastic", meaning: "プラスチック［ビニール］製の" }, { word: "paper", meaning: "紙の" }, { word: "straw", meaning: "ストロー" }, { word: "original", meaning: "独創的な、独自の" }, { word: "reusable", meaning: "再利用できる" }, { word: "meat", meaning: "肉" }, { word: "pie", meaning: "パイ" }, { word: "bean", meaning: "豆" }, { word: "soup", meaning: "スープ" }, { word: "chicken", meaning: "とり肉、チキン" }, { word: "curry", meaning: "カレー（料理）" }, { word: "of course", meaning: "もちろん" }, { word: "need to", meaning: "…する必要がある" }, { word: "all", meaning: "全ての、全部の" }, { word: "need", meaning: "…を必要とする" }, { word: "that", meaning: "あの、その、例の" }, { word: "one", meaning: "［前に出てきた名詞のかわりとして］1つ、1人、…なもの" }
-            ]},
-            "unit8_read": { name: "Unit 8・Read and Think", words: [
-                { word: "well", meaning: "井戸" }, { word: "other", meaning: "（2つの中で）もう1つ［一方］の" }, { word: "village", meaning: "村" }, { word: "collect", meaning: "…を集める" }, { word: "far", meaning: "遠くに［へ］" }, { word: "group", meaning: "グループ、団体" }, { word: "build", meaning: "…を建てる、つくる" }, { word: "these", meaning: "これら、この人たち" }, { word: "money", meaning: "金、通貨" }, { word: "get", meaning: "…を得る、受け取る、手に入る" }, { word: "clean", meaning: "きれいな、清潔な" }, { word: "happy", meaning: "幸せな、うれしい、楽しい" }, { word: "river", meaning: "川" }, { word: "on the other hand", meaning: "他方では、これに反して" }, { word: "for a long time", meaning: "長い間" }, { word: "for", meaning: "【時間・距離】…の間" }, { word: "from", meaning: "【場所】…から" }, { word: "help", meaning: "援助、助け" }, { word: "look", meaning: "…（のよう）に見える" }, { word: "time", meaning: "時間、期間、ひま" }
-            ]},
-            "scene4": { name: "Scene 4・Real Life English", words: [
-                { word: "server", meaning: "給仕、ウェイター" }, { word: "anything", meaning: "［疑問文で］何か" }, { word: "else", meaning: "（その）ほかに［の］" }, { word: "full", meaning: "いっぱいの、満腹の" }, { word: "mushroom", meaning: "キノコ" }, { word: "steak", meaning: "ステーキ" }, { word: "salad", meaning: "サラダ" }, { word: "dessert", meaning: "デザート" }, { word: "would like", meaning: "…がほしい（のですが）" }, { word: "would like to", meaning: "…したい（のですが）" }, { word: "No, thank you.", meaning: "いいえ、けっこうです。" }
-            ]},
-            "stage_act_2": { name: "Stage Activity 2", words: [
-                { word: "voice", meaning: "声" }, { word: "word", meaning: "歌詞" }, { word: "cheer", meaning: "…を元気づける" }, { word: "concert", meaning: "演奏会、コンサート" }, { word: "dome", meaning: "丸屋根、ドーム" }, { word: "stage", meaning: "舞台、ステージ" }, { word: "performance", meaning: "演技、演奏、公演" }, { word: "again", meaning: "もう一度、再び、また" }, { word: "hero", meaning: "英雄、ヒーロー" }, { word: "singer", meaning: "歌手" }, { word: "world", meaning: "世界" }, { word: "music", meaning: "音楽" }, { word: "all over", meaning: "…のいたるところに［で、の］" }, { word: "cheer up", meaning: "…を元気づける" }, { word: "have", meaning: "…を開く、開催する" }, { word: "over", meaning: "…のいたるところに、一面に" }, { word: "up", meaning: "勢いよく、元気に" }
-            ]},
-            "unit9_1": { name: "Unit 9・Part 1", words: [
-                { word: "back", meaning: "戻って、返して" }, { word: "during", meaning: "…の間ずっと、…の間に" }, { word: "stay", meaning: "滞在する、泊まる" }, { word: "snowboarding", meaning: "スノーボード（をすること）" }, { word: "Christmas Day", meaning: "クリスマス" }, { word: "relax", meaning: "くつろぐ" }, { word: "met", meaning: "meetの過去形" }, { word: "ice hockey", meaning: "アイスホッケー" }, { word: "went", meaning: "goの過去形" }, { word: "vacation", meaning: "休暇、休み" }, { word: "mountain", meaning: "山" }, { word: "saw", meaning: "seeの過去形" }, { word: "go back", meaning: "帰る、戻る" }, { word: "at home", meaning: "家で［に］" }, { word: "year", meaning: "年、1年" }, { word: "for", meaning: "【原因・理由】…のために、…の理由で" }, { word: "last", meaning: "この前の、昨…、先…" }, { word: "meet", meaning: "（…に）会う、…と出会う、面会する" }
-            ]},
-            "unit9_2": { name: "Unit 9・Part 2", words: [
-                { word: "did", meaning: "doの過去形" }, { word: "traditional", meaning: "伝統的な" }, { word: "special", meaning: "特別な" }, { word: "grandparent", meaning: "祖父、祖母" }, { word: "wrote", meaning: "writeの過去形" }, { word: "New Year", meaning: "新年" }, { word: "ate", meaning: "eatの過去形" }, { word: "New Year's Eve", meaning: "大みそか" }, { word: "card", meaning: "カード、はがき" }, { word: "rice cake", meaning: "もち" }, { word: "Good for you!", meaning: "よくやった。" }, { word: "How nice!", meaning: "いいね。すばらしい。うれしい。" }, { word: "clean", meaning: "…をそうじする" }, { word: "for", meaning: "…にとって" }
-            ]},
-            "unit9_read": { name: "Unit 9・Read and Think", words: [
-                { word: "spent", meaning: "spendの過去形" }, { word: "spend", meaning: "（時）を過ごす" }, { word: "came", meaning: "comeの過去形" }, { word: "bought", meaning: "buyの過去形" }, { word: "fortune slip", meaning: "おみくじ" }, { word: "read", meaning: "readの過去形" }, { word: "said", meaning: "sayの過去形" }, { word: "charm", meaning: "お守り" }, { word: "got", meaning: "getの過去形" }, { word: "wooden", meaning: "木でできた、木製の" }, { word: "wish", meaning: "願い、願い事" }, { word: "board game", meaning: "ボードゲーム" }, { word: "New Year's Day", meaning: "元日" }, { word: "future", meaning: "未来、将来" }, { word: "bad", meaning: "悪い、よくない、ひどい" }, { word: "tablet", meaning: "板状の小片" }, { word: "had", meaning: "haveの過去形" }, { word: "have a good time", meaning: "…な時を過ごす" }, { word: "so", meaning: "そんなに、それほど" }, { word: "time", meaning: "（ある経験をした）時間" }
-            ]},
-            "scene5": { name: "Scene 5・Real Life English", words: [
-                { word: "dear", meaning: "親愛なる…（様）［手紙などの書き出しの言葉］" }, { word: "grandma", meaning: "おばあちゃん" }, { word: "grandpa", meaning: "おじいちゃん" }, { word: "ski", meaning: "スキーをする" }, { word: "fell", meaning: "fallの過去形" }, { word: "Mt.", meaning: "［Mountの略。山の名の前につけて］…山" }, { word: "snow", meaning: "雪" }, { word: "outside", meaning: "外で［に、へ］" }, { word: "miss", meaning: "…がいないのをさびしく思う" }, { word: "care", meaning: "世話" }, { word: "down", meaning: "下に、下がって" }, { word: "hotel", meaning: "ホテル、旅館" }, { word: "go skiing", meaning: "…しに行く" }, { word: "for the first time", meaning: "はじめて" }, { word: "fall down", meaning: "倒れる" }, { word: "take care of", meaning: "…をだいじにする、体に気をつける" }, { word: "How are you?", meaning: "お元気ですか。調子はどうですか。" }, { word: "fall", meaning: "転ぶ、倒れる" }, { word: "for", meaning: "【特定の日時・機会】…に" }, { word: "take", meaning: "（ある行動）をとる、する" }, { word: "time", meaning: "…回、…度" }
-            ]},
-            "unit10_1": { name: "Unit 10・Part 1", words: [
-                { word: "this", meaning: "今の、現在の" }, { word: "remember", meaning: "（…を）思い出す、覚えている" }, { word: "bored", meaning: "退屈した、うんざりした" }, { word: "were", meaning: "areの過去形" }, { word: "realize", meaning: "…だと気づく" }, { word: "made", meaning: "makeの過去形" }, { word: "mistake", meaning: "誤り、まちがい" }, { word: "anyone", meaning: "［肯定文で］だれでも" }, { word: "won", meaning: "winの過去形" }, { word: "anyway", meaning: "とにかく、それでも" }, { word: "chorus", meaning: "合唱" }, { word: "contest", meaning: "コンテスト、コンクール" }, { word: "was", meaning: "am、isの過去形" }, { word: "memory", meaning: "思い出" }, { word: "at first", meaning: "最初は、はじめのうちは" }, { word: "like doing", meaning: "…するのが好きである" }, { word: "wasn’t", meaning: "was not" }, { word: "weren’t", meaning: "were not" }, { word: "chorus contest", meaning: "合唱コンクール" }, { word: "place", meaning: "順位、立場" }, { word: "practice", meaning: "練習" }, { word: "win", meaning: "…を勝ち取る、獲得する" }, { word: "best", meaning: "［goodの最上級］最もよい" }, { word: "can", meaning: "【可能性】…することがあり得る" }, { word: "make", meaning: "…をする、行う" }
-            ]},
-            "unit10_2": { name: "Unit 10・Part 2", words: [
-                { word: "hey", meaning: "やあ、おい、ちょっと" }, { word: "break", meaning: "休憩" }, { word: "then", meaning: "そのとき（に）" }, { word: "bring", meaning: "…をもたらす" }, { word: "heart", meaning: "心臓、心" }, { word: "beat", meaning: "どきどきする" }, { word: "way", meaning: "道、道筋" }, { word: "each", meaning: "それぞれの、各自の" }, { word: "album", meaning: "アルバム" }, { word: "yesterday", meaning: "昨日（は）" }, { word: "fast", meaning: "速く" }, { word: "bring back", meaning: "…を思い出させる" }, { word: "on one’s way to", meaning: "（…へ行く）途中で" }, { word: "show", meaning: "（…に）～を［…だと］見せる、示す" }, { word: "on", meaning: "【状態】…している最中で、…中で" }, { word: "these", meaning: "これらの" }
-            ]},
-            "unit10_read": { name: "Unit 10・Read and Think", words: [
-                { word: "trip", meaning: "旅行" }, { word: "campground", meaning: "キャンプ場" }, { word: "hot spring", meaning: "温泉" }, { word: "set", meaning: "setの過去形 / …を置く、すえる、配置する" }, { word: "tent", meaning: "テント" }, { word: "main", meaning: "主な、主要な" }, { word: "campfire", meaning: "キャンプファイア" }, { word: "camping", meaning: "キャンプ（生活）" }, { word: "night", meaning: "夜、晩" }, { word: "event", meaning: "出来事、行事" }, { word: "there is", meaning: "…がある［いる］単数" }, { word: "there are", meaning: "…がある［いる］複数" }, { word: "set up", meaning: "…を建てる" }, { word: "there’s", meaning: "there is" }, { word: "isn’t", meaning: "is not" }, { word: "aren’t", meaning: "are not" }, { word: "around", meaning: "…のまわりに、周囲に" }, { word: "lot", meaning: "たいへん、とても" }, { word: "up", meaning: "上へ［に］、上のほうへ、立てて" }
-            ]},
-            "scene6": { name: "Scene 6・Real Life English", words: [
-                { word: "wrong", meaning: "ぐあいが悪い" }, { word: "stomachache", meaning: "胃痛、腹痛" }, { word: "before", meaning: "…の前に［の］" }, { word: "mild", meaning: "穏やかな、強くない、軽い" }, { word: "medicine", meaning: "薬" }, { word: "rest", meaning: "休み、休息" }, { word: "headache", meaning: "頭痛" }, { word: "fever", meaning: "熱" }, { word: "toothache", meaning: "歯痛" }, { word: "doctor", meaning: "医者、医師" }, { word: "What’s wrong?", meaning: "どうかしたのですか。" }, { word: "take a rest", meaning: "ひと休みする" }, { word: "for", meaning: "…として" }, { word: "have", meaning: "…を食べる、飲む" }, { word: "OK", meaning: "よろしい、だいじょうぶ" }, { word: "take", meaning: "（薬・飲み物）を飲む" }
-            ]},
-            "stage_act_3": { name: "Stage Activity 3", words: [
-                { word: "ran", meaning: "runの過去形" }, { word: "relay", meaning: "リレー競走" }, { word: "another", meaning: "ほかの、別の、ちがった" }, { word: "runner", meaning: "走者" }, { word: "behind", meaning: "…の後ろに" }, { word: "sports day", meaning: "運動会" }, { word: "and", meaning: "［同じ語を結んで］ますます、どんどん" }, { word: "just", meaning: "ちょうど、まさに" }
+                { word: "flour", meaning: "小麦粉" },
+                { word: "cabbage", meaning: "キャベツ" },
+                { word: "crispy", meaning: "カリカリした" },
+                { word: "tasty", meaning: "おいしい、味がよい" },
+                { word: "easily", meaning: "簡単に、楽に、すぐに" },
+                { word: "ingredient", meaning: "（料理などの）材料" },
+                { word: "reason", meaning: "理由、根拠" },
+                { word: "of", meaning: "【性質・特徴】…の" }
             ]},
             "lets_read_1a": { name: "Let’s Read 1-A", words: [
-                { word: "naughty", meaning: "いたずらな、わんぱくな" }, { word: "trick", meaning: "いたずら" }, { word: "crept", meaning: "creepの過去形" }, { word: "creep", meaning: "はう、こっそり進む" }, { word: "let", meaning: "…を～の状態にさせる" }, { word: "shout", meaning: "（ …と）叫ぶ" }, { word: "escape", meaning: "（…から）逃げる" }, { word: "later", meaning: "もっと遅く、あとで" }, { word: "thought", meaning: "thinkの過去形" }, { word: "die", meaning: "死ぬ" }, { word: "alone", meaning: "ひとりだけの、ただ…だけ" }, { word: "out", meaning: "外へ［に］、外出して" }, { word: "one day", meaning: "ある日" }, { word: "be full of", meaning: "…でいっぱいである" }, { word: "out of", meaning: "…から（外へ）" }, { word: "in", meaning: "【着用】…を身につけて、…を着て" }, { word: "little", meaning: "小さい、かわいい" }, { word: "one", meaning: "［時を表す名詞の前に用いて］ある…" }, { word: "play", meaning: "（いたずらなど）をする" }, { word: "think", meaning: "…だと思う" }, { word: "up", meaning: "近づいて" }
+                { word: "check", meaning: "…を調べる、チェックする" },
+                { word: "however", meaning: "しかしながら、けれども" },
+                { word: "easy", meaning: "やさしい、簡単な" },
+                { word: "ago", meaning: "（今から）…前に" },
+                { word: "timekeeping", meaning: "時間の計測" },
+                { word: "ancient", meaning: "古代の" },
+                { word: "Egyptian", meaning: "エジプト人" },
+                { word: "put", meaning: "putの過去形" },
+                { word: "put", meaning: "…を置く、入れる、つける" },
+                { word: "stick", meaning: "棒" },
+                { word: "shadow", meaning: "影" },
+                { word: "told", meaning: "tellの過去形" },
+                { word: "long ago", meaning: "ずっと前に" },
+                { word: "some of", meaning: "…のうちいくつか［いく人か］" },
+                { word: "about", meaning: "およそ、約、…ごろ" },
+                { word: "long", meaning: "長い間、ずっと" },
+                { word: "some", meaning: "いくらか、多少、少し、数人" }
             ]},
             "lets_read_1b": { name: "Let’s Read 1-B", words: [
-                { word: "took", meaning: "takeの過去形" }, { word: "vendor", meaning: "（屋台の）もの売り、行商人" }, { word: "cart", meaning: "カート、手押し車" }, { word: "left", meaning: "leaveの過去形" }, { word: "leave", meaning: "…を置いていく" }, { word: "brought", meaning: "bringの過去形" }, { word: "chestnut", meaning: "クリ" }, { word: "heard", meaning: "hearの過去形" }, { word: "hear", meaning: "…が聞こえる、…を聞く" }, { word: "something", meaning: "何か、あるもの" }, { word: "himself", meaning: "彼自身を［に］" }, { word: "neighbor", meaning: "近所の人、隣人" }, { word: "receive", meaning: "…を受け取る" }, { word: "someone", meaning: "だれか、ある人" }, { word: "thing", meaning: "もの、こと" }, { word: "god", meaning: "神" }, { word: "say to oneself", meaning: "…とひとり言を言う" }, { word: "bring", meaning: "（～に）…を持ってくる、…を連れてくる" }, { word: "take", meaning: "…を（手に）取る、…を持っていく、連れていく" }
+                { word: "measure", meaning: "…をはかる" },
+                { word: "without", meaning: "…なしで［に］" },
+                { word: "pot", meaning: "つぼ、かめ" },
+                { word: "hole", meaning: "穴" },
+                { word: "decrease", meaning: "減る、減少する" },
+                { word: "line", meaning: "線、電線、路線" },
+                { word: "fire", meaning: "火、炎" },
+                { word: "burn", meaning: "…を燃やす" },
+                { word: "candle", meaning: "ろうそく" },
+                { word: "gave", meaning: "giveの過去形" },
+                { word: "give", meaning: "（～に）…を与える、渡す、もたらす" },
+                { word: "at night", meaning: "夜に（は）" },
+                { word: "little by little", meaning: "少しずつ" },
+                { word: "could", meaning: "canの過去形。【能力・可能】…することができた" },
+                { word: "little", meaning: "［little by littleで］少しずつ" },
+                { word: "other", meaning: "ほかの、別の" }
             ]},
             "lets_read_1c": { name: "Let’s Read 1-C", words: [
-                { word: "through", meaning: "【貫通】…を通り抜けて" }, { word: "door", meaning: "ドア、戸" }, { word: "into", meaning: "【運動・方向】…の中へ［に］" }, { word: "pick", meaning: "［pick upで］…を拾い上げる、手に取る" }, { word: "gun", meaning: "銃" }, { word: "bang", meaning: "バン、ズドン、バタン、ドン" }, { word: "ground", meaning: "地面、土地" }, { word: "fresh", meaning: "新鮮な" }, { word: "floor", meaning: "床" }, { word: "nod", meaning: "うなずく" }, { word: "weakly", meaning: "弱く、弱々しく" }, { word: "drop", meaning: "…を落とす" }, { word: "smoke", meaning: "煙" }, { word: "rose", meaning: "riseの過去形" }, { word: "rise", meaning: "のぼる、上がる、上昇する" }, { word: "look up", meaning: "視線を上げる、見上げる" }, { word: "pick up", meaning: "…を拾い上げる、手に取る" }
+                { word: "mechanical", meaning: "機械の" },
+                { word: "weight", meaning: "重いもの、おもり" },
+                { word: "power", meaning: "…に動力を供給する、…を動力で動かす" },
+                { word: "hour", meaning: "時刻" },
+                { word: "bell", meaning: "ベルや鈴、かね（の音）" },
+                { word: "heavy", meaning: "重い" },
+                { word: "move", meaning: "…を動かす" },
+                { word: "improve", meaning: "…を改善する、上達させる" },
+                { word: "light", meaning: "軽い" },
+                { word: "eventually", meaning: "最後には、ようやく" },
+                { word: "began", meaning: "beginの過去形" },
+                { word: "begin", meaning: "…を始める" },
+                { word: "carry", meaning: "…を（持ち）運ぶ、…を持っていく" },
+                { word: "begin to", meaning: "…し始める" },
+                { word: "spring", meaning: "ばね、ぜんまい" }
             ]},
-            "room1": { name: "Word Room 1", words: [
-                { word: "tired", meaning: "疲れた" }, { word: "sleepy", meaning: "眠い" }, { word: "hungry", meaning: "空腹の、飢えた" }, { word: "thirsty", meaning: "のどのかわいた" }, { word: "weather", meaning: "天気、天候" }, { word: "sunny", meaning: "日の当たる、晴れた" }, { word: "cloudy", meaning: "くもった" }, { word: "windy", meaning: "風の吹く、風の強い" }, { word: "snowy", meaning: "雪の降る" }, { word: "warm", meaning: "あたたかい" }, { word: "cold", meaning: "冷たい、寒い" }, { word: "humid", meaning: "湿った、湿気の多い" }, { word: "stand", meaning: "立つ、立っている" }, { word: "stand up", meaning: "立ち上がる" }, { word: "sit", meaning: "すわる、すわっている" }, { word: "sit down", meaning: "すわる" }, { word: "raise", meaning: "…を上げる" }, { word: "pair", meaning: "1対、1組、ペア" }, { word: "repeat", meaning: "くり返し言う、くり返す" }, { word: "quiet", meaning: "静かな" }, { word: "good", meaning: "元気な、健康な" }, { word: "in", meaning: "【方法・道具・材料】…で、…を使って" }, { word: "up", meaning: "起立して、起きて" }
+            "lets_read_1d": { name: "Let’s Read 1-D", words: [
+                { word: "type", meaning: "タイプ、種類" },
+                { word: "result", meaning: "結果" },
+                { word: "invention", meaning: "発明、発明品" },
+                { word: "effort", meaning: "努力" },
+                { word: "even", meaning: "…でさえ" },
+                { word: "recognize", meaning: "（見たり聞いたりして）…とわかる、…を認識する" },
+                { word: "idea", meaning: "考え、アイディア" },
+                { word: "technology", meaning: "（科学）技術、テクノロジー" },
+                { word: "wisdom", meaning: "知恵、英知" },
+                { word: "it is time to", meaning: "…すべき時である" },
+                { word: "great", meaning: "偉大な、すぐれた" },
+                { word: "improve", meaning: "よくなる、進歩する" },
+                { word: "now", meaning: "さて、ところで、さあ" }
             ]},
-            "room2": { name: "Word Room 2", words: [
-                { word: "color", meaning: "色、色彩" }, { word: "shape", meaning: "形" }, { word: "orange", meaning: "オレンジ（色の）" }, { word: "yellow", meaning: "黄色（い）" }, { word: "pink", meaning: "ピンク（色の）" }, { word: "purple", meaning: "紫（色の）" }, { word: "circle", meaning: "円、丸" }, { word: "square", meaning: "正方形" }, { word: "triangle", meaning: "三角形" }, { word: "rectangle", meaning: "長方形" }
+            "unit4_1": { name: "Unit 4・Part 1", words: [
+                { word: "homestay", meaning: "ホームステイ" },
+                { word: "advice", meaning: "忠告、助言" },
+                { word: "member", meaning: "一員、メンバー" },
+                { word: "guest", meaning: "客、泊まり客" },
+                { word: "follow", meaning: "…に従う、…を守る" },
+                { word: "rule", meaning: "規則、ルール" },
+                { word: "host", meaning: "（招待した客をもてなす）主人（役）" },
+                { word: "perfect", meaning: "完全な、完ぺきな、最適な" },
+                { word: "have to", meaning: "…しなければならない" },
+                { word: "host family", meaning: "ホストファミリー［ホームステイ先の家族］" },
+                { word: "ask", meaning: "（…を［に］）たずねる、質問する" }
             ]},
-            "room3": { name: "Word Room 3", words: [
-                { word: "spring", meaning: "春" }, { word: "autumn", meaning: "秋" }, { word: "Dolls' Festival", meaning: "ひな祭り" }, { word: "Children's Day", meaning: "こどもの日" }, { word: "Star Festival", meaning: "七夕祭り" }, { word: "Firework", meaning: "花火" }, { word: "Festival", meaning: "祭り、催し物" }, { word: "Halloween", meaning: "ハロウィーン" }, { word: "Christmas", meaning: "クリスマス" }
+            "unit4_2": { name: "Unit 4・Part 2", words: [
+                { word: "must", meaning: "…しなければならない" },
+                { word: "shower", meaning: "シャワー" },
+                { word: "limit", meaning: "限界、限度、制限" },
+                { word: "must not", meaning: "…してはいけない" },
+                { word: "by", meaning: "【時間】…までに" },
+                { word: "save", meaning: "…を節約する" }
             ]},
-            "room4": { name: "Word Room 4", words: [
-                { word: "bread", meaning: "パン、食パン" }, { word: "sandwich", meaning: "サンドイッチ" }, { word: "pizza", meaning: "ピザ" }, { word: "hamburger", meaning: "ハンバーガー" }, { word: "donut", meaning: "ドーナツ" }, { word: "rice ball", meaning: "おにぎり" }, { word: "pancake", meaning: "パンケーキ、ホットケーキ" }, { word: "hot dog", meaning: "ホットドッグ" }, { word: "French fries", meaning: "フライドポテト" }, { word: "fried chicken", meaning: "フライドチキン" }, { word: "sausage", meaning: "ソーセージ" }, { word: "omelet", meaning: "オムレツ" }, { word: "spaghetti", meaning: "スパゲッティ" }, { word: "coffee", meaning: "コーヒー" }, { word: "soda", meaning: "ソーダ、炭酸飲料" }, { word: "parfait", meaning: "パフェ" }, { word: "ice cream", meaning: "アイスクリーム" }, { word: "shaved ice", meaning: "かき氷" }, { word: "chocolate", meaning: "チョコレート" }, { word: "drink", meaning: "飲み物" }
+            "unit4_read1": { name: "Unit 4・Read and Think 1", words: [
+                { word: "elderly", meaning: "年配の" },
+                { word: "couple", meaning: "夫婦" },
+                { word: "living room", meaning: "居間、リビングルーム" },
+                { word: "finish", meaning: "…を終える" },
+                { word: "nothing", meaning: "何も…ない" },
+                { word: "should", meaning: "…すべきである" },
+                { word: "plate", meaning: "（浅い）取り皿" },
+                { word: "hurt", meaning: "…を傷つける" },
+                { word: "feeling", meaning: "感情、気持ち" },
+                { word: "go to bed", meaning: "床につく、寝る" },
+                { word: "after", meaning: "…したあとで" },
+                { word: "much", meaning: "［数えられない名詞につけて］多くの、多量の" },
+                { word: "much", meaning: "多量、たくさん" }
             ]},
-            "room5": { name: "Word Room 5", words: [
-                { word: "vegetable", meaning: "野菜" }, { word: "banana", meaning: "バナナ" }, { word: "grape", meaning: "ブドウ" }, { word: "kiwi fruit", meaning: "キウイフルーツ" }, { word: "lemon", meaning: "レモン" }, { word: "melon", meaning: "メロン" }, { word: "potato", meaning: "ジャガイモ" }, { word: "tomato", meaning: "トマト" }, { word: "lettuce", meaning: "レタス" }, { word: "onion", meaning: "タマネギ" }, { word: "pineapple", meaning: "パイナップル" }, { word: "strawberry", meaning: "イチゴ" }, { word: "watermelon", meaning: "スイカ" }, { word: "corn", meaning: "トウモロコシ" }, { word: "pork", meaning: "豚肉" }, { word: "bacon", meaning: "ベーコン" }, { word: "ham", meaning: "ハム" }, { word: "orange", meaning: "オレンジ" }
+            "unit4_read2": { name: "Unit 4・Read and Think 2", words: [
+                { word: "answer", meaning: "…に答える" },
+                { word: "enter", meaning: "（場所）に入る" },
+                { word: "explain", meaning: "…を説明する" },
+                { word: "felt", meaning: "feelの過去分詞" },
+                { word: "feel", meaning: "…と感じる、気持ちがする" },
+                { word: "end", meaning: "（期間、行為などの）終わり、最後" },
+                { word: "kept", meaning: "keepの過去形" },
+                { word: "keep", meaning: "［keep ...ingで］…し続ける" },
+                { word: "carefully", meaning: "注意深く" },
+                { word: "take off", meaning: "（服など）を脱ぐ" },
+                { word: "feel like ing", meaning: "…したい気がする" },
+                { word: "in the end", meaning: "結局" },
+                { word: "each other", meaning: "たがい（に）" },
+                { word: "keep ing", meaning: "…し続ける" },
+                { word: "in the future", meaning: "未来に、将来に" },
+                { word: "listen to", meaning: "…を聞く" },
+                { word: "felt", meaning: "feelの過去形" },
+                { word: "get", meaning: "着く、到着する" },
+                { word: "near", meaning: "近い、近くの" },
+                { word: "off", meaning: "脱いで" },
+                { word: "other", meaning: "別の人［もの］、ほかの人［もの］" }
             ]},
-            "room6": { name: "Word Room 6", words: [
-                { word: "panda", meaning: "（ジャイアント）パンダ" }, { word: "bear", meaning: "クマ" }, { word: "elephant", meaning: "ゾウ" }, { word: "tiger", meaning: "トラ" }, { word: "lion", meaning: "ライオン" }, { word: "zebra", meaning: "シマウマ" }, { word: "giraffe", meaning: "キリン" }, { word: "camel", meaning: "ラクダ" }, { word: "frog", meaning: "カエル" }, { word: "whale", meaning: "クジラ" }, { word: "penguin", meaning: "ペンギン" }, { word: "sea turtle", meaning: "ウミガメ" }, { word: "shark", meaning: "サメ、フカ" }, { word: "ant", meaning: "アリ" }, { word: "butterfly", meaning: "チョウ" }, { word: "spider", meaning: "クモ" }
+            "scene4": { name: "Scene 4・Real Life English", words: [
+                { word: "Mrs.", meaning: "［結婚している女性をさして］…さん、先生" },
+                { word: "precious", meaning: "貴重な、大切な" },
+                { word: "able", meaning: "［be able toで］ …することができる" },
+                { word: "be able to", meaning: "…することができる" },
+                { word: "Best wishes,", meaning: "それでは。［手紙の結びの言葉］" },
+                { word: "wish", meaning: "祝福の言葉、祈り" }
             ]},
-            "room7": { name: "Word Room 7", words: [
-                { word: "forest", meaning: "森、森林" }, { word: "volleyball", meaning: "バレーボール" }, { word: "softball", meaning: "ソフトボール" }, { word: "dodgeball", meaning: "ドッジボール" }, { word: "table tennis", meaning: "卓球" }, { word: "badminton", meaning: "バドミントン" }, { word: "track and field", meaning: "陸上競技" }, { word: "skiing", meaning: "スキー" }, { word: "dance", meaning: "ダンス、おどり" }
+            "unit5_1": { name: "Unit 5・Part 1", words: [
+                { word: "universal", meaning: "全ての人々の" },
+                { word: "design", meaning: "デザイン" },
+                { word: "fair", meaning: "博覧会、フェア" },
+                { word: "bottle", meaning: "びん、ボトル" },
+                { word: "automatic", meaning: "（機械などが）自動式の、機械的な、無意識の" },
+                { word: "adjustable", meaning: "調節可能な" },
+                { word: "public", meaning: "公の、公共の" },
+                { word: "touch", meaning: "…にさわる、ふれる" },
+                { word: "product", meaning: "製品" },
+                { word: "facility", meaning: "施設、設備" },
+                { word: "city hall", meaning: "市役所" },
+                { word: "how to", meaning: "…する方法、どう…するか" },
+                { word: "to", meaning: "【疑問詞 ＋ 不定詞】…すべきか、…したらよいか、…のやり方" }
             ]},
-            "room8": { name: "Word Room 8", words: [
-                { word: "piano", meaning: "ピアノ" }, { word: "violin", meaning: "バイオリン" }, { word: "guitar", meaning: "ギター" }, { word: "recorder", meaning: "リコーダー" }, { word: "harmonica", meaning: "ハーモニカ" }, { word: "drum", meaning: "ドラム、たいこ" }, { word: "triangle", meaning: "トライアングル" }
+            "unit5_2": { name: "Unit 5・Part 2", words: [
+                { word: "staff", meaning: "職員、従業員" },
+                { word: "tap", meaning: "…を軽くたたく、トントン［コツコツ］たたく" },
+                { word: "castanets", meaning: "［複数あつかい］カスタネット" },
+                { word: "both", meaning: "［both ... and ～で］…も～も両方" },
+                { word: "left-handed", meaning: "左利きの、左利き用の" },
+                { word: "right-handed", meaning: "右利きの、右利き用の" },
+                { word: "over here", meaning: "こちらに、こちらでは" },
+                { word: "thanks to", meaning: "…のおかげで" },
+                { word: "over", meaning: "向こうへ、あちらへ、こちらへ" },
+                { word: "paper", meaning: "紙、用紙" }
             ]},
-            "room9": { name: "Word Room 9", words: [
-                { word: "stationery", meaning: "文房具" }, { word: "computer", meaning: "コンピュータ" }, { word: "smartphone", meaning: "スマートフォン" }, { word: "chair", meaning: "いす" }, { word: "racket", meaning: "ラケット" }, { word: "glass", meaning: "コップ、グラス" }, { word: "dictionary", meaning: "辞書" }, { word: "present", meaning: "プレゼント" }, { word: "camera", meaning: "カメラ" }, { word: "crayon", meaning: "クレヨン" }, { word: "marker", meaning: "マーカー（ペン）" }, { word: "pencil", meaning: "えんぴつ" }, { word: "pencil case", meaning: "筆箱" }, { word: "eraser", meaning: "消しゴム" }, { word: "ruler", meaning: "定規" }, { word: "scissors", meaning: "［複数あつかい］はさみ" }, { word: "stapler", meaning: "ホッチキス" }, { word: "shirt", meaning: "シャツ" }, { word: "sweatshirt", meaning: "スウェットシャツ、トレーナー" }, { word: "sweater", meaning: "セーター" }, { word: "pants", meaning: "［複数あつかい］ズボン" }, { word: "jeans", meaning: "［複数あつかい］ジーンズ、ジーパン" }, { word: "glove", meaning: "てぶくろ、グローブ" }, { word: "sock", meaning: "［ふつうsocksで］靴下、ソックス" }, { word: "shoe", meaning: "くつ" }, { word: "tablet", meaning: "タブレット型コンピュータ" }, { word: "watch", meaning: "腕時計、懐中時計" }
+            "unit5_read1": { name: "Unit 5・Read and Think 1", words: [
+                { word: "useful", meaning: "役に立つ、有用な" },
+                { word: "sign", meaning: "標識、看板、掲示" },
+                { word: "young", meaning: "若い、幼い" },
+                { word: "ramp", meaning: "スロープ" },
+                { word: "stair", meaning: "［stairsで］階段" },
+                { word: "wheelchair", meaning: "車いす" },
+                { word: "pull", meaning: "…をひく、ひっぱる" },
+                { word: "baggage", meaning: "（旅行者の）手荷物" },
+                { word: "baby", meaning: "赤ん坊" },
+                { word: "presentation", meaning: "発表、プレゼンテーション" },
+                { word: "next", meaning: "次に、今度は" },
+                { word: "sure", meaning: "確信して" },
+                { word: "that", meaning: "…ということ" },
+                { word: "the", meaning: "［形容詞につけて］…な［の］人々 the elderly お年寄り" },
+                { word: "this", meaning: "今述べたこと、次に述べること" }
             ]},
-            "room10": { name: "Word Room 10", words: [
-                { word: "entrance", meaning: "玄関、入り口" }, { word: "restroom", meaning: "手洗い、トイレ" }, { word: "office", meaning: "事務所、役所" }, { word: "teachers’ office", meaning: "職員室" }, { word: "principal's office", meaning: "校長室" }, { word: "nurse's office", meaning: "保健室" }
+            "unit5_read2": { name: "Unit 5・Read and Think 2", words: [
+                { word: "American", meaning: "アメリカの、アメリカ人の" },
+                { word: "professor", meaning: "教授" },
+                { word: "childhood", meaning: "子供のころ" },
+                { word: "remove", meaning: "…を取り除く" },
+                { word: "barrier", meaning: "壁、障壁" },
+                { word: "disabled", meaning: "体の不自由な" },
+                { word: "regardless", meaning: "何があっても、とにかく、（困難・忠告などに）おかまいなしに" },
+                { word: "ability", meaning: "（…する）能力、…できること、才能" },
+                { word: "situation", meaning: "立場、境遇、状況、情勢、場面" },
+                { word: "found", meaning: "…を創立する" },
+                { word: "center", meaning: "（活動などの）中心地、センター" },
+                { word: "spread", meaning: "spreadの過去形" },
+                { word: "spread", meaning: "…を広げる、広める" },
+                { word: "accessible", meaning: "（…にとって）使いやすい、（…にとって）行きやすい" },
+                { word: "1970s", meaning: "（1970）年代" },
+                { word: "regardless of", meaning: "…にかかわらず" },
+                { word: "father", meaning: "［the ～～～ ofで］…の創始者、生みの親" }
             ]},
-            "room11": { name: "Word Room 11", words: [
-                { word: "social studies", meaning: "社会科" }, { word: "science", meaning: "科学、理科" }, { word: "home economics", meaning: "家庭科" }, { word: "moral education", meaning: "道徳" }, { word: "school trip", meaning: "修学旅行" }, { word: "school festival", meaning: "文化祭" }, { word: "field trip", meaning: "校外見学、遠足" }, { word: "drama", meaning: "劇" }, { word: "swimming meet", meaning: "水泳大会" }, { word: "entrance ceremony", meaning: "入学式" }, { word: "graduation ceremony", meaning: "卒業式" }
+            "unit6_1": { name: "Unit 6・Part 1", words: [
+                { word: "trivia", meaning: "雑学的な知識" },
+                { word: "quiz", meaning: "クイズ" },
+                { word: "court", meaning: "（テニス・バレーボールなどの）コート" },
+                { word: "than", meaning: "…よりも" }
             ]},
-            "room12": { name: "Word Room 12", words: [
-                { word: "activity", meaning: "活動" }, { word: "brass band", meaning: "ブラスバンド、吹奏楽団" }, { word: "newspaper", meaning: "新聞" }, { word: "bus stop", meaning: "バス停" }, { word: "police station", meaning: "警察署" }, { word: "fire station", meaning: "消防署" }, { word: "bookstore", meaning: "書店" }, { word: "supermarket", meaning: "スーパーマーケット" }, { word: "temple", meaning: "寺" }, { word: "stadium", meaning: "スタジアム、競技場" }, { word: "bus", meaning: "バス" }, { word: "taxi", meaning: "タクシー" }, { word: "job", meaning: "職、仕事" }, { word: "comedian", meaning: "コメディアン" }, { word: "artist", meaning: "芸術家、芸能人" }, { word: "writer", meaning: "筆者、作家" }, { word: "nurse", meaning: "看護師" }, { word: "vet", meaning: "獣医" }, { word: "baker", meaning: "パン焼き職人" }, { word: "farmer", meaning: "農場主" }, { word: "police officer", meaning: "警察官" }, { word: "fire fighter", meaning: "消防士" }, { word: "pilot", meaning: "パイロット" }, { word: "astronaut", meaning: "宇宙飛行士" }, { word: "researcher", meaning: "研究者" }, { word: "scientist", meaning: "科学者" }, { word: "flight attendant", meaning: "（飛行機の）客室乗務員" }, { word: "driver", meaning: "運転手" }
+            "unit6_2": { name: "Unit 6・Part 2", words: [
+                { word: "survey", meaning: "調査" },
+                { word: "curling", meaning: "カーリング" },
+                { word: "more", meaning: "［比較級を作る］（～より）もっと…" },
+                { word: "strategy", meaning: "戦略、作戦、計画、対策" },
+                { word: "skill", meaning: "腕前、技術" },
+                { word: "most", meaning: "［最上級を作る］いちばん…、最も…" },
+                { word: "answer", meaning: "答え、返事" }
             ]},
-            "room13": { name: "Word Room 13", words: [
-                { word: "classmate", meaning: "同級生" }, { word: "grandmother", meaning: "祖母" }, { word: "grandfather", meaning: "祖父" }, { word: "aunt", meaning: "おば、おばさん" }, { word: "uncle", meaning: "おじ、おじさん" }, { word: "body", meaning: "体" }, { word: "hair", meaning: "髪" }, { word: "head", meaning: "頭" }, { word: "face", meaning: "顔" }, { word: "shoulder", meaning: "肩" }, { word: "arm", meaning: "腕" }, { word: "knee", meaning: "ひざ" }, { word: "eye", meaning: "目" }, { word: "ear", meaning: "耳" }, { word: "mouth", meaning: "口" }, { word: "tooth", meaning: "歯" }, { word: "teeth", meaning: "toothの複数形" }, { word: "neck", meaning: "首" }, { word: "leg", meaning: "脚" }, { word: "toe", meaning: "足の指" }
+            "unit6_read1": { name: "Unit 6・Read and Think 1", words: [
+                { word: "graph", meaning: "グラフ、図表" },
+                { word: "according", meaning: "［according toで］…によれば" },
+                { word: "percent", meaning: "パーセント" },
+                { word: "such", meaning: "そのような、このような" },
+                { word: "conclusion", meaning: "結論、決定、結末、結び" },
+                { word: "half", meaning: "半分、2分の1" },
+                { word: "better", meaning: "［well、very muchの比較級］よりよく、より以上に" },
+                { word: "according to", meaning: "…によれば" },
+                { word: "as for", meaning: "…について言えば" },
+                { word: "such as ～", meaning: "～のような…" },
+                { word: "in conclusion", meaning: "最後に、結論として" },
+                { word: "more than", meaning: "…より多くの人［もの、こと］" },
+                { word: "as", meaning: "…のような" },
+                { word: "best", meaning: "［well、very muchの最上級］最もよく、いちばん（うまく）" },
+                { word: "find", meaning: "…に気がつく、…がわかる" },
+                { word: "for", meaning: "【関連】…については" },
+                { word: "more", meaning: "［many、muchの比較級］もっと多くの" },
+                { word: "then", meaning: "それから、その次に" },
+                { word: "yes", meaning: "賛成" }
             ]},
-            "room14": { name: "Word Room 14", words: [
-                { word: "spell", meaning: "（語）をつづる" }, { word: "listen", meaning: "聞く、耳を傾ける" }, { word: "catch", meaning: "…を捕まえる、…をとらえる" }, { word: "fly", meaning: "飛ぶ" }, { word: "ride", meaning: "…に乗る、乗っていく" }, { word: "save", meaning: "…を救う" }, { word: "dance", meaning: "おどる、ダンスをする" }, { word: "cookie", meaning: "クッキー" }, { word: "skate", meaning: "スケートをする" }, { word: "high", meaning: "高く" }, { word: "dancing", meaning: "おどり、ダンス" }, { word: "fishing", meaning: "（魚）つり" }, { word: "hiking", meaning: "ハイキング" }, { word: "shopping", meaning: "買い物" }, { word: "reading", meaning: "読書、読むこと" }, { word: "wake", meaning: "目が覚める" }, { word: "wake up", meaning: "目が覚める、目を覚ます" }, { word: "get up", meaning: "起きる、起床する" }, { word: "wash", meaning: "（ …を）洗う" }, { word: "comb", meaning: "（髪）をくしでとかす" }, { word: "breakfast", meaning: "朝食" }, { word: "brush", meaning: "…をみがく" }, { word: "garbage", meaning: "生ごみ、ごみ" }, { word: "dinner", meaning: "夕食、ディナー" }, { word: "dish", meaning: "皿" }, { word: "get", meaning: "（ある状態）になる" }, { word: "home", meaning: "家に［へ］" }, { word: "walk", meaning: "（イヌなど）を歩かせる、散歩させる" }
+            "unit6_read2": { name: "Unit 6・Read and Think 2", words: [
+                { word: "as", meaning: "【比較】～と同じくらい…［ふつうas ... as ～の形で用いられる。前のasは副詞］" },
+                { word: "feedback", meaning: "意見、フィードバック" },
+                { word: "speaker", meaning: "話す人、演説者" },
+                { word: "content", meaning: "中身、内容" },
+                { word: "delivery", meaning: "話しぶり" },
+                { word: "clear", meaning: "はっきりした" },
+                { word: "contact", meaning: "接触" },
+                { word: "comment", meaning: "批評、コメント" },
+                { word: "topic", meaning: "話題、トピック" },
+                { word: "spoke", meaning: "speak の過去形" },
+                { word: "data", meaning: "資料、データ" },
+                { word: "slide", meaning: "（プレゼンテーション用の）スライド" },
+                { word: "letter", meaning: "文字" },
+                { word: "eye contact", meaning: "視線を合わすこと、アイコンタクト" },
+                { word: "work", meaning: "仕事、職" }
             ]},
-            "room15": { name: "Word Room 15", words: [
-                { word: "never", meaning: "決して…ない" }, { word: "delicious", meaning: "とてもおいしい" }, { word: "low", meaning: "（高さ・位置などが）低い" }, { word: "short", meaning: "（時間・長さ・距離が）短い" }, { word: "slow", meaning: "遅い" }, { word: "active", meaning: "活動的な" }, { word: "shy", meaning: "内気な、恥ずかしがりの" }, { word: "smart", meaning: "りこうな、頭のいい、抜け目のない" }, { word: "bitter", meaning: "苦い" }, { word: "salty", meaning: "塩気のある、塩からい" }, { word: "sour", meaning: "酸っぱい" }, { word: "spicy", meaning: "香辛料のきいた、香ばしい" }, { word: "soft", meaning: "やわらかい" }, { word: "fast", meaning: "速い" }, { word: "hard", meaning: "かたい" }, { word: "high", meaning: "高い" }, { word: "old", meaning: "古い" }, { word: "sweet", meaning: "甘い" }
+            "scene6": { name: "Scene 6・Real Life English 6", words: [
+                { word: "goodbye", meaning: "さようなら" },
+                { word: "shall", meaning: "【提案・勧誘】［相手の意思をたずねて］Shall I ［we］...? …しましょうか。" },
+                { word: "direction", meaning: "方向、方角" },
+                { word: "change trains", meaning: "電車を乗りかえる" },
+                { word: "get to", meaning: "…に着く、到着する" },
+                { word: "change", meaning: "（電車など）を乗りかえる" },
+                { word: "stop", meaning: "停留所、駅" },
+                { word: "take", meaning: "（乗り物など）に乗る" },
+                { word: "which", meaning: "どちらの、どの" }
+            ]},
+            "stage_act_2": { name: "Stage Activity 2", words: [
+                { word: "artificial", meaning: "人工の、人工的な、人造の" },
+                { word: "turf", meaning: "芝、芝地" },
+                { word: "field", meaning: "競技場、（陸上競技の）フィールド" },
+                { word: "video", meaning: "映像、動画" },
+                { word: "unique", meaning: "特有の、独特な、ただ一つの、唯一の" },
+                { word: "almost", meaning: "ほとんど" },
+                { word: "belong", meaning: "［belong toで］…に所属する" },
+                { word: "clean up", meaning: "きれいにそうじする" },
+                { word: "letter", meaning: "手紙" },
+                { word: "up", meaning: "すっかり、完全に" }
+            ]},
+            "lets_read_2a": { name: "Let’s Read 2-A", words: [
+                { word: "once", meaning: "かつて、以前、昔" },
+                { word: "poor", meaning: "貧しい、かわいそうな" },
+                { word: "rich", meaning: "金持ちの、裕福な" },
+                { word: "sell", meaning: "…を売る" },
+                { word: "candy", meaning: "キャンディー、砂糖菓子" },
+                { word: "door-to-door", meaning: "戸別に、1 軒ずつ" },
+                { word: "earn", meaning: "…をかせぐ" },
+                { word: "few", meaning: "少しの" },
+                { word: "coin", meaning: "硬貨、コイン" },
+                { word: "knock", meaning: "ノックする、コツコツたたく" },
+                { word: "well-off", meaning: "裕福な" },
+                { word: "herself", meaning: "彼女自身、自ら" },
+                { word: "a glass of", meaning: "コップ1杯（の量）の" },
+                { word: "a few", meaning: "少数の、いくらかの" },
+                { word: "be about to", meaning: "今にも…しようとしている" },
+                { word: "about", meaning: "今にも…しかけていて" },
+                { word: "sorry", meaning: "気の毒で、かわいそうで" }
+            ]},
+            "lets_read_2b": { name: "Let’s Read 2-B", words: [
+                { word: "pocket", meaning: "ポケット" },
+                { word: "reply", meaning: "…と答える" },
+                { word: "pay", meaning: "（代金などを）払う" },
+                { word: "kindness", meaning: "親切、親切な行為" },
+                { word: "away", meaning: "はなれて、去って" },
+                { word: "wonder", meaning: "思いをめぐらす" },
+                { word: "hope", meaning: "…を望む、…だとよいと思う" },
+                { word: "with a smile", meaning: "にっこり笑って" },
+                { word: "do well", meaning: "順調にやる、元気になる" },
+                { word: "and", meaning: "［命令文のあとで］そうすれば" },
+                { word: "before", meaning: "…する前に、…しないうちに" },
+                { word: "before", meaning: "以前に、かつて" },
+                { word: "better", meaning: "［good、wellの比較級］もっとよい、よくなって" },
+                { word: "much", meaning: "［形容詞・副詞の比較級・最上級を強調して］ずっと、はるかに" },
+                { word: "smile", meaning: "ほほえみ、微笑" }
+            ]},
+            "lets_read_2c": { name: "Let’s Read 2-C", words: [
+                { word: "ill", meaning: "病気で、ぐあい［気分］が悪い" },
+                { word: "sent", meaning: "sendの過去形" },
+                { word: "send", meaning: "（…に）～をおくる、（人）を行かせる" },
+                { word: "operation", meaning: "手術" },
+                { word: "woke", meaning: "wakeの過去形" },
+                { word: "alive", meaning: "生きて、生きた状態で" },
+                { word: "envelope", meaning: "封筒" },
+                { word: "bill", meaning: "請求書" },
+                { word: "afraid", meaning: "こわがって" },
+                { word: "inside", meaning: "内側に、内部に" },
+                { word: "paid", meaning: "支払い済みの" },
+                { word: "go by", meaning: "（時間が）過ぎる、通り過ぎる" },
+                { word: "in front of", meaning: "…の前で［に］" },
+                { word: "right away", meaning: "すぐに" },
+                { word: "be afraid to", meaning: "…するのがこわい" },
+                { word: "in full", meaning: "全部" },
+                { word: "here’s", meaning: "here is" },
+                { word: "away", meaning: "［right awayで］すぐに" },
+                { word: "by", meaning: "通り過ぎて" },
+                { word: "full", meaning: "完全" },
+                { word: "old", meaning: "年をとった" },
+                { word: "right", meaning: "ちょうど、すぐに" },
+                { word: "say", meaning: "…と書いてある、示している" }
+            ]},
+            "unit7_1": { name: "Unit 7・Part 1", words: [
+                { word: "select", meaning: "…を選ぶ" },
+                { word: "heritage", meaning: "（文化的な）遺産" },
+                { word: "site", meaning: "遺跡" },
+                { word: "natural", meaning: "自然の" },
+                { word: "cultural", meaning: "文化の" },
+                { word: "mixed", meaning: "混合した" },
+                { word: "selection", meaning: "選択" },
+                { word: "standard", meaning: "基準" },
+                { word: "decide", meaning: "…を決める" },
+                { word: "general", meaning: "一般的な、総合的な、全般的な" },
+                { word: "conference", meaning: "会議、評議会" }
+            ]},
+            "unit7_2": { name: "Unit 7・Part 2", words: [
+                { word: "fantastic", meaning: "すばらしい、すてきな" },
+                { word: "hometown", meaning: "故郷" },
+                { word: "floral", meaning: "花の" },
+                { word: "region", meaning: "地方、地域" },
+                { word: "known", meaning: "knowの過去分詞" },
+                { word: "plant", meaning: "植物" },
+                { word: "diversity", meaning: "（…の）多様性、相違（点）" },
+                { word: "species", meaning: "（生物学上の）種［複数形もspecies］" },
+                { word: "found", meaning: "findの過去分詞" },
+                { word: "more than", meaning: "…より多い" }
+            ]},
+            "unit7_read1": { name: "Unit 7・Read and Think 1", words: [
+                { word: "built", meaning: "buildの過去分詞" },
+                { word: "emperor", meaning: "皇帝" },
+                { word: "wife", meaning: "妻" },
+                { word: "architecture", meaning: "建築、建築学、建築様式" },
+                { word: "cover", meaning: "…をおおう、包む" },
+                { word: "marble", meaning: "大理石" },
+                { word: "jewel", meaning: "宝石" },
+                { word: "material", meaning: "原料、材料、（服などの）生地" },
+                { word: "pollution", meaning: "汚染、汚れ、（汚染による）公害、汚染物質" },
+                { word: "government", meaning: "政府" },
+                { word: "protect", meaning: "…を守る、保護する" },
+                { word: "in memory of", meaning: "…を記念して" },
+                { word: "from far away", meaning: "遠くから" },
+                { word: "because of", meaning: "…のために" },
+                { word: "by", meaning: "【動作主】…によって［主に受け身の文で］" },
+                { word: "face", meaning: "…に直面する" },
+                { word: "of", meaning: "【原因・動機】…のため、…で" },
+                { word: "turn", meaning: "（…に）なる、変わる" }
+            ]},
+            "unit7_read2": { name: "Unit 7・Read and Think 2", words: [
+                { word: "list", meaning: "…を（文化財のリストに）載せる" },
+                { word: "seen", meaning: "seeの過去分詞" },
+                { word: "tourist", meaning: "観光客、旅行者" },
+                { word: "climb", meaning: "…に［を］のぼる" },
+                { word: "sunrise", meaning: "日の出" },
+                { word: "cloud", meaning: "雲" },
+                { word: "crater", meaning: "噴火口、（隕石の衝突などによる地面の）穴、（月面の）クレーター" },
+                { word: "amount", meaning: "量、額" },
+                { word: "trail", meaning: "（通ってできた）小道" },
+                { word: "recently", meaning: "最近、近ごろ" },
+                { word: "cleanup", meaning: "大そうじ" },
+                { word: "campaign", meaning: "キャンペーン" },
+                { word: "forever", meaning: "永久に、永遠に" },
+                { word: "more and more", meaning: "ますます（多くの）" },
+                { word: "a amount of", meaning: "…の量の～" },
+                { word: "bath", meaning: "ふろ場、浴室、浴槽、湯ぶね" },
+                { word: "be", meaning: "［受け身の形を作る］" },
+                { word: "left", meaning: "leaveの過去分詞" },
+                { word: "of", meaning: "【材料・要素】…で（作った）、…から（成る）" }
+            ]},
+            "scene7": { name: "Scene 7・Real Life English 7", words: [
+                { word: "goods", meaning: "商品、品物" },
+                { word: "size", meaning: "サイズ、寸法" },
+                { word: "price", meaning: "値段" },
+                { word: "medium", meaning: "中くらいの、Mサイズの" },
+                { word: "clerk", meaning: "店員、フロント係" },
+                { word: "customer", meaning: "客、顧客" },
+                { word: "How much", meaning: "…はいくらですか。" },
+                { word: "take", meaning: "…を選ぶ、…を買う" },
+                { word: "under", meaning: "…未満で" }
+            ]},
+            "stage_act_3": { name: "Stage Activity 3", words: [
+                { word: "discussion", meaning: "討論、話し合い" },
+                { word: "chosen", meaning: "chooseの過去分詞" },
+                { word: "tourism", meaning: "観光" },
+                { word: "industry", meaning: "産業、工業、…業" },
+                { word: "develop", meaning: "…を発展させる" },
+                { word: "against", meaning: "…に反対して" },
+                { word: "increase", meaning: "増加" },
+                { word: "cause", meaning: "…の原因となる、…をひき起こす" },
+                { word: "traffic jam", meaning: "交通渋滞" },
+                { word: "pollute", meaning: "（水・空気など）を汚す、汚染する" },
+                { word: "environment", meaning: "環境" },
+                { word: "therefore", meaning: "それゆえに、したがって、だから" },
+                { word: "review", meaning: "…を見直す" },
+                { word: "value", meaning: "価値" },
+                { word: "destroy", meaning: "…を破壊する" },
+                { word: "attract", meaning: "（人）をひきつける" },
+                { word: "possible", meaning: "（物事が）可能な、できる" },
+                { word: "point", meaning: "特徴、論点、ポイント" },
+                { word: "agree", meaning: "賛成する、意見が一致する" },
+                { word: "concern", meaning: "（人）を心配させる" },
+                { word: "crime", meaning: "罪、犯罪" },
+                { word: "due to", meaning: "…のために、…が原因で" },
+                { word: "be afraid of", meaning: "…をおそれる" },
+                { word: "be concerned about", meaning: "…について心配する［心配になる］" },
+                { word: "for", meaning: "【支持】…に賛成して" },
+                { word: "may", meaning: "【推量】…かもしれない、（たぶん）…だろう" },
+                { word: "increase", meaning: "…を増やす、増大させる" },
+                { word: "with", meaning: "【賛成】…に賛成して、味方して" }
+            ]},
+            "lets_read_3a": { name: "Let’s Read 3-A", words: [
+                { word: "planet", meaning: "惑星" },
+                { word: "photograph", meaning: "写真" },
+                { word: "university", meaning: "大学" },
+                { word: "attracted", meaning: "ひきつけられる" },
+                { word: "middle", meaning: "中央、真ん中" },
+                { word: "wilderness", meaning: "荒野" },
+                { word: "mayor", meaning: "市長、町長、村長" },
+                { word: "invite", meaning: "…を招待する、招く" },
+                { word: "dream", meaning: "夢" },
+                { word: "true", meaning: "本当の、真実の" },
+                { word: "in the middle of", meaning: "…の真ん中に［の］" },
+                { word: "for himself", meaning: "自分で、独力で" },
+                { word: "come true", meaning: "実現する、本当になる" },
+                { word: "change", meaning: "…を変える" },
+                { word: "come", meaning: "（ある状態）になる" },
+                { word: "life", meaning: "一生、人生" },
+                { word: "write", meaning: "（…に）手紙を書く" }
+            ]},
+            "lets_read_3b": { name: "Let’s Read 3-B", words: [
+                { word: "among", meaning: "…の中で［に、を］、…の間で［に、を］" },
+                { word: "convenience", meaning: "便利なこと［もの］" },
+                { word: "hunt", meaning: "…を狩る、狩りをする" },
+                { word: "gather", meaning: "…を集める、…をつむ" },
+                { word: "berry", meaning: "ベリー" },
+                { word: "tradition", meaning: "伝統" },
+                { word: "harmoniously", meaning: "調和して" },
+                { word: "understood", meaning: "understandの過去形" },
+                { word: "living", meaning: "生きている" },
+                { word: "share", meaning: "…を共有する" },
+                { word: "became", meaning: "becomeの過去形" },
+                { word: "part", meaning: "部分、［part of で］…の一部" },
+                { word: "of", meaning: "【同格】…という、…の" }
+            ]},
+            "lets_read_3c": { name: "Let’s Read 3-C", words: [
+                { word: "return", meaning: "帰る、戻る" },
+                { word: "photographer", meaning: "写真家" },
+                { word: "camp", meaning: "キャンプをする" },
+                { word: "severe", meaning: "厳しい" },
+                { word: "wild", meaning: "野生の" },
+                { word: "lonely", meaning: "ひとりぼっちの、さびしい" },
+                { word: "freedom", meaning: "自由" },
+                { word: "playful", meaning: "楽しげな、陽気な" },
+                { word: "scene", meaning: "景色、光景" },
+                { word: "suddenly", meaning: "突然、急に" },
+                { word: "kill", meaning: "…を殺す" },
+                { word: "alone", meaning: "ひとりで、ただ…だけ" },
+                { word: "end", meaning: "終わる" },
+                { word: "free", meaning: "自由な、束縛されない" },
+                { word: "live", meaning: "［lifeを目的語にして］…な人生［生活］を送る" },
+                { word: "wonder", meaning: "驚き、不思議" }
+            ]},
+            "lets_read_3d": { name: "Let’s Read 3-D", words: [
+                { word: "glacier", meaning: "氷河" },
+                { word: "disappear", meaning: "姿を消す、消滅する" },
+                { word: "global warming", meaning: "地球温暖化" },
+                { word: "enough", meaning: "十分な、必要なだけの" },
+                { word: "habitat", meaning: "生息地" },
+                { word: "grow", meaning: "（しだいに）…になる" },
+                { word: "lose", meaning: "…を失う" },
+                { word: "land", meaning: "土地" },
+                { word: "island", meaning: "島" },
+                { word: "slowly", meaning: "ゆっくりと、遅く" },
+                { word: "twice", meaning: "2倍、2度" },
+                { word: "rest", meaning: "残り、その他" },
+                { word: "Earth", meaning: "地球" },
+                { word: "remind", meaning: "…に思い出させる、気づかせる" },
+                { word: "past", meaning: "過去" },
+                { word: "pass", meaning: "（…に）～を手渡す、…を伝える" },
+                { word: "beauty", meaning: "美しさ、美" },
+                { word: "turn into", meaning: "…になる、変わる" },
+                { word: "twice as as ～", meaning: "～より2倍…" },
+                { word: "remind of ～", meaning: "…に～を思い出させる" },
+                { word: "pass on to ～", meaning: "…を～に伝える" },
+                { word: "as", meaning: "【時】…のとき、…するにつれて" },
+                { word: "future", meaning: "未来の、将来の" },
+                { word: "into", meaning: "【質の変化】…に（なる）" },
+                { word: "way", meaning: "方法、やり方" }
             ]}
         };
 
