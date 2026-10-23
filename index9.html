@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English-Japanese Team Word Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        button {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 h-screen overflow-hidden flex flex-col justify-between select-none p-2 font-sans">
+
+    <header class="bg-white border border-slate-200 px-3 py-1.5 flex justify-between items-center shadow-xs shrink-0 rounded-lg">
+        <div class="flex items-center space-x-2">
+            <div>
+                <span class="text-[10px] text-indigo-600 font-bold tracking-wide uppercase block leading-none">Prepared by Dr. George Cabrera</span>
+                <h1 class="text-sm font-extrabold text-slate-800 leading-tight">English-Japanese Team Word Game</h1>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <div id="word-timer-badge" class="hidden bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-md text-xs border border-rose-200">
+                <i class="fa-solid fa-hourglass-half mr-1"></i> Word: <span id="word-time-left">00:00</span>
+            </div>
+            <div id="timer-display" class="hidden bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-md text-xs border border-amber-200">
+                <i class="fa-solid fa-clock mr-1"></i> Game: <span id="time-left">00:00</span>
+            </div>
+            <button onclick="openTeacherLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-3 py-1 rounded-md text-xs transition shadow-xs">
+                <i class="fa-solid fa-user-gear mr-1"></i> Teacher Portal
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-1 py-1.5 w-full flex-grow flex flex-col justify-between min-h-0 gap-2">
+        
+        <!-- Controls Row -->
+        <div class="flex items-center justify-center gap-3 shrink-0">
+            <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold px-5 py-1.5 rounded-lg transition shadow-md flex items-center space-x-2 text-xs sm:text-sm">
+                <i class="fa-solid fa-play"></i>
+                <span>Start Game</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold px-5 py-1.5 rounded-lg transition shadow-md flex items-center space-x-2 text-xs sm:text-sm">
+                <i class="fa-solid fa-rotate"></i>
+                <span>Reset Game</span>
+            </button>
+        </div>
+
+        <!-- Japanese Meaning Display Box -->
+        <div class="bg-white border-2 border-emerald-500 rounded-xl px-6 py-4 text-center shadow-md shrink-0 flex flex-col items-center justify-center">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block leading-none mb-2">Japanese Meaning (Shuffled Order)</span>
+            <div id="game-prompt" class="text-xl sm:text-3xl font-black text-slate-800 tracking-wide leading-snug min-h-[44px] flex items-center justify-center">
+                Press START to Play
+            </div>
+        </div>
+
+        <!-- Team Boards Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 flex-grow min-h-0">
+            
+            <!-- TEAM A -->
+            <div class="bg-white rounded-xl border-2 border-indigo-900 p-2.5 shadow-xs flex flex-col justify-between h-full min-h-0">
+                <div class="shrink-0 flex flex-col gap-1.5">
+                    <h2 class="text-center font-extrabold text-indigo-900 text-xs">Team A (Type English)</h2>
+                    
+                    <!-- Score Box Above -->
+                    <div class="bg-indigo-50 border-2 border-indigo-300 rounded-xl px-4 py-2.5 flex justify-between items-center shadow-sm shrink-0">
+                        <span class="text-sm font-black text-indigo-900 uppercase tracking-wider">Team A Score</span>
+                        <div id="score-a" class="text-indigo-900 font-black text-3xl px-4 py-1 rounded-xl bg-white border-2 border-indigo-400 shadow-inner">0</div>
+                    </div>
+
+                    <!-- Answer Boxes -->
+                    <div id="team-a-display" class="w-full bg-slate-50 border-2 border-indigo-900 rounded-xl min-h-[52px] p-2 flex flex-wrap items-center justify-center gap-1 overflow-y-auto max-h-[100px]"></div>
+                </div>
+
+                <div class="flex flex-col justify-end flex-grow min-h-0 gap-1 mt-1.5">
+                    <div class="grid grid-cols-10 gap-1" id="keyboard-a-row1"></div>
+                    <div class="grid grid-cols-9 gap-1 px-2" id="keyboard-a-row2"></div>
+                    <div class="grid grid-cols-7 gap-1 px-6" id="keyboard-a-row3"></div>
+                    <div class="grid grid-cols-4 gap-1 shrink-0">
+                        <button onclick="handleLetterClick('A', '.')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">.</button>
+                        <button onclick="handleLetterClick('A', ',')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">,</button>
+                        <button onclick="handleLetterClick('A', '\'')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">'</button>
+                        <button onclick="handleLetterClick('A', '-')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">-</button>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="handleTeamAction('A', 'space')" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 py-1 rounded text-xs font-semibold border border-indigo-200 transition active:scale-95">Space</button>
+                        <button onclick="handleTeamAction('A', 'backspace')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 rounded text-xs font-semibold border border-slate-300 transition active:scale-95">Backspace</button>
+                        <button onclick="handleTeamAction('A', 'clear')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 rounded text-xs font-semibold border border-slate-300 transition active:scale-95">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEAM B -->
+            <div class="bg-white rounded-xl border-2 border-rose-700 p-2.5 shadow-xs flex flex-col justify-between h-full min-h-0">
+                <div class="shrink-0 flex flex-col gap-1.5">
+                    <h2 class="text-center font-extrabold text-rose-700 text-xs">Team B (Type English)</h2>
+                    
+                    <!-- Score Box Above -->
+                    <div class="bg-rose-50 border-2 border-rose-300 rounded-xl px-4 py-2.5 flex justify-between items-center shadow-sm shrink-0">
+                        <span class="text-sm font-black text-rose-900 uppercase tracking-wider">Team B Score</span>
+                        <div id="score-b" class="text-rose-900 font-black text-3xl px-4 py-1 rounded-xl bg-white border-2 border-rose-400 shadow-inner">0</div>
+                    </div>
+
+                    <!-- Answer Boxes -->
+                    <div id="team-b-display" class="w-full bg-slate-50 border-2 border-rose-700 rounded-xl min-h-[52px] p-2 flex flex-wrap items-center justify-center gap-1 overflow-y-auto max-h-[100px]"></div>
+                </div>
+
+                <div class="flex flex-col justify-end flex-grow min-h-0 gap-1 mt-1.5">
+                    <div class="grid grid-cols-10 gap-1" id="keyboard-b-row1"></div>
+                    <div class="grid grid-cols-9 gap-1 px-2" id="keyboard-b-row2"></div>
+                    <div class="grid grid-cols-7 gap-1 px-6" id="keyboard-b-row3"></div>
+                    <div class="grid grid-cols-4 gap-1 shrink-0">
+                        <button onclick="handleLetterClick('B', '.')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">.</button>
+                        <button onclick="handleLetterClick('B', ',')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">,</button>
+                        <button onclick="handleLetterClick('B', '\'')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">'</button>
+                        <button onclick="handleLetterClick('B', '-')" class="bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold py-1 rounded text-xs transition shadow-xs active:scale-95">-</button>
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="handleTeamAction('B', 'space')" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-800 py-1 rounded text-xs font-semibold border border-rose-200 transition active:scale-95">Space</button>
+                        <button onclick="handleTeamAction('B', 'backspace')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 rounded text-xs font-semibold border border-slate-300 transition active:scale-95">Backspace</button>
+                        <button onclick="handleTeamAction('B', 'clear')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 rounded text-xs font-semibold border border-slate-300 transition active:scale-95">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div id="modal-teacher-login" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-800">Teacher Login</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Password Required</label>
+                <input type="password" id="teacher-password-input" class="w-full p-3 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Enter password...">
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModals()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">Cancel</button>
+                <button onclick="verifyTeacherPassword()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-sm">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-portal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-800">Teacher Portal - Game Settings</h3>
+                <button onclick="closeModals()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Entire Game Duration</label>
+                    <select id="teacher-game-timer-select" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="180">3 Minutes</option>
+                        <option value="240">4 Minutes</option>
+                        <option value="300" selected>5 Minutes</option>
+                        <option value="360">6 Minutes</option>
+                        <option value="420">7 Minutes</option>
+                        <option value="480">8 Minutes</option>
+                        <option value="540">9 Minutes</option>
+                        <option value="600">10 Minutes</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Per-Word Time Limit</label>
+                    <select id="teacher-word-timer-select" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="30" selected>30 Seconds</option>
+                        <option value="60">1 Minute</option>
+                        <option value="120">2 Minutes</option>
+                        <option value="180">3 Minutes</option>
+                        <option value="240">4 Minutes</option>
+                        <option value="300">5 Minutes</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Word Pairs (Format: English : Japanese)</label>
+                <textarea id="teacher-words-input" rows="6" class="w-full p-3 border rounded-xl text-sm font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <p class="text-xs text-slate-400 mt-1">One pair per line (e.g. <code>apple : りんご</code>).</p>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModals()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium">Cancel</button>
+                <button onclick="saveTeacherSettings()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-sm">Save & Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultPairs = [
+            { en: "nice", jp: "すてきな、よい" },
+            { en: "to", jp: "【不定詞（名詞的）】…する［である］こと" },
+            { en: "meet", jp: "…と知り合いになる" },
+            { en: "you", jp: "あなた（たち）を［に］" },
+            { en: "good", jp: "よい" },
+            { en: "morning", jp: "朝、午前" },
+            { en: "I", jp: "私は［が］" },
+            { en: "am", jp: "…です、…だ (I)" },
+            { en: "hi", jp: "やあ、こんにちは" },
+            { en: "my", jp: "私の" },
+            { en: "name", jp: "名前" },
+            { en: "is", jp: "…です、…だ (三人称)" },
+            { en: "hello", jp: "やあ、こんにちは" },
+            { en: "do", jp: "［疑問文や応答を作る・一般動詞の時］" },
+            { en: "like", jp: "…を好む、…が好きである" },
+            { en: "tennis", jp: "テニス" },
+            { en: "yes", jp: "はい、ええ、そうです" },
+            { en: "Nice to meet you.", jp: "はじめまして。" },
+            { en: "Good morning.", jp: "おはようございます。" },
+            { en: "apple", jp: "リンゴ" },
+            { en: "bat", jp: "バット" },
+            { en: "cat", jp: "ネコ" },
+            { en: "dog", jp: "イヌ" },
+            { en: "egg", jp: "卵" },
+            { en: "flower", jp: "花" },
+            { en: "gorilla", jp: "ゴリラ" },
+            { en: "horse", jp: "ウマ" },
+            { en: "ink", jp: "インク" },
+            { en: "jump", jp: "とぶ" },
+            { en: "koala", jp: "コアラ" },
+            { en: "log", jp: "丸太" },
+            { en: "monkey", jp: "サル" },
+            { en: "net", jp: "網、ネット" },
+            { en: "octopus", jp: "タコ" },
+            { en: "pan", jp: "平なべ" },
+            { en: "queen", jp: "女王、王妃" },
+            { en: "rabbit", jp: "ウサギ" },
+            { en: "snake", jp: "ヘビ" },
+            { en: "tree", jp: "木、樹木" },
+            { en: "umbrella", jp: "傘" },
+            { en: "V sign", jp: "ブイサイン" },
+            { en: "wolf", jp: "オオカミ" },
+            { en: "fox", jp: "キツネ" },
+            { en: "yo-yo", jp: "（おもちゃの）ヨーヨー" },
+            { en: "zipper", jp: "ジッパー、ファスナー" },
+            { en: "city", jp: "市、都市、都会" },
+            { en: "gym", jp: "体育館" },
+            { en: "apron", jp: "エプロン" },
+            { en: "evening", jp: "夕方、晩［ふつう日没から寝る時刻までをさす］" },
+            { en: "ice", jp: "氷" },
+            { en: "ocean", jp: "大洋、海" },
+            { en: "uniform", jp: "制服、ユニフォーム" },
+            { en: "fan", jp: "扇、うちわ、扇風機" },
+            { en: "pen", jp: "ペン" },
+            { en: "ten", jp: "10（の）" },
+            { en: "sun", jp: "太陽、日" },
+            { en: "run", jp: "走る、運行している" },
+            { en: "hat", jp: "（ふちのある）帽子" },
+            { en: "hot", jp: "熱い、暑い" },
+            { en: "cup", jp: "カップ" },
+            { en: "cap", jp: "（ふちがないか、ひさしのついた）帽子" },
+            { en: "map", jp: "地図" },
+            { en: "mop", jp: "モップ" },
+            { en: "cut", jp: "…を切る、…の供給をとめる" },
+            { en: "TV", jp: "テレビ（放送）" },
+            { en: "milk", jp: "牛乳、ミルク" },
+            { en: "box", jp: "箱" },
+            { en: "bag", jp: "かばん、バッグ、ふくろ" },
+            { en: "desk", jp: "机" },
+            { en: "bed", jp: "ベッド" },
+            { en: "red", jp: "赤（い）" },
+            { en: "P.E.", jp: "体育" },
+            { en: "play", jp: "（競技・ゲームなどを）する、（曲・楽器などを）演奏する" },
+            { en: "soccer", jp: "サッカー" },
+            { en: "have", jp: "…を持っている、…がある、…がいる、…を飼っている" },
+            { en: "a", jp: "1つの、1人の［数えられる名詞の前に置く。ふつう訳さない］" },
+            { en: "want", jp: "…がほしい" },
+            { en: "call", jp: "…を（～と）呼ぶ、名づける" },
+            { en: "South Africa", jp: "南アフリカ共和国" },
+            { en: "love", jp: "…が大好きである、…を愛している" },
+            { en: "everyone", jp: "みなさん、みんな、だれでも" },
+            { en: "me", jp: "私を［に］" },
+            { en: "from", jp: "【起源・出所】…から、…出身の、…に由来する" },
+            { en: "Japanese", jp: "日本の、日本人の、日本語の" },
+            { en: "sweet", jp: "甘い菓子、キャンディー" },
+            { en: "and", jp: "…と～" },
+            { en: "too", jp: "…もまた、そのうえ" },
+            { en: "join", jp: "…に加わる、参加する" },
+            { en: "the", jp: "［状況や文脈から何をさすかわかる場合］その" },
+            { en: "club", jp: "クラブ、部" },
+            { en: "Call me", jp: "私を…と呼んでください。" },
+            { en: "want to", jp: "…したい" },
+            { en: "number", jp: "数、数字" },
+            { en: "one", jp: "1つ［1人］（の）" },
+            { en: "two", jp: "2（つの）" },
+            { en: "three", jp: "3（つの）" },
+            { en: "four", jp: "4（つの）" },
+            { en: "five", jp: "5（つの）" },
+            { en: "six", jp: "6（つの）" },
+            { en: "seven", jp: "7（つの）" },
+            { en: "eight", jp: "8（つの）" },
+            { en: "nine", jp: "9（つの）" },
+            { en: "eleven", jp: "11（の）" },
+            { en: "twelve", jp: "12（の）" },
+            { en: "thirteen", jp: "13（の）" },
+            { en: "fourteen", jp: "14（の）" },
+            { en: "fifteen", jp: "15（の）" },
+            { en: "sixteen", jp: "16（の）" },
+            { en: "seventeen", jp: "17（の）" },
+            { en: "eighteen", jp: "18（の）" },
+            { en: "nineteen", jp: "19（の）" },
+            { en: "twenty", jp: "20（の）" },
+            { en: "thirty", jp: "30（の）" },
+            { en: "forty", jp: "40（の）" },
+            { en: "fifty", jp: "50（の）" },
+            { en: "sixty", jp: "60（の）" },
+            { en: "seventy", jp: "70（の）" },
+            { en: "eighty", jp: "80（の）" },
+            { en: "ninety", jp: "90（の）" },
+            { en: "hundred", jp: "100（の）" },
+            { en: "zero", jp: "0（の）" },
+            { en: "fan", jp: "ファン" },
+            { en: "often", jp: "しばしば、よく" },
+            { en: "with", jp: "【共同・同伴】…といっしょに" },
+            { en: "but", jp: "しかし、けれども" },
+            { en: "rugby", jp: "ラグビー" },
+            { en: "watch", jp: "…を（注意して）見る" },
+            { en: "friend(s)", jp: "友達" },
+            { en: "great", jp: "すばらしい、とても楽しい" },
+            { en: "no", jp: "いいえ、いや、だめだ" },
+            { en: "not", jp: "…でない、…しない、…ではなく" },
+            { en: "oh", jp: "まあ、あら、ああ、おや" },
+            { en: "don’t", jp: "do notの(省略)" },
+            { en: "draw", jp: "（線画）をかく" },
+            { en: "an", jp: "1つの、1人の［母音で始まる］" },
+            { en: "anime", jp: "（日本の）アニメ" },
+            { en: "so", jp: "だから、それで、では" },
+            { en: "about", jp: "…について、…に関する" },
+            { en: "lesson", jp: "授業、レッスン" },
+            { en: "comic", jp: "マンガ" },
+            { en: "wow", jp: "うわあ、わあ" },
+            { en: "are", jp: "…です、…だ" },
+            { en: "in", jp: "【従事・所属】…に所属して、参加して" },
+            { en: "art", jp: "芸術、美術" },
+            { en: "how", jp: "【状態】どんなようす［ぐあい］で" },
+            { en: "school", jp: "学校" },
+            { en: "now", jp: "今、現在は、今では、今すぐ" },
+            { en: "take", jp: "…を利用する、…を受ける" },
+            { en: "swimming", jp: "水泳" },
+            { en: "class", jp: "学級、組、クラス" },
+            { en: "our", jp: "私たちの" },
+            { en: "Canada", jp: "カナダ" },
+            { en: "America", jp: "アメリカ（合衆国）" },
+            { en: "Ms.", jp: "［女性をさして］…さん、先生" },
+            { en: "Mr.", jp: "［男性をさして］…さん、先生" },
+            { en: "he", jp: "彼は［が］" },
+            { en: "she", jp: "彼女は［が］" },
+            { en: "new", jp: "新しい、新任の" },
+            { en: "teacher", jp: "先生、教師" },
+            { en: "on", jp: "【所属】…の一員で、…に属して" },
+            { en: "team", jp: "チーム、組" },
+            { en: "at", jp: "【評価の対象】…は、…が、…に関しては" },
+            { en: "cool", jp: "かっこいい" },
+            { en: "Chinese", jp: "中国の" },
+            { en: "cannot", jp: "…できない" },
+            { en: "some", jp: "いくつかの、いくらかの、少しの" },
+            { en: "parent", jp: "親、親たち、両親" },
+            { en: "China", jp: "中国" },
+            { en: "food", jp: "食べ物" },
+            { en: "father", jp: "父、お父さん" },
+            { en: "can", jp: "【能力・可能】…することができる" },
+            { en: "make", jp: "…を作る、得る" },
+            { en: "very", jp: "非常に、とても、［否定文で］あまり（…でない）" },
+            { en: "well", jp: "じょうずに、うまく、よく" },
+            { en: "that", jp: "［すでに述べた事柄をさして］そのこと、それ" },
+            { en: "read", jp: "（…を）読む、読んで知る" },
+            { en: "really", jp: "本当ですか、へえ、そうなんだ" },
+            { en: "see", jp: "（…が）わかる、理解する" },
+            { en: "I see.", jp: "なるほど。わかった。" },
+            { en: "excuse", jp: "…を許す" },
+            { en: "oops", jp: "おっと、うわっ、しまった" },
+            { en: "here", jp: "さあ、ほら" },
+            { en: "welcome", jp: "歓迎される" },
+            { en: "totem pole", jp: "トーテムポール" },
+            { en: "thunderbird", jp: "サンダーバード" },
+            { en: "your", jp: "あなた（たち）の" },
+            { en: "thank", jp: "…に感謝する" },
+            { en: "it", jp: "それは［が］" },
+            { en: "bird", jp: "鳥" },
+            { en: "Excuse me.", jp: "すみません。失礼ですが。" },
+            { en: "Here you are.", jp: "はい、どうぞ。" },
+            { en: "Thank you.", jp: "ありがとう。" },
+            { en: "You are welcome.", jp: "どういたしまして。" },
+            { en: "symbol", jp: "シンボル、象徴、記号" },
+            { en: "for", jp: "【代理・代表】…のかわりに、…に相当する" },
+            { en: "interesting", jp: "おもしろい、興味深い" },
+            { en: "favorite", jp: "いちばん好きな、お気に入りの" },
+            { en: "character", jp: "登場人物" },
+            { en: "also", jp: "…もまた、そのうえ" },
+            { en: "what", jp: "何、どんなもの［こと］" },
+            { en: "family", jp: "一族" },
+            { en: "who", jp: "だれ、だれが" },
+            { en: "why", jp: "なぜ、どうして" },
+            { en: "brave", jp: "勇かんな、勇ましい" },
+            { en: "kind", jp: "親切な、やさしい" },
+            { en: "around", jp: "…の近くに" },
+            { en: "after", jp: "…のあとに［で］" },
+            { en: "online", jp: "オンラインで" },
+            { en: "live", jp: "住む、住んでいる、生きる、暮らす、ずっと残る" },
+            { en: "come", jp: "来る" },
+            { en: "by", jp: "【手段・方法・原因】…によって" },
+            { en: "walk", jp: "（…を）歩く、歩いていく［くる］" },
+            { en: "when", jp: "いつ、どんなときに" },
+            { en: "study", jp: "（…を）勉強する、研究する" },
+            { en: "after school", jp: "放課後（に）" },
+            { en: "week", jp: "週、1週間" },
+            { en: "hallway", jp: "ろうか" },
+            { en: "win", jp: "（…に）勝つ" },
+            { en: "next", jp: "次の、今度の、となりの" },
+            { en: "lick", jp: "運、幸運" },
+            { en: "near", jp: "…の近くに［で］" },
+            { en: "where", jp: "どこに［で、へ］" },
+            { en: "practice", jp: "（…を）練習する" },
+            { en: "hard", jp: "熱心に、一生懸命に" },
+            { en: "go", jp: "行く" },
+            { en: "park", jp: "公園、遊園地" },
+            { en: "station", jp: "駅" },
+            { en: "under", jp: "…の下に［で］、…のもとに" },
+            { en: "Good luck.", jp: "幸運を祈ります。がんばって。" },
+            { en: "New Zealand", jp: "ニュージーランド" },
+            { en: "puppy", jp: "子イヌ" },
+            { en: "of", jp: "【部分】…の中の［で］、…の" },
+            { en: "someday", jp: "いつか" },
+            { en: "lot", jp: "たくさん" },
+            { en: "they", jp: "彼らは［が］、彼女らは［が］、それらは［が］" },
+            { en: "animal(s)", jp: "動物" },
+            { en: "visit", jp: "（人・場所）を訪ねる" },
+            { en: "Japan", jp: "日本" },
+            { en: "many", jp: "たくさんの、多くの" },
+            { en: "one of", jp: "…の1つ［1人］" },
+            { en: "a lot of", jp: "たくさんの、多数の" },
+            { en: "How many ...?", jp: "どれくらい多くの、いくつの" },
+            { en: "noon", jp: "正午、真昼" },
+            { en: "last", jp: "最後の、最終の" },
+            { en: "like", jp: "…のような［に］、…に似た、…らしい" },
+            { en: "o’clock", jp: "…時" },
+            { en: "netball", jp: "ネットボール" },
+            { en: "time", jp: "時刻" },
+            { en: "afternoon", jp: "午後" },
+            { en: "sport", jp: "スポーツ" },
+            { en: "am", jp: "午前" },
+            { en: "pm", jp: "午後" },
+            { en: "basketball", jp: "バスケットボール" },
+            { en: "Sounds ....", jp: "…そうですね。" },
+            { en: "front", jp: "前、　正面" },
+            { en: "be", jp: "...である、 ...になる" },
+            { en: "nervous", jp: "緊張して" },
+            { en: "worry", jp: "心配する、悩む" },
+            { en: "yourself", jp: "あなた自身を［に］" },
+            { en: "sheep", jp: "ヒツジ" },
+            { en: "kiwi", jp: "キーウィ［動物名］" },
+            { en: "right", jp: "正しい、正確な" },
+            { en: "turn", jp: "順番、番" },
+            { en: "please", jp: "どうぞ、お願いします、すみませんが" },
+            { en: "look", jp: "見る、目を向ける" },
+            { en: "enjoy oneself", jp: "楽しむ、楽しく過ごす" },
+            { en: "look at", jp: "…を見る" },
+            { en: "fun", jp: "楽しいこと" },
+            { en: "long", jp: "長い" },
+            { en: "song", jp: "歌" },
+            { en: "fine", jp: "（人が）元気な" },
+            { en: "pet", jp: "ペット、愛がん動物" },
+            { en: "stop", jp: "とまる、停止する" },
+            { en: "eat", jp: "…を食べる、食事をする" },
+            { en: "sad", jp: "悲しい" },
+            { en: "eel", jp: "ウナギ" },
+            { en: "gift", jp: "贈り物" },
+            { en: "man", jp: "男性、男の人" },
+            { en: "bench", jp: "ベンチ" },
+            { en: "picture", jp: "絵、絵画、写真" },
+            { en: "basket", jp: "かご、ざる、バスケット" },
+            { en: "kitchen", jp: "台所、キッチン" },
+            { en: "table", jp: "テーブル" },
+            { en: "all", jp: "全部、全員、全て、みな" },
+            { en: "poster", jp: "ポスター、広告" },
+            { en: "age", jp: "年齢" },
+            { en: "movie", jp: "映画" },
+            { en: "student", jp: "学生、生徒" },
+            { en: "much", jp: "［動詞を修飾して］おおいに、たいへん" },
+            { en: "starter", jp: "先発メンバー" },
+            { en: "famous", jp: "有名な" },
+            { en: "tell", jp: "…に（～を）話す、教える" },
+            { en: "elementary school", jp: "小学校" },
+            { en: "subject", jp: "教科、科目" },
+            { en: "junior high school", jp: "中学校" },
+            { en: "every", jp: "毎…、…ごとに" },
+            { en: "big", jp: "重要な、すごい" },
+            { en: "player", jp: "競技者、選手" },
+            { en: "very much", jp: "とても、たいへん" },
+            { en: "every day", jp: "毎日" },
+            { en: "what", jp: "何の、どんな" },
+            { en: "sound like", jp: "…のように聞こえる、思える" },
+            { en: "be", jp: "…である、…になる" },
+            { en: "favorite", jp: "大好きなもの［人］" },
+            { en: "as", jp: "…として" },
+            { en: "tour", jp: "旅行、ツアー、見学" },
+            { en: "guide", jp: "ガイド、案内人" },
+            { en: "write", jp: "（…を）書く" },
+            { en: "blog", jp: "ブログ" },
+            { en: "local", jp: "（ある）地方の、地元の" },
+            { en: "beautiful", jp: "美しい" },
+            { en: "spot", jp: "地点、場所" },
+            { en: "his", jp: "彼の" },
+            { en: "Honolulu", jp: "ホノルル" },
+            { en: "Hawaii", jp: "ハワイ" },
+            { en: "brother", jp: "兄、弟、兄弟" },
+            { en: "year", jp: "…歳、年齢" },
+            { en: "old", jp: "…歳の、（作られてから）…年［月］になる" },
+            { en: "work", jp: "働く、作業をする" },
+            { en: "nature", jp: "自然" },
+            { en: "any", jp: "［疑問文などで］いくらかの、何らかの" },
+            { en: "does", jp: "［疑問文や応答を作る］" },
+            { en: "has", jp: "haveの三人称単数現在形" },
+            { en: "there", jp: "そこに［で、へ］" },
+            { en: "surf", jp: "サーフィン［波乗り］をする" },
+            { en: "life", jp: "生活、暮らし" },
+            { en: "question", jp: "質問、疑問" },
+            { en: "weekend", jp: "週末" },
+            { en: "swim", jp: "泳ぐ" },
+            { en: "sometimes", jp: "ときどき" },
+            { en: "dolphin", jp: "イルカ" },
+            { en: "cafe", jp: "喫茶店、カフェ" },
+            { en: "website", jp: "ウェブサイト" },
+            { en: "popular", jp: "人気のある" },
+            { en: "owner", jp: "所有者、持ち主" },
+            { en: "know", jp: "（…を）知っている、わかる" },
+            { en: "patty", jp: "パティ" },
+            { en: "fried", jp: "油であげた、油でいためた" },
+            { en: "top", jp: "表面、上部" },
+            { en: "wonderful", jp: "すばらしい、すてきな" },
+            { en: "Maria", jp: "マリア[名]" },
+            { en: "loco moco", jp: "ロコモコ" },
+            { en: "restaurant", jp: "レストラン" },
+            { en: "friendly", jp: "好意的な、親切な" },
+            { en: "dish", jp: "料理、（料理の）1品" },
+            { en: "fried egg", jp: "目玉焼き" },
+            { en: "on top of", jp: "…の上に" },
+            { en: "him", jp: "彼を［に］" },
+            { en: "say", jp: "（…を）言う、…だと言う" },
+            { en: "everything", jp: "何でも、全てのもの［こと］" },
+            { en: "show", jp: "ショー" },
+            { en: "her", jp: "彼女を［に］" },
+            { en: "performer", jp: "演技者" },
+            { en: "U.K.", jp: "英国" },
+            { en: "together", jp: "いっしょに、ともに" },
+            { en: "let's", jp: "…しよう" },
+            { en: "Why don’t we", jp: "…しませんか。" },
+            { en: "to", jp: "【対象・関連】…に（とって）" },
+            { en: "fine", jp: "けっこうな" },
+            { en: "for", jp: "【用途・適合】…するための、…に適した、…向けの" },
+            { en: "see", jp: "…に会う" },
+            { en: "minute", jp: "（時間の単位の）分" },
+            { en: "wait", jp: "待つ" },
+            { en: "whose", jp: "だれの、だれのもの" },
+            { en: "yours", jp: "あなた（たち）のもの" },
+            { en: "mine", jp: "私のもの" },
+            { en: "maybe", jp: "たぶん、もしかすると" },
+            { en: "careful", jp: "注意深い" },
+            { en: "crowded", jp: "こみ合った、満員の" },
+            { en: "history", jp: "歴史" },
+            { en: "still", jp: "まだ、今でも" },
+            { en: "over", jp: "…より多く、…をこえて" },
+            { en: "start", jp: "始まる、出発する、開始する" },
+            { en: "ticket", jp: "切符、チケット" },
+            { en: "Thanks", jp: "ありがとう。" },
+            { en: "be careful with", jp: "…のあつかいに気をつける" },
+            { en: "How old", jp: "何歳で、作られてからどれくらいで" },
+            { en: "In", jp: "【時間】…に、…の間に、…後に" },
+            { en: "thank", jp: "感謝" },
+            { en: "with", jp: "【関係・対象】…に関して、…について" },
+            { en: "here", jp: "ここに［で、へ］" },
+            { en: "well", jp: "［ためらったり、返事に詰まったりして］ええと、そうですね" },
+            { en: "cushion", jp: "クッション、ざぶとん" },
+            { en: "different", jp: "いろいろな" },
+            { en: "role", jp: "役、役割" },
+            { en: "use", jp: "…を使う、利用する、消費する" },
+            { en: "only", jp: "ただ…だけ" },
+            { en: "prop", jp: "小道具" },
+            { en: "which", jp: "どちら、どれ、どちらの人［もの］" },
+            { en: "or", jp: "…かまたは～、…や～" },
+            { en: "casual", jp: "カジュアルな、くだけた、ふだん着の" },
+            { en: "large", jp: "多い、多数の" },
+            { en: "collection", jp: "収集したもの、コレクション" },
+            { en: "hand", jp: "手" },
+            { en: "towel", jp: "タオル、手拭い" },
+            { en: "wear", jp: "…を着ている、身につけている" },
+            { en: "clothes", jp: "［複数あつかい］衣服" },
+            { en: "for", jp: "【対象】…に対して" },
+            { en: "in", jp: "【範囲】…において、…に関しては" },
+            { en: "play", jp: "（役）を演じる" },
+            { en: "open", jp: "（ …を）開く、あける" },
+            { en: "close", jp: "…を閉じる、終える" },
+            { en: "window", jp: "窓" },
+            { en: "sure", jp: "［返事で］もちろん、いいとも" },
+            { en: "problem", jp: "問題" },
+            { en: "little", jp: "［a littleで］少し" },
+            { en: "dark", jp: "暗い" },
+            { en: "light", jp: "明かり、電灯" },
+            { en: "just", jp: "ただ…だけ、ほんの、ちょっと" },
+            { en: "moment", jp: "瞬間、ちょっとの間" },
+            { en: "off", jp: "（電気・ガス・水道などが）切れて、とまって" },
+            { en: "borrow", jp: "…を借りる" },
+            { en: "help", jp: "…を手伝う、助ける、…の役に立つ" },
+            { en: "homework", jp: "宿題" },
+            { en: "No problem", jp: "いいですよ。もちろん。" },
+            { en: "a little", jp: "少し" },
+            { en: "turn on", jp: "（スイッチ）を入れる、つける" },
+            { en: "help with", jp: "…を～の面で手伝う" },
+            { en: "All right", jp: "よろしい。わかった。了解した。" },
+            { en: "Just a moment", jp: "ちょっと待って。" },
+            { en: "turn off", jp: "（スイッチ）をとめる、消す" },
+            { en: "all", jp: "全く、全て、すっかり" },
+            { en: "and", jp: "そして、それから" },
+            { en: "can I", jp: "【許可】…してもよいですか。" },
+            { en: "can you", jp: "【依頼】 …してくれますか。" },
+            { en: "no", jp: "1つ［1人］も…ない、少しも…ない" },
+            { en: "on", jp: "（電気・ガス・水道などが）通じて、ついて、出て" },
+            { en: "this", jp: "この" },
+            { en: "hers", jp: "彼女のもの" },
+            { en: "its", jp: "それの、その" },
+            { en: "us", jp: "私たちを［に］" },
+            { en: "ours", jp: "私たちのもの" },
+            { en: "their", jp: "彼らの、彼女らの、それらの" },
+            { en: "them", jp: "彼ら［彼女ら、それら］を［に］" },
+            { en: "theirs", jp: "彼ら［彼女ら、それら］のもの" },
+            { en: "her", jp: "彼女の" },
+            { en: "his", jp: "彼のもの" },
+            { en: "of", jp: "【行為の対象】…を、…の、…への           &#x20;" },
+            { en: "tomorrow", jp: "明日（は）" },
+            { en: "plan", jp: "計画、予定" },
+            { en: "free", jp: "ひまな" },
+            { en: "mean", jp: "…を意味する、…のことを言う" },
+            { en: "busy", jp: "忙しい" },
+            { en: "talk", jp: "話す、しゃべる" },
+            { en: "What’s up?", jp: "どうしたのですか。" },
+            { en: "sound like", jp: "…のように聞こえる、思える" },
+            { en: "look forward to", jp: "…を楽しみに待つ" },
+            { en: "hello", jp: "（電話で）もしもし" },
+            { en: "at", jp: "【時刻・年齢】…に" },
+            { en: "online", jp: "オンラインの" },
+            { en: "market", jp: "市場" },
+            { en: "souvenir", jp: "記念品、みやげ" },
+            { en: "place", jp: "場所、ところ" },
+            { en: "appear", jp: "現れる、姿を現す" },
+            { en: "those", jp: "あれらの、それらの" },
+            { en: "buy", jp: "…を買う" },
+            { en: "people", jp: "人々" },
+            { en: "Welcome to", jp: "…へようこそ。" },
+            { en: "also", jp: "そのうえ、さらに" },
+            { en: "take", jp: "（写真など）を撮る" },
+            { en: "welcome", jp: "ようこそ、いらっしゃい" },
+            { en: "around", jp: "…のまわりを回って" },
+            { en: "home", jp: "故郷" },
+            { en: "mom", jp: "お母さん" },
+            { en: "dad", jp: "お父さん" },
+            { en: "travel", jp: "旅行する" },
+            { en: "angry", jp: "怒った、腹を立てた" },
+            { en: "palace", jp: "宮殿、王宮" },
+            { en: "exciting", jp: "興奮させるような、わくわくさせるような" },
+            { en: "late", jp: "遅い、おくれた、遅刻した" },
+            { en: "sorry", jp: "すまなく思って" },
+            { en: "funny", jp: "おかしな" },
+            { en: "OK", jp: "よろしい、はい、わかった、それでは" },
+            { en: "I’m sorry", jp: "ごめんなさい。すみません。" },
+            { en: "big", jp: "大きい" },
+            { en: "excuse", jp: "言い訳、弁解、口実" },
+            { en: "for", jp: "【利益】…のために［の］" },
+            { en: "how", jp: "【感嘆】なんと、なんて、どんなに" },
+            { en: "too", jp: "あまりに、…すぎる" },
+            { en: "well", jp: "［話を切り出したり、再び始めたりして］さて、ところで、それでは" },
+            { en: "what", jp: "なんと、なんて" },
+            { en: "pardon", jp: "何とおっしゃいましたか。もう一度おっしゃってください。［聞き返すときに用いる]" },
+            { en: "along", jp: "…に沿って" },
+            { en: "street", jp: "通り、街路" },
+            { en: "traffic light", jp: "交通信号" },
+            { en: "straight", jp: "まっすぐに" },
+            { en: "factory", jp: "工場" },
+            { en: "building", jp: "建物、ビル" },
+            { en: "woman", jp: "女性、女の人" },
+            { en: "hospital", jp: "病院" },
+            { en: "left", jp: "左に［へ］、左側に" },
+            { en: "right", jp: "右に［へ］" },
+            { en: "museum", jp: "博物館、美術館" },
+            { en: "post office", jp: "郵便局" },
+            { en: "library", jp: "図書館、図書室" },
+            { en: "look for", jp: "…をさがす" },
+            { en: "Let’s see", jp: "［考えながら］ええと。そうですね。" },
+            { en: "go along", jp: "（通り・道）を進む" },
+            { en: "for", jp: "【目的・用意】…のために、…を求めて" },
+            { en: "large", jp: "大きい、広い" },
+            { en: "turn", jp: "向く、曲がる" },
+            { en: "ethnic", jp: "民族（特有）の" },
+            { en: "Africa", jp: "アフリカ" },
+            { en: "Kenya", jp: "ケニア" },
+            { en: "volunteer", jp: "ボランティア" },
+            { en: "need", jp: "困っている状態、貧困" },
+            { en: "teach", jp: "…に（～を）教える" },
+            { en: "try", jp: "（…を）試す、やってみる、努力する" },
+            { en: "best", jp: "最もよいもの、最良の状態" },
+            { en: "respect", jp: "…を尊敬する、尊重する" },
+            { en: "become", jp: "…になる" },
+            { en: "cousin", jp: "いとこ" },
+            { en: "children", jp: "childの複数形" },
+            { en: "child", jp: "子供" },
+            { en: "country", jp: "国" },
+            { en: "always", jp: "いつも、常に" },
+            { en: "in need", jp: "困っている" },
+            { en: "do one’s best", jp: "最善を尽くす" },
+            { en: "try to", jp: "…しようと試みる、努力する" },
+            { en: "in", jp: "【状態】…（の状態）で" },
+            { en: "some", jp: "一部の、（中には）…もある" },
+            { en: "African", jp: "アフリカ（人）の" },
+            { en: "reduce", jp: "（サイズ・数量・程度など）を減らす、縮小する" },
+            { en: "waste", jp: "ごみ、廃棄物" },
+            { en: "plastic", jp: "プラスチック［ビニール］製の" },
+            { en: "paper", jp: "紙の" },
+            { en: "straw", jp: "ストロー" },
+            { en: "original", jp: "独創的な、独自の" },
+            { en: "reusable", jp: "再利用できる" },
+            { en: "meat", jp: "肉" },
+            { en: "pie", jp: "パイ" },
+            { en: "bean", jp: "豆" },
+            { en: "soup", jp: "スープ" },
+            { en: "chicken", jp: "とり肉、チキン" },
+            { en: "curry", jp: "カレー（料理）" },
+            { en: "of course", jp: "もちろん" },
+            { en: "need to", jp: "…する必要がある" },
+            { en: "all", jp: "全ての、全部の" },
+            { en: "need", jp: "…を必要とする" },
+            { en: "that", jp: "あの、その、例の" },
+            { en: "one", jp: "［前に出てきた名詞のかわりとして］1つ、1人、…なもの" },
+            { en: "well", jp: "井戸" },
+            { en: "other", jp: "（2つの中で）もう1つ［一方］の" },
+            { en: "village", jp: "村" },
+            { en: "collect", jp: "…を集める" },
+            { en: "far", jp: "遠くに［へ］" },
+            { en: "group", jp: "グループ、団体" },
+            { en: "build", jp: "…を建てる、つくる" },
+            { en: "these", jp: "これら、この人たち" },
+            { en: "money", jp: "金、通貨" },
+            { en: "get", jp: "…を得る、受け取る、手に入れる" },
+            { en: "clean", jp: "きれいな、清潔な" },
+            { en: "happy", jp: "幸せな、うれしい、楽しい" },
+            { en: "river", jp: "川" },
+            { en: "on the other hand", jp: "他方では、これに反して" },
+            { en: "for a long time", jp: "長い間" },
+            { en: "for", jp: "【時間・距離】…の間&#x20;" },
+            { en: "from", jp: "【場所】…から" },
+            { en: "help", jp: "援助、助け" },
+            { en: "look", jp: "…（のよう）に見える" },
+            { en: "time", jp: "時間、期間、ひま" },
+            { en: "server", jp: "給仕、ウェイター" },
+            { en: "anything", jp: "［疑問文で］何か" },
+            { en: "else", jp: "（その）ほかに［の］" },
+            { en: "full", jp: "いっぱいの、満腹の" },
+            { en: "mushroom", jp: "キノコ" },
+            { en: "steak", jp: "ステーキ" },
+            { en: "salad", jp: "サラダ" },
+            { en: "dessert", jp: "デザート" },
+            { en: "would like", jp: "…がほしい（のですが）" },
+            { en: "would like to", jp: "…したい（のですが）" },
+            { en: "No, thank you.", jp: "いいえ、けっこうです。" },
+            { en: "voice", jp: "声" },
+            { en: "word", jp: "歌詞" },
+            { en: "cheer", jp: "…を元気づける" },
+            { en: "concert", jp: "演奏会、コンサート" },
+            { en: "dome", jp: "丸屋根、ドーム" },
+            { en: "stage", jp: "舞台、ステージ" },
+            { en: "performance", jp: "演技、演奏、公演" },
+            { en: "again", jp: "もう一度、再び、また" },
+            { en: "hero", jp: "英雄、ヒーロー" },
+            { en: "singer", jp: "歌手" },
+            { en: "world", jp: "世界" },
+            { en: "music", jp: "音楽" },
+            { en: "all over", jp: "…のいたるところに［で、の］" },
+            { en: "cheer \\_ \\_ up", jp: "…を元気づける" },
+            { en: "have", jp: "…を開く、開催する" },
+            { en: "over", jp: "…のいたるところに、一面に" },
+            { en: "up", jp: "勢いよく、元気に" },
+            { en: "back", jp: "戻って、返して" },
+            { en: "during", jp: "…の間ずっと、…の間に" },
+            { en: "stay", jp: "滞在する、泊まる" },
+            { en: "snowboarding", jp: "スノーボード（をすること）" },
+            { en: "Christmas Day", jp: "クリスマス" },
+            { en: "relax", jp: "くつろぐ" },
+            { en: "met", jp: "meetの過去形" },
+            { en: "ice hockey", jp: "アイスホッケー" },
+            { en: "went", jp: "goの過去形" },
+            { en: "vacation", jp: "休暇、休み" },
+            { en: "mountain", jp: "山" },
+            { en: "saw", jp: "seeの過去形" },
+            { en: "go back", jp: "帰る、戻る" },
+            { en: "at home", jp: "家で［に］" },
+            { en: "year", jp: "年、1年" },
+            { en: "for", jp: "【原因・理由】…のために、…の理由で" },
+            { en: "last", jp: "この前の、昨…、先…" },
+            { en: "meet", jp: "（…に）会う、…と出会う、面会する" },
+            { en: "traditional", jp: "伝統的な" },
+            { en: "special", jp: "特別な" },
+            { en: "grandparent", jp: "祖父、祖母" },
+            { en: "wrote", jp: "writeの過去形" },
+            { en: "New Year", jp: "新年" },
+            { en: "Ate", jp: "eatの過去形" },
+            { en: "New Year's Eve", jp: "大みそか" },
+            { en: "card", jp: "カード、はがき" },
+            { en: "rice cake", jp: "もち" },
+            { en: "Good for you!", jp: "よくやった。" },
+            { en: "How nice!", jp: "いいね。すばらしい。うれしい。" },
+            { en: "clean", jp: "…をそうじする" },
+            { en: "for", jp: "…にとって" },
+            { en: "spent", jp: "spendの過去形" },
+            { en: "spend", jp: "（時）を過ごす" },
+            { en: "came", jp: "comeの過去形" },
+            { en: "bought", jp: "buyの過去形" },
+            { en: "fortune slip", jp: "おみくじ" },
+            { en: "read", jp: "readの過去形" },
+            { en: "said", jp: "sayの過去形" },
+            { en: "charm", jp: "お守り" },
+            { en: "got", jp: "getの過去形" },
+            { en: "wooden", jp: "木でできた、木製の" },
+            { en: "wish", jp: "願い、願い事" },
+            { en: "board game", jp: "ボードゲーム" },
+            { en: "New Year's Day", jp: "元日" },
+            { en: "future", jp: "未来、将来" },
+            { en: "bad", jp: "悪い、よくない、ひどい" },
+            { en: "tablet", jp: "板状の小片" },
+            { en: "had", jp: "haveの過去形" },
+            { en: "have a \\_ \\_ time", jp: "…な時を過ごす" },
+            { en: "so", jp: "そんなに、それほど" },
+            { en: "time", jp: "（ある経験をした）時間" },
+            { en: "grandma", jp: "おばあちゃん" },
+            { en: "grandpa", jp: "おじいちゃん" },
+            { en: "ski", jp: "スキーをする" },
+            { en: "fell", jp: "fallの過去形" },
+            { en: "Mt.", jp: "［Mountの略。山の名の前につけて］…山" },
+            { en: "snow", jp: "雪" },
+            { en: "outside", jp: "外で［に、へ］" },
+            { en: "miss", jp: "…がいないのをさびしく思う" },
+            { en: "care", jp: "世話" },
+            { en: "down", jp: "下に、下がって" },
+            { en: "hotel", jp: "ホテル、旅館" },
+            { en: "go \\_ \\_ ing", jp: "…しに行く" },
+            { en: "for the first time", jp: "はじめて" },
+            { en: "fall down", jp: "倒れる" },
+            { en: "take care of", jp: "…をだいじにする、体に気をつける" },
+            { en: "How are you?", jp: "お元気ですか。調子はどうですか。" },
+            { en: "fall", jp: "転ぶ、倒れる" },
+            { en: "for", jp: "【特定の日時・機会】…に&#x20;" },
+            { en: "take", jp: "（ある行動）をとる、する" },
+            { en: "time", jp: "…回、…度" },
+            { en: "this", jp: "今の、現在の" },
+            { en: "remember", jp: "（…を）思い出す、覚えている" },
+            { en: "bored", jp: "退屈した、うんざりした" },
+            { en: "were", jp: "areの過去形" },
+            { en: "realize", jp: "…だと気づく" },
+            { en: "made", jp: "makeの過去形" },
+            { en: "mistake", jp: "誤り、まちがい" },
+            { en: "anyone", jp: "［肯定文で］だれでも" },
+            { en: "won", jp: "winの過去形" },
+            { en: "anyway", jp: "とにかく、それでも" },
+            { en: "chorus", jp: "合唱" },
+            { en: "contest", jp: "コンテスト、コンクール" },
+            { en: "was", jp: "am、isの過去形" },
+            { en: "memory", jp: "思い出" },
+            { en: "at first", jp: "最初は、はじめのうちは" },
+            { en: "like \\_ \\_ ing", jp: "…するのが好きである" },
+            { en: "wasn’t", jp: "was not" },
+            { en: "weren’t", jp: "were not" },
+            { en: "chorus contest", jp: "合唱コンクール" },
+            { en: "place", jp: "順位、立場" },
+            { en: "practice", jp: "練習" },
+            { en: "win", jp: "…を勝ち取る、獲得する" },
+            { en: "best", jp: "［goodの最上級］最もよい" },
+            { en: "can", jp: "【可能性】…することがあり得る" },
+            { en: "make", jp: "…をする、行う" },
+            { en: "hey", jp: "やあ、おい、ちょっと" },
+            { en: "break", jp: "休憩" },
+            { en: "then", jp: "そのとき（に）" },
+            { en: "bring", jp: "…をもたらす" },
+            { en: "heart", jp: "心臓、心" },
+            { en: "beat", jp: "どきどきする" },
+            { en: "way", jp: "道、道筋" },
+            { en: "each", jp: "それぞれの、各自の" },
+            { en: "album", jp: "アルバム" },
+            { en: "yesterday", jp: "昨日（は）" },
+            { en: "fast", jp: "速く" },
+            { en: "bring back", jp: "…を思い出させる" },
+            { en: "on one’s way to", jp: "（…へ行く）途中で" },
+            { en: "show", jp: "（…に）～を［…だと］見せる、示す" },
+            { en: "on", jp: "【状態】…している最中で、…中で" },
+            { en: "these", jp: "これらの" },
+            { en: "trip", jp: "旅行" },
+            { en: "campground", jp: "キャンプ場" },
+            { en: "hot spring", jp: "温泉" },
+            { en: "set", jp: "setの過去形" },
+            { en: "set", jp: "…を置く、すえる、配置する" },
+            { en: "tent", jp: "テント" },
+            { en: "main", jp: "主な、主要な" },
+            { en: "campfire", jp: "キャンプファイア" },
+            { en: "camping", jp: "キャンプ（生活）" },
+            { en: "night", jp: "夜、晩" },
+            { en: "event", jp: "出来事、行事" },
+            { en: "there is", jp: "…がある［いる］単数" },
+            { en: "there are", jp: "…がある［いる］複数" },
+            { en: "set up", jp: "…を建てる" },
+            { en: "there’s", jp: "there is (省略)" },
+            { en: "isn’t", jp: "is not (省略)" },
+            { en: "aren’t", jp: "are not (省略)" },
+            { en: "around", jp: "…のまわりに、周囲に" },
+            { en: "lot", jp: "たいへん、とても" },
+            { en: "up", jp: "上へ［に］、上のほうへ、立てて" },
+            { en: "wrong", jp: "ぐあいが悪い" },
+            { en: "stomachache", jp: "胃痛、腹痛" },
+            { en: "before", jp: "…の前に［の］" },
+            { en: "mild", jp: "穏やかな、強くない、軽い" },
+            { en: "medicine", jp: "薬" },
+            { en: "rest", jp: "休み、休息" },
+            { en: "headache", jp: "頭痛" },
+            { en: "fever", jp: "熱" },
+            { en: "toothache", jp: "歯痛" },
+            { en: "doctor", jp: "医者、医師" },
+            { en: "What’s wrong?", jp: "どうかしたのですか。" },
+            { en: "take a rest", jp: "ひと休みする" },
+            { en: "for", jp: "…として" },
+            { en: "have", jp: "…を食べる、飲む" },
+            { en: "OK", jp: "よろしい、だいじょうぶ" },
+            { en: "take", jp: "（薬・飲み物）を飲む" },
+            { en: "ran", jp: "runの過去形" },
+            { en: "relay", jp: "リレー競走" },
+            { en: "another", jp: "ほかの、別の、ちがった" },
+            { en: "runner", jp: "走者" },
+            { en: "behind", jp: "…の後ろに" },
+            { en: "sports day", jp: "運動会" },
+            { en: "and", jp: "［同じ語を\\_\\_ で結んで］ますます、どんどん" },
+            { en: "just", jp: "ちょうど、まさに" },
+            { en: "naughty", jp: "いたずらな、わんぱくな" },
+            { en: "trick", jp: "いたずら" },
+            { en: "crept", jp: "creepの過去形" },
+            { en: "creep", jp: "はう、こっそり進む" },
+            { en: "let", jp: "letの過去形" },
+            { en: "let", jp: "…を～の状態にさせる" },
+            { en: "shout", jp: "（ …と）叫ぶ" },
+            { en: "escape", jp: "（…から）逃げる" },
+            { en: "later", jp: "もっと遅く、あとで" },
+            { en: "thought", jp: "thinkの過去形" },
+            { en: "die", jp: "死ぬ" },
+            { en: "alone", jp: "ひとりだけの、ただ…だけ" },
+            { en: "out", jp: "外へ［に］、外出して" },
+            { en: "one day", jp: "ある日" },
+            { en: "be full of", jp: "…でいっぱいである" },
+            { en: "out of", jp: "…から（外へ）" },
+            { en: "in", jp: "【着用】…を身につけて、…を着て" },
+            { en: "little", jp: "小さい、かわいい" },
+            { en: "one", jp: "［時を表す名詞の前に用いて］ある…" },
+            { en: "play", jp: "（いたずらなど）をする" },
+            { en: "think", jp: "…だと思う" },
+            { en: "up", jp: "近づいて" },
+            { en: "took", jp: "takeの過去形" },
+            { en: "vendor", jp: "（屋台の）もの売り、行商人" },
+            { en: "cart", jp: "カート、手押し車" },
+            { en: "left", jp: "leaveの過去形" },
+            { en: "leave", jp: "…を置いていく" },
+            { en: "brought", jp: "bringの過去形" },
+            { en: "chestnut", jp: "クリ" },
+            { en: "heard", jp: "hearの過去形" },
+            { en: "hear", jp: "…が聞こえる、…を聞く" },
+            { en: "something", jp: "何か、あるもの" },
+            { en: "himself", jp: "彼自身を［に］" },
+            { en: "neighbor", jp: "近所の人、隣人" },
+            { en: "receive", jp: "…を受け取る" },
+            { en: "someone", jp: "だれか、ある人" },
+            { en: "thing", jp: "もの、こと" },
+            { en: "god", jp: "神" },
+            { en: "say to oneself", jp: "…とひとり言を言う" },
+            { en: "bring", jp: "（～に）…を持ってくる、…を連れてくる" },
+            { en: "take", jp: "…を（手に）取る、…を持っていく、連れていく" },
+            { en: "through", jp: "【貫通】…を通り抜けて" },
+            { en: "door", jp: "ドア、戸" },
+            { en: "into", jp: "【運動・方向】…の中へ［に］" },
+            { en: "pick", jp: "［\\_\\_\\_upで］…を拾い上げる、手に取る" },
+            { en: "gun", jp: "銃" },
+            { en: "bang", jp: "（衝突・銃・ドアなどの音を表して）バン、ズドン、バタン、ドン" },
+            { en: "ground", jp: "地面、土地" },
+            { en: "fresh", jp: "新鮮な" },
+            { en: "floor", jp: "床" },
+            { en: "nod", jp: "うなずく" },
+            { en: "weakly", jp: "弱く、弱々しく" },
+            { en: "drop", jp: "…を落とす" },
+            { en: "smoke", jp: "煙" },
+            { en: "rose", jp: "riseの過去形" },
+            { en: "rise", jp: "のぼる、上がる、上昇する" },
+            { en: "look up", jp: "視線を上げる、見上げる" },
+            { en: "pick up", jp: "…を拾い上げる、手に取る" },
+            { en: "tired", jp: "疲れた" },
+            { en: "sleepy", jp: "眠い" },
+            { en: "hungry", jp: "空腹の、飢えた" },
+            { en: "thirsty", jp: "のどのかわいた" },
+            { en: "weather", jp: "天気、天候" },
+            { en: "sunny", jp: "日の当たる、晴れた" },
+            { en: "cloudy", jp: "くもった" },
+            { en: "windy", jp: "風の吹く、風の強い、風の当たる" },
+            { en: "snowy", jp: "雪の降る" },
+            { en: "warm", jp: "あたたかい" },
+            { en: "cold", jp: "冷たい、寒い" },
+            { en: "humid", jp: "湿った、湿気の多い" },
+            { en: "stand", jp: "立つ、立っている" },
+            { en: "stand up", jp: "立ち上がる" },
+            { en: "sit", jp: "すわる、すわっている" },
+            { en: "sit down", jp: "すわる" },
+            { en: "raise", jp: "…を上げる" },
+            { en: "pair", jp: "1対、1組、ペア" },
+            { en: "repeat", jp: "くり返し言う、くり返す" },
+            { en: "quiet", jp: "静かな" },
+            { en: "good", jp: "元気な、健康な" },
+            { en: "in", jp: "【方法・道具・材料】…で、…を使って" },
+            { en: "up", jp: "起立して、起きて" },
+            { en: "color", jp: "色、色彩" },
+            { en: "shape", jp: "形" },
+            { en: "orange", jp: "オレンジ（色の）" },
+            { en: "yellow", jp: "黄色（い）" },
+            { en: "pink", jp: "ピンク（色の）" },
+            { en: "purple", jp: "紫（色の）" },
+            { en: "circle", jp: "円、丸" },
+            { en: "square", jp: "正方形" },
+            { en: "triangle", jp: "三角形" },
+            { en: "rectangle", jp: "長方形" },
+            { en: "spring", jp: "春" },
+            { en: "autumn", jp: "秋" },
+            { en: "Dolls' Festival", jp: "ひな祭り" },
+            { en: "Children's Day", jp: "こどもの日" },
+            { en: "Star Festival", jp: "七夕祭り" },
+            { en: "Firework", jp: "花火" },
+            { en: "Festival", jp: "祭り、催し物" },
+            { en: "Halloween", jp: "ハロウィーン" },
+            { en: "Christmas", jp: "クリスマス（=Christmas Day）" },
+            { en: "bread", jp: "パン、食パン" },
+            { en: "sandwich", jp: "サンドイッチ" },
+            { en: "pizza", jp: "ピザ" },
+            { en: "hamburger", jp: "ハンバーガー" },
+            { en: "donut", jp: "ドーナツ" },
+            { en: "rice ball", jp: "おにぎり" },
+            { en: "pancake", jp: "パンケーキ、ホットケーキ" },
+            { en: "hot dog", jp: "ホットドッグ" },
+            { en: "French fries", jp: "フライドポテト" },
+            { en: "fried chicken", jp: "フライドチキン" },
+            { en: "sausage", jp: "ソーセージ" },
+            { en: "omelet", jp: "オムレツ" },
+            { en: "spaghetti", jp: "スパゲッティ" },
+            { en: "coffee", jp: "コーヒー" },
+            { en: "soda", jp: "ソーダ、炭酸飲料" },
+            { en: "parfait", jp: "パフェ" },
+            { en: "ice cream", jp: "アイスクリーム" },
+            { en: "shaved ice", jp: "かき氷" },
+            { en: "chocolate", jp: "チョコレート" },
+            { en: "drink", jp: "飲み物" },
+            { en: "vegetable", jp: "野菜" },
+            { en: "banana", jp: "バナナ" },
+            { en: "grape", jp: "ブドウ" },
+            { en: "kiwi fruit", jp: "キウイフルーツ" },
+            { en: "lemon", jp: "レモン" },
+            { en: "melon", jp: "メロン" },
+            { en: "potato", jp: "ジャガイモ" },
+            { en: "tomato", jp: "トマト" },
+            { en: "lettuce", jp: "レタス" },
+            { en: "onion", jp: "タマネギ" },
+            { en: "pineapple", jp: "パイナップル" },
+            { en: "strawberry", jp: "イチゴ" },
+            { en: "watermelon", jp: "スイカ" },
+            { en: "corn", jp: "トウモロコシ" },
+            { en: "pork", jp: "豚肉" },
+            { en: "bacon", jp: "ベーコン" },
+            { en: "ham", jp: "ハム" },
+            { en: "orange", jp: "オレンジ" },
+            { en: "panda", jp: "（ジャイアント）パンダ" },
+            { en: "bear", jp: "クマ" },
+            { en: "elephant", jp: "ゾウ" },
+            { en: "tiger", jp: "トラ" },
+            { en: "lion", jp: "ライオン" },
+            { en: "zebra", jp: "シマウマ" },
+            { en: "giraffe", jp: "キリン" },
+            { en: "camel", jp: "ラクダ" },
+            { en: "frog", jp: "カエル" },
+            { en: "whale", jp: "クジラ" },
+            { en: "penguin", jp: "ペンギン" },
+            { en: "sea turtle", jp: "ウミガメ" },
+            { en: "shark", jp: "サメ、フカ" },
+            { en: "ant", jp: "アリ" },
+            { en: "butterfly", jp: "チョウ" },
+            { en: "spider", jp: "クモ" },
+            { en: "forest", jp: "森、森林" },
+            { en: "volleyball", jp: "バレーボール" },
+            { en: "softball", jp: "ソフトボール" },
+            { en: "dodgeball", jp: "ドッジボール" },
+            { en: "table tennis", jp: "卓球" },
+            { en: "badminton", jp: "バドミントン" },
+            { en: "track and field", jp: "陸上競技" },
+            { en: "skiing", jp: "スキー" },
+            { en: "dance", jp: "ダンス、おどり" },
+            { en: "piano", jp: "ピアノ" },
+            { en: "violin", jp: "バイオリン" },
+            { en: "guitar", jp: "ギター" },
+            { en: "recorder", jp: "リコーダー" },
+            { en: "harmonica", jp: "ハーモニカ" },
+            { en: "drum", jp: "ドラム、たいこ" },
+            { en: "triangle", jp: "トライアングル" },
+            { en: "stationery", jp: "文房具" },
+            { en: "computer", jp: "コンピュータ" },
+            { en: "smartphone", jp: "スマートフォン" },
+            { en: "chair", jp: "いす" },
+            { en: "racket", jp: "ラケット" },
+            { en: "glass", jp: "コップ、グラス" },
+            { en: "dictionary", jp: "辞書" },
+            { en: "present", jp: "プレゼント" },
+            { en: "camera", jp: "カメラ" },
+            { en: "crayon", jp: "クレヨン" },
+            { en: "marker", jp: "マーカー（ペン）" },
+            { en: "pencil", jp: "えんぴつ" },
+            { en: "pencil case", jp: "筆箱" },
+            { en: "eraser", jp: "消しゴム" },
+            { en: "ruler", jp: "定規" },
+            { en: "scissors", jp: "［複数あつかい］はさみ" },
+            { en: "stapler", jp: "ホッチキス" },
+            { en: "shirt", jp: "シャツ" },
+            { en: "sweatshirt", jp: "スウェットシャツ、トレーナー" },
+            { en: "sweater", jp: "セーター" },
+            { en: "pants", jp: "［複数あつかい］ズボン" },
+            { en: "jeans", jp: "［複数あつかい］ジーンズ、ジーパン" },
+            { en: "glove", jp: "てぶくろ、グローブ" },
+            { en: "sock", jp: "［ふつうsocksで］靴下、ソックス" },
+            { en: "shoe", jp: "くつ" },
+            { en: "tablet", jp: "タブレット型コンピュータ" },
+            { en: "watch", jp: "腕時計、懐中時計" },
+            { en: "entrance", jp: "玄関、入り口" },
+            { en: "restroom", jp: "手洗い、トイレ" },
+            { en: "office", jp: "事務所、役所" },
+            { en: "teachers’ office", jp: "職員室" },
+            { en: "principal's office", jp: "校長室" },
+            { en: "nurse's office", jp: "保健室" },
+            { en: "social studies", jp: "社会科" },
+            { en: "science", jp: "科学、理科" },
+            { en: "home economics", jp: "家庭科" },
+            { en: "moral education", jp: "道徳" },
+            { en: "school trip", jp: "修学旅行" },
+            { en: "school festival", jp: "文化祭" },
+            { en: "field trip", jp: "校外見学、遠足" },
+            { en: "drama", jp: "劇" },
+            { en: "swimming meet", jp: "水泳大会" },
+            { en: "entrance ceremony", jp: "入学式" },
+            { en: "graduation ceremony", jp: "卒業式" },
+            { en: "activity", jp: "活動" },
+            { en: "brass band", jp: "ブラスバンド、吹奏楽団" },
+            { en: "newspaper", jp: "新聞" },
+            { en: "bus stop", jp: "バス停" },
+            { en: "police station", jp: "警察署" },
+            { en: "fire station", jp: "消防署" },
+            { en: "bookstore", jp: "書店" },
+            { en: "supermarket", jp: "スーパーマーケット" },
+            { en: "temple", jp: "寺" },
+            { en: "stadium", jp: "スタジアム、競技場" },
+            { en: "bus", jp: "バス" },
+            { en: "taxi", jp: "タクシー" },
+            { en: "job", jp: "職、仕事" },
+            { en: "comedian", jp: "コメディアン" },
+            { en: "artist", jp: "芸術家、芸能人" },
+            { en: "writer", jp: "筆者、作家" },
+            { en: "nurse", jp: "看護師" },
+            { en: "vet", jp: "獣医" },
+            { en: "baker", jp: "パン焼き職人" },
+            { en: "farmer", jp: "農場主" },
+            { en: "police officer", jp: "警察官" },
+            { en: "fire fighter", jp: "消防士" },
+            { en: "pilot", jp: "パイロット" },
+            { en: "astronaut", jp: "宇宙飛行士" },
+            { en: "researcher", jp: "研究者" },
+            { en: "flight attendant", jp: "（飛行機の）客室乗務員" },
+            { en: "driver", jp: "運転手" },
+            { en: "classmate", jp: "同級生" },
+            { en: "grandmother", jp: "祖母" },
+            { en: "grandfather", jp: "祖父" },
+            { en: "aunt", jp: "おば、おばさん" },
+            { en: "uncle", jp: "おじ、おじさん" },
+            { en: "body", jp: "体" },
+            { en: "hair", jp: "髪" },
+            { en: "head", jp: "頭" },
+            { en: "face", jp: "顔" },
+            { en: "shoulder", jp: "肩" },
+            { en: "arm", jp: "腕" },
+            { en: "knee", jp: "ひざ" },
+            { en: "eye", jp: "目" },
+            { en: "ear", jp: "耳" },
+            { en: "mouth", jp: "口" },
+            { en: "tooth", jp: "歯" },
+            { en: "teeth", jp: "toothの複数形" },
+            { en: "neck", jp: "首" },
+            { en: "leg", jp: "脚" },
+            { en: "toe", jp: "足の指" },
+            { en: "spell", jp: "（語）をつづる" },
+            { en: "listen", jp: "聞く、耳を傾ける" },
+            { en: "catch", jp: "…を捕まえる、…をとらえる" },
+            { en: "fly", jp: "飛ぶ" },
+            { en: "ride", jp: "…に乗る、乗っていく" },
+            { en: "save", jp: "…を救う" },
+            { en: "dance", jp: "おどる、ダンスをする" },
+            { en: "cookie", jp: "クッキー" },
+            { en: "skate", jp: "スケートをする" },
+            { en: "high", jp: "高く" },
+            { en: "dancing", jp: "おどり、ダンス" },
+            { en: "fishing", jp: "（魚）つり" },
+            { en: "hiking", jp: "ハイキング" },
+            { en: "shopping", jp: "買い物" },
+            { en: "reading", jp: "読書、読むこと" },
+            { en: "wake", jp: "目が覚める" },
+            { en: "wake up", jp: "目が覚める、目を覚ます" },
+            { en: "get up", jp: "起きる、起床する" },
+            { en: "wash", jp: "（ …を）洗う" },
+            { en: "comb", jp: "（髪）をくしでとかす" },
+            { en: "breakfast", jp: "朝食" },
+            { en: "brush", jp: "…をみがく" },
+            { en: "garbage", jp: "生ごみ、ごみ" },
+            { en: "dinner", jp: "夕食、ディナー" },
+            { en: "dish", jp: "皿" },
+            { en: "get", jp: "（ある状態）になる" },
+            { en: "home", jp: "家に［へ］" },
+            { en: "walk", jp: "（イヌなど）を歩かせる、散歩させる" },
+            { en: "never", jp: "決して…ない" },
+            { en: "delicious", jp: "とてもおいしい" },
+            { en: "low", jp: "（高さ・位置などが）低い" },
+            { en: "short", jp: "（時間・長さ・距離が）短い" },
+            { en: "slow", jp: "遅い" },
+            { en: "active", jp: "活動的な" },
+            { en: "shy", jp: "内気な、恥ずかしがりの" },
+            { en: "smart", jp: "りこうな、頭のいい、抜け目のない" },
+            { en: "bitter", jp: "苦い" },
+            { en: "salty", jp: "塩気のある、塩からい" },
+            { en: "sour", jp: "酸っぱい" },
+            { en: "spicy", jp: "香辛料のきいた、香ばしい" },
+            { en: "soft", jp: "やわらかい" },
+            { en: "fast", jp: "速い" },
+            { en: "hard", jp: "かたい" },
+            { en: "high", jp: "高い" },
+            { en: "old", jp: "古い" },
+            { en: "sweet", jp: "甘い" }
+        ];
+
+        let wordPairs = JSON.parse(localStorage.getItem('dr_cabrera_pairs_v2')) || defaultPairs;
+        let gameTimeSetting = parseInt(localStorage.getItem('dr_cabrera_game_timer')) || 300;
+        let wordTimeSetting = parseInt(localStorage.getItem('dr_cabrera_word_timer')) || 30;
+
+        let shuffledQueue = [];
+        let currentIndex = 0;
+        let gameActive = false;
+        let teamAInput = "";
+        let teamBInput = "";
+        let scoreA = 0;
+        let scoreB = 0;
+        let currentPair = null;
+
+        let gameTimerInterval = null;
+        let gameTimeLeft = 0;
+
+        let wordTimerInterval = null;
+        let wordTimeLeft = 0;
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initQWERTYKeyboards() {
+            const row1 = "qwertyuiop".split("");
+            const row2 = "asdfghjkl".split("");
+            const row3 = "zxcvbnm".split("");
+
+            ['A', 'B'].forEach(team => {
+                const teamTag = team.toLowerCase();
+                
+                const buildRow = (letters, containerId) => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = "";
+                    letters.forEach(letter => {
+                        const btn = document.createElement('button');
+                        btn.type = "button";
+                        btn.textContent = letter;
+                        btn.className = "bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold py-1.5 rounded text-xs transition shadow-xs active:bg-slate-200 active:scale-95 flex items-center justify-center w-full";
+                        btn.addEventListener('pointerdown', (e) => {
+                            e.preventDefault();
+                            handleLetterClick(team, letter);
+                        });
+                        container.appendChild(btn);
+                    });
+                };
+
+                buildRow(row1, `keyboard-${teamTag}-row1`);
+                buildRow(row2, `keyboard-${teamTag}-row2`);
+                buildRow(row3, `keyboard-${teamTag}-row3`);
+            });
+        }
+
+        function startGame() {
+            if (wordPairs.length === 0) {
+                alert("Word pairs list is empty! Please add words via the Teacher Portal.");
+                return;
+            }
+            shuffledQueue = shuffleArray(wordPairs);
+            currentIndex = 0;
+            scoreA = 0;
+            scoreB = 0;
+            teamAInput = "";
+            teamBInput = "";
+            gameActive = true;
+            
+            document.getElementById('score-a').textContent = scoreA;
+            document.getElementById('score-b').textContent = scoreB;
+            document.getElementById('timer-display').classList.remove('hidden');
+            document.getElementById('word-timer-badge').classList.remove('hidden');
+
+            loadNextPair();
+
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            gameTimeLeft = gameTimeSetting;
+            updateGameTimerDisplay();
+
+            gameTimerInterval = setInterval(() => {
+                gameTimeLeft--;
+                updateGameTimerDisplay();
+                if (gameTimeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    if (wordTimerInterval) clearInterval(wordTimerInterval);
+                    endGameByTimeUp();
+                }
+            }, 1000);
+        }
+
+        function loadNextPair() {
+            if (!gameActive) return;
+
+            if (currentIndex >= shuffledQueue.length) {
+                shuffledQueue = shuffleArray(wordPairs);
+                currentIndex = 0;
+            }
+            currentPair = shuffledQueue[currentIndex];
+            currentIndex++;
+
+            document.getElementById('game-prompt').textContent = currentPair.jp;
+            teamAInput = "";
+            teamBInput = "";
+            updateDisplays();
+
+            startWordTimer();
+        }
+
+        function startWordTimer() {
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            wordTimeLeft = wordTimeSetting;
+            updateWordTimerDisplay();
+
+            wordTimerInterval = setInterval(() => {
+                wordTimeLeft--;
+                updateWordTimerDisplay();
+                if (wordTimeLeft <= 0) {
+                    loadNextPair();
+                }
+            }, 1000);
+        }
+
+        function updateGameTimerDisplay() {
+            const minutes = Math.floor(gameTimeLeft / 60);
+            const seconds = gameTimeLeft % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('time-left').textContent = formatted;
+        }
+
+        function updateWordTimerDisplay() {
+            const minutes = Math.floor(wordTimeLeft / 60);
+            const seconds = wordTimeLeft % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('word-time-left').textContent = formatted;
+        }
+
+        function endGameByTimeUp() {
+            gameActive = false;
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            document.getElementById('word-timer-badge').classList.add('hidden');
+            
+            const promptBox = document.getElementById('game-prompt');
+            let resultMessage = "Time's up! Game Over! ";
+            if (scoreA > scoreB) {
+                resultMessage += "Team A Wins! 🎉";
+            } else if (scoreB > scoreA) {
+                resultMessage += "Team B Wins! 🎉";
+            } else {
+                resultMessage += "It's a Tie! 🤝";
+            }
+            
+            promptBox.textContent = resultMessage;
+            promptBox.classList.add('text-rose-600', 'font-extrabold');
+        }
+
+        function handleLetterClick(team, char) {
+            if (!gameActive) return;
+            if (team === 'A') {
+                teamAInput += char;
+                updateDisplays();
+                checkTeamWin('A');
+            } else {
+                teamBInput += char;
+                updateDisplays();
+                checkTeamWin('B');
+            }
+        }
+
+        function handleTeamAction(team, action) {
+            if (!gameActive) return;
+            if (team === 'A') {
+                if (action === 'space') teamAInput += " ";
+                if (action === 'backspace') teamAInput = teamAInput.slice(0, -1);
+                if (action === 'clear') teamAInput = "";
+                updateDisplays();
+            } else {
+                if (action === 'space') teamBInput += " ";
+                if (action === 'backspace') teamBInput = teamBInput.slice(0, -1);
+                if (action === 'clear') teamBInput = "";
+                updateDisplays();
+            }
+        }
+
+        function updateDisplays() {
+            renderLetterBoxes('A', teamAInput);
+            renderLetterBoxes('B', teamBInput);
+        }
+
+        function renderLetterBoxes(team, inputVal) {
+            const container = document.getElementById(`team-${team.toLowerCase()}-display`);
+            container.innerHTML = "";
+
+            if (!currentPair || !gameActive) {
+                const textSpan = document.createElement('span');
+                textSpan.className = "text-slate-400 font-mono text-sm font-bold";
+                textSpan.textContent = "Press START to load letter boxes";
+                container.appendChild(textSpan);
+                return;
+            }
+
+            const targetWord = currentPair.en;
+            const inputChars = inputVal.split("");
+
+            let boxWidthClass = "w-7 h-8 sm:w-8 sm:h-9 text-sm sm:text-base";
+            if (targetWord.length > 15) {
+                boxWidthClass = "w-5 h-6 sm:w-6 sm:h-7 text-xs sm:text-sm";
+            } else if (targetWord.length > 10) {
+                boxWidthClass = "w-6 h-7 sm:w-7 sm:h-8 text-xs sm:text-base";
+            }
+
+            for (let i = 0; i < targetWord.length; i++) {
+                const targetChar = targetWord[i];
+                const enteredChar = inputChars[i] || "";
+
+                if (targetChar === ' ') {
+                    const spaceBox = document.createElement('div');
+                    spaceBox.className = "w-2 sm:w-3 h-6 shrink-0";
+                    container.appendChild(spaceBox);
+                } else {
+                    const box = document.createElement('div');
+                    box.className = `${boxWidthClass} border-2 rounded-md flex items-center justify-center font-mono font-black shrink-0 transition-all uppercase shadow-xs `;
+                    
+                    if (enteredChar) {
+                        box.textContent = enteredChar;
+                        box.classList.add('border-indigo-600', 'bg-indigo-100', 'text-indigo-900');
+                    } else {
+                        box.textContent = "";
+                        box.classList.add('border-slate-300', 'bg-white', 'text-slate-800');
+                    }
+                    container.appendChild(box);
+                }
+            }
+        }
+
+        function checkTeamWin(team) {
+            const targetClean = currentPair.en.replace(/\s+/g, '').toLowerCase();
+            const teamInputClean = (team === 'A' ? teamAInput : teamBInput).replace(/\s+/g, '').toLowerCase();
+
+            if (teamInputClean === targetClean) {
+                if (team === 'A') {
+                    scoreA++;
+                    document.getElementById('score-a').textContent = scoreA;
+                } else {
+                    scoreB++;
+                    document.getElementById('score-b').textContent = scoreB;
+                }
+                flashWinner(team);
+                loadNextPair();
+            }
+        }
+
+        function flashWinner(team) {
+            const display = document.getElementById(`team-${team.toLowerCase()}-display`);
+            display.classList.add('bg-emerald-100', 'border-emerald-600');
+            setTimeout(() => {
+                display.classList.remove('bg-emerald-100', 'border-emerald-600');
+            }, 800);
+        }
+
+        function resetGame() {
+            gameActive = false;
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            document.getElementById('timer-display').classList.add('hidden');
+            document.getElementById('word-timer-badge').classList.add('hidden');
+            teamAInput = "";
+            teamBInput = "";
+            scoreA = 0;
+            scoreB = 0;
+            document.getElementById('score-a').textContent = 0;
+            document.getElementById('score-b').textContent = 0;
+            document.getElementById('team-a-display').textContent = "";
+            document.getElementById('team-b-display').textContent = "";
+            const promptBox = document.getElementById('game-prompt');
+            promptBox.textContent = "Press START to Play";
+            promptBox.classList.remove('text-rose-600', 'font-extrabold');
+        }
+
+        function openTeacherLoginModal() {
+            document.getElementById('teacher-password-input').value = "";
+            document.getElementById('modal-teacher-login').classList.remove('hidden');
+        }
+
+        function closeModals() {
+            document.getElementById('modal-teacher-login').classList.add('hidden');
+            document.getElementById('modal-portal').classList.add('hidden');
+        }
+
+        function verifyTeacherPassword() {
+            const pass = document.getElementById('teacher-password-input').value;
+            if (pass === 'admin' || pass === 'teacher123') {
+                closeModals();
+                openTeacherPortalSettings();
+            } else {
+                alert('Incorrect password! Access denied.');
+            }
+        }
+
+        function openTeacherPortalSettings() {
+            document.getElementById('teacher-game-timer-select').value = gameTimeSetting;
+            document.getElementById('teacher-word-timer-select').value = wordTimeSetting;
+            document.getElementById('teacher-words-input').value = wordPairs.map(p => `${p.en} : ${p.jp}`).join('\n');
+            document.getElementById('modal-portal').classList.remove('hidden');
+        }
+
+        function saveTeacherSettings() {
+            gameTimeSetting = parseInt(document.getElementById('teacher-game-timer-select').value);
+            wordTimeSetting = parseInt(document.getElementById('teacher-word-timer-select').value);
+            
+            localStorage.setItem('dr_cabrera_game_timer', gameTimeSetting);
+            localStorage.setItem('dr_cabrera_word_timer', wordTimeSetting);
+
+            const raw = document.getElementById('teacher-words-input').value;
+            const lines = raw.split('\n');
+            let newPairs = [];
+
+            lines.forEach(line => {
+                if (line.includes(':')) {
+                    let parts = line.split(':');
+                    let en = parts[0].trim();
+                    let jp = parts.slice(1).join(':').trim();
+                    if (en && jp) {
+                        newPairs.push({ en, jp });
+                    }
+                }
+            });
+
+            if (newPairs.length === 0) {
+                alert("Please format at least one pair correctly using a colon (e.g., apple : りんご).");
+                return;
+            }
+
+            wordPairs = newPairs;
+            localStorage.setItem('dr_cabrera_pairs_v2', JSON.stringify(wordPairs));
+            closeModals();
+            alert("Settings updated successfully!");
+            resetGame();
+        }
+
+        window.onload = function() {
+            initQWERTYKeyboards();
+        };
+    </script>
+</body>
+</html>
