@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jojo - Handsome AI English Tutor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Glow Effects */
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+        }
+        .glow-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
+        }
+        .glow-mic {
+            box-shadow: 0 0 30px 2px rgba(14, 165, 233, 0.6);
+        }
+
+        /* Canvas Backdrop Styling */
+        #avatar-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        /* Pulse Animation for Speech Mic */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col md:flex-row overflow-hidden select-none">
+
+    <!-- LEFT / BACKGROUND: 3D Handsome Avatar Area -->
+    <div class="relative w-full md:w-1/2 h-2/5 md:h-full bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 flex flex-col justify-between p-4 md:p-6 z-10">
+        
+        <!-- Top App Header -->
+        <div class="relative z-10 flex items-center justify-between glass-card p-3 md:p-4 rounded-2xl">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg glow-cyan">
+                    J
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">Jojo</h1>
+                    <p class="text-xs text-slate-400 font-medium">Your Handsome AI English Tutor</p>
+                </div>
+            </div>
+            
+            <!-- Avatar Expression Badges -->
+            <div class="flex items-center space-x-2 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700/50">
+                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="status-text" class="text-xs font-semibold text-slate-300">Ready to Talk</span>
+            </div>
+        </div>
+
+        <!-- 3D Avatar WebGL Canvas Container -->
+        <div id="avatar-container" class="cursor-grab active:cursor-grabbing"></div>
+
+        <!-- Avatar Controls & Audio Visualizer Overlay -->
+        <div class="relative z-10 space-y-3">
+            <!-- Audio Lip Sync Visualizer Waves -->
+            <div id="visualizer-bar" class="flex justify-center items-center space-x-1.5 h-8 opacity-0 transition-opacity duration-300">
+                <div class="w-1.5 bg-cyan-400 rounded-full h-3 animate-bounce" style="animation-delay: 0.1s"></div>
+                <div class="w-1.5 bg-blue-400 rounded-full h-6 animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-1.5 bg-indigo-400 rounded-full h-8 animate-bounce" style="animation-delay: 0.3s"></div>
+                <div class="w-1.5 bg-cyan-400 rounded-full h-5 animate-bounce" style="animation-delay: 0.4s"></div>
+                <div class="w-1.5 bg-blue-400 rounded-full h-2 animate-bounce" style="animation-delay: 0.5s"></div>
+            </div>
+
+            <!-- Avatar Mood / Style Buttons -->
+            <div class="glass-card p-2 rounded-xl flex justify-center space-x-2 max-w-sm mx-auto">
+                <button onclick="setAvatarMood('smile')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition">
+                    😊 Friendly
+                </button>
+                <button onclick="setAvatarMood('attentive')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition">
+                    🧐 Attentive
+                </button>
+                <button onclick="setAvatarMood('encouraging')" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition">
+                    ✨ Charming
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Interactive AI Tutor Workspace -->
+    <div class="w-full md:w-1/2 h-3/5 md:h-full bg-slate-950 flex flex-col justify-between p-4 md:p-6 z-20 border-t md:border-t-0 md:border-l border-slate-800/60 overflow-y-auto">
+        
+        <!-- Mode Selector Tabs -->
+        <div class="grid grid-cols-3 gap-2 p-1.5 glass-card rounded-xl mb-4">
+            <button id="mode-free" onclick="switchMode('free')" class="py-2 px-3 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md">
+                <i class="fa-solid fa-comments mr-1.5"></i>Free Chat
+            </button>
+            <button id="mode-grammar" onclick="switchMode('grammar')" class="py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800/50">
+                <i class="fa-solid fa-spell-check mr-1.5"></i>Grammar
+            </button>
+            <button id="mode-roleplay" onclick="switchMode('roleplay')" class="py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800/50">
+                <i class="fa-solid fa-masks-theater mr-1.5"></i>Roleplay
+            </button>
+        </div>
+
+        <!-- Roleplay Scenario Selection (Hidden by default) -->
+        <div id="roleplay-options" class="hidden mb-4 p-3 glass-card rounded-xl border border-cyan-500/20">
+            <p class="text-xs font-semibold text-cyan-400 mb-2">Choose Scenario:</p>
+            <div class="flex space-x-2 overflow-x-auto pb-1">
+                <button onclick="selectScenario('Coffee Shop')" class="px-3 py-1.5 bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 rounded-lg text-xs text-slate-200 whitespace-nowrap">☕ Ordering Coffee</button>
+                <button onclick="selectScenario('Job Interview')" class="px-3 py-1.5 bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 rounded-lg text-xs text-slate-200 whitespace-nowrap">💼 Job Interview</button>
+                <button onclick="selectScenario('Casual Chat')" class="px-3 py-1.5 bg-slate-800 hover:bg-cyan-600/30 border border-slate-700 rounded-lg text-xs text-slate-200 whitespace-nowrap">🌆 Casual Meetup</button>
+            </div>
+        </div>
+
+        <!-- Feedback & Tutor Output Container -->
+        <div class="flex-1 flex flex-col justify-start space-y-4 overflow-y-auto mb-4 pr-1">
+            
+            <!-- Live User Input Transcript Box -->
+            <div class="glass-card p-4 rounded-2xl border-l-4 border-cyan-500">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs uppercase tracking-wider font-bold text-cyan-400">You Said</span>
+                    <span id="score-badge" class="hidden text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">95% Accuracy</span>
+                </div>
+                <p id="user-transcript" class="text-slate-200 text-sm italic font-medium">"Click the mic button below to start speaking or pick a prompt starter..."</p>
+            </div>
+
+            <!-- Jojo AI Tutor Response & Detailed Feedback Card -->
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-blue-500 space-y-3 relative overflow-hidden">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-bold text-blue-400">Jojo's Response</span>
+                    </div>
+                    <button onclick="speakCurrentResponse()" class="text-slate-400 hover:text-cyan-400 transition text-sm">
+                        <i class="fa-solid fa-volume-high"></i> Listen
+                    </button>
+                </div>
+
+                <p id="jojo-response" class="text-slate-100 text-sm font-normal leading-relaxed">
+                    Hello! I'm Jojo, your personal English tutor. How can I help you improve your speaking today? Feel free to talk or type anything!
+                </p>
+
+                <!-- ELSA Style Granular Breakdown (Grammar, Phrasing, Pronunciation) -->
+                <div id="correction-box" class="pt-3 border-t border-slate-800 space-y-2 text-xs">
+                    
+                    <!-- Native Expression Suggestion -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
+                        <span class="text-cyan-400 font-bold block mb-0.5"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Better Way to Say It:</span>
+                        <p id="better-expression" class="text-slate-300 font-medium">"Hello Jojo, I'm excited to practice speaking English with you today!"</p>
+                    </div>
+
+                    <!-- Phonetic / Pronunciation Breakdown -->
+                    <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex justify-between items-center">
+                        <div>
+                            <span class="text-indigo-400 font-bold block mb-0.5"><i class="fa-solid fa-comments mr-1"></i>Pronunciation Tip:</span>
+                            <span id="phonetic-tip" class="text-slate-300 font-mono">practice -> /ˈpræk.tɪs/</span>
+                        </div>
+                        <span class="text-slate-500 text-[10px]">IPA Guide</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Suggestions / Prompts -->
+            <div>
+                <p class="text-xs font-semibold text-slate-500 mb-2">Suggested Prompt Starters:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="sendQuickPrompt('How was your day today, Jojo?')" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                        "How was your day today, Jojo?"
+                    </button>
+                    <button onclick="sendQuickPrompt('Can you check my grammar in this sentence?')" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                        "Can you check my grammar?"
+                    </button>
+                    <button onclick="sendQuickPrompt('Let\'s practice ordering food at a restaurant.')" class="text-xs px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                        "Let's practice food ordering"
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Interactive Voice & Text Controls -->
+        <div class="space-y-3 pt-2 border-t border-slate-800/80">
+            
+            <!-- Voice Error / Permission Alert Banner (Hidden by default) -->
+            <div id="mic-warning-box" class="hidden text-xs bg-amber-500/10 border border-amber-500/30 text-amber-300 p-2.5 rounded-xl flex items-start space-x-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                <div>
+                    <span class="font-bold block">Microphone Notice</span>
+                    <span id="mic-warning-text">If mic is restricted in this preview, you can host this file on GitHub Pages with HTTPS or test via manual input below!</span>
+                </div>
+            </div>
+
+            <!-- Voice Input Mic Button Bar -->
+            <div class="flex items-center justify-center space-x-4">
+                <button id="mic-btn" onclick="toggleSpeechRecognition()" class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white text-2xl flex items-center justify-center glow-mic hover:scale-105 active:scale-95 transition-transform duration-200">
+                    <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                </button>
+            </div>
+
+            <!-- Alternative Manual Text Input -->
+            <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                <input id="text-input" type="text" placeholder="Type your sentence here..." class="w-full bg-transparent text-sm text-slate-200 px-3 py-2 focus:outline-none placeholder-slate-500 font-medium" onkeydown="if(event.key === 'Enter') handleTextSubmit()">
+                <button onclick="handleTextSubmit()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-xs font-bold hover:opacity-90 transition">
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- THREE.JS 3D AVATAR SCRIPT -->
+    <script>
+        let scene, camera, renderer;
+        let headGroup, jaw, leftEye, rightEye, hairMesh, suitMesh;
+        let clock = new THREE.Clock();
+        
+        // Animation State
+        let isSpeaking = false;
+        let mouthOpenAmount = 0;
+        let targetMouthOpen = 0;
+        let headRotationTarget = { x: 0, y: 0 };
+        let currentMood = 'smile';
+
+        function init3DAvatar() {
+            const container = document.getElementById('avatar-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // 1. Scene Setup
+            scene = new THREE.Scene();
+
+            // 2. Camera Setup
+            camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
+            camera.position.set(0, 0.2, 3.8);
+
+            // 3. Renderer Setup
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // 4. Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            // Key Light (Cyan Glow)
+            const keyLight = new THREE.DirectionalLight(0x06b6d4, 1.2);
+            keyLight.position.set(2, 3, 4);
+            scene.add(keyLight);
+
+            // Fill Light (Warm Soft White)
+            const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
+            fillLight.position.set(-2, 1, 2);
+            scene.add(fillLight);
+
+            // Rim Light (Indigo Backlight)
+            const rimLight = new THREE.PointLight(0x6366f1, 2, 10);
+            rimLight.position.set(0, 2, -2);
+            scene.add(rimLight);
+
+            // 5. Construct Handsome Procedural Avatar (Jojo)
+            headGroup = new THREE.Group();
+            scene.add(headGroup);
+
+            // Skin Material (Stylized Smooth Tone)
+            const skinMaterial = new THREE.MeshStandardMaterial({
+                color: 0xf5d0c5,
+                roughness: 0.4,
+                metalness: 0.1
+            });
+
+            // Head Base
+            const headGeo = new THREE.SphereGeometry(0.55, 32, 32);
+            headGeo.scale(1, 1.2, 0.95);
+            const headMesh = new THREE.Mesh(headGeo, skinMaterial);
+            headGroup.add(headMesh);
+
+            // Jaw / Mouth (Separate for Lip Sync)
+            const jawGeo = new THREE.BoxGeometry(0.35, 0.15, 0.3);
+            jawGeo.translate(0, -0.075, 0);
+            const jawMat = new THREE.MeshStandardMaterial({ color: 0xe8b5a8, roughness: 0.5 });
+            jaw = new THREE.Mesh(jawGeo, jawMat);
+            jaw.position.set(0, -0.45, 0.25);
+            headGroup.add(jaw);
+
+            // Eyes Setup
+            const eyeGeo = new THREE.SphereGeometry(0.07, 16, 16);
+            const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const irisMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.2 });
+
+            // Left Eye
+            leftEye = new THREE.Group();
+            const leftWhite = new THREE.Mesh(eyeGeo, eyeWhiteMat);
+            const leftIris = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), irisMat);
+            leftIris.position.z = 0.045;
+            leftEye.add(leftWhite, leftIris);
+            leftEye.position.set(-0.2, 0.1, 0.45);
+            headGroup.add(leftEye);
+
+            // Right Eye
+            rightEye = leftEye.clone();
+            rightEye.position.set(0.2, 0.1, 0.45);
+            headGroup.add(rightEye);
+
+            // Handsome Stylish Hair
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0x1e1b18, roughness: 0.3 });
+            hairMesh = new THREE.Group();
+
+            for (let i = 0; i < 14; i++) {
+                const strandGeo = new THREE.ConeGeometry(0.12, 0.5, 8);
+                const strand = new THREE.Mesh(strandGeo, hairMat);
+                strand.position.set(
+                    (Math.random() - 0.5) * 0.7,
+                    0.5 + Math.random() * 0.15,
+                    (Math.random() - 0.5) * 0.5
+                );
+                strand.rotation.z = (Math.random() - 0.5) * 0.6;
+                strand.rotation.x = -0.3 + (Math.random() - 0.5) * 0.4;
+                hairMesh.add(strand);
+            }
+            headGroup.add(hairMesh);
+
+            // Neck & Handsome Suit Jacket
+            const neckGeo = new THREE.CylinderGeometry(0.18, 0.22, 0.4, 16);
+            const neckMesh = new THREE.Mesh(neckGeo, skinMaterial);
+            neckMesh.position.set(0, -0.7, 0);
+            headGroup.add(neckMesh);
+
+            // Suit Shoulders
+            const suitMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.6 });
+            const suitGeo = new THREE.BoxGeometry(1.4, 0.6, 0.6);
+            suitMesh = new THREE.Mesh(suitGeo, suitMat);
+            suitMesh.position.set(0, -1.05, 0);
+            headGroup.add(suitMesh);
+
+            // Collared Shirt Inner
+            const shirtMat = new THREE.MeshBasicMaterial({ color: 0xf8fafc });
+            const shirtGeo = new THREE.ConeGeometry(0.25, 0.4, 4);
+            const shirtMesh = new THREE.Mesh(shirtGeo, shirtMat);
+            shirtMesh.position.set(0, -0.85, 0.22);
+            shirtMesh.rotation.x = 0.3;
+            headGroup.add(shirtMesh);
+
+            // Handle Resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Subtle Mouse Tracking for Interactive Head Tilt
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+                const y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+                headRotationTarget.y = x * 0.3;
+                headRotationTarget.x = -y * 0.2;
+            });
+
+            // Start Render Loop
+            animate3DAvatar();
+        }
+
+        function animate3DAvatar() {
+            requestAnimationFrame(animate3DAvatar);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Idle Natural Floating & Breathing Movement
+            headGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.04;
+            headGroup.rotation.z = Math.sin(elapsedTime * 0.8) * 0.02;
+
+            // Smooth Interpolation for Head Mouse Follow
+            headGroup.rotation.y += (headRotationTarget.y - headGroup.rotation.y) * 0.05;
+            headGroup.rotation.x += (headRotationTarget.x - headGroup.rotation.x) * 0.05;
+
+            // Lip-Sync Lip Animation when Speaking
+            if (isSpeaking) {
+                targetMouthOpen = Math.abs(Math.sin(elapsedTime * 15)) * 0.12 + 0.02;
+            } else {
+                targetMouthOpen = 0;
+            }
+
+            mouthOpenAmount += (targetMouthOpen - mouthOpenAmount) * 0.2;
+            if (jaw) {
+                jaw.position.y = -0.45 - mouthOpenAmount;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('avatar-container');
+            if (!container) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function setAvatarMood(mood) {
+            currentMood = mood;
+            const statusText = document.getElementById('status-text');
+            if (mood === 'smile') {
+                headRotationTarget.x = -0.05;
+                statusText.innerText = "Mood: Friendly 😊";
+            } else if (mood === 'attentive') {
+                headRotationTarget.x = 0.1;
+                statusText.innerText = "Mood: Listening 🧐";
+            } else if (mood === 'encouraging') {
+                headRotationTarget.x = 0.0;
+                statusText.innerText = "Mood: Charming ✨";
+            }
+        }
+
+        // Initialize 3D Canvas on Load
+        window.addEventListener('DOMContentLoaded', init3DAvatar);
+    </script>
+
+    <!-- VOICE, GRAMMAR EVALUATOR & TUTOR INTERACTION LOGIC -->
+    <script>
+        let isListening = false;
+        let recognition = null;
+        let activeMode = 'free';
+
+        // Initialize Web Speech Recognition with Guardrails
+        function initSpeechRecognition() {
+            const isSecureContext = window.isSecureContext || window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            
+            if (('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) && isSecureContext) {
+                try {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+
+                    recognition.onstart = function() {
+                        isListening = true;
+                        updateMicUI(true);
+                        hideMicWarning();
+                        setAvatarMood('attentive');
+                    };
+
+                    recognition.onresult = function(event) {
+                        let transcript = '';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                        document.getElementById('user-transcript').innerText = `"${transcript}"`;
+                        
+                        if (event.results[0].isFinal) {
+                            processUserInput(transcript);
+                        }
+                    };
+
+                    recognition.onerror = function(event) {
+                        console.warn("Speech Recognition notice:", event.error);
+                        isListening = false;
+                        updateMicUI(false);
+
+                        if (event.error === 'service-not-allowed' || event.error === 'not-allowed') {
+                            showMicWarning("Speech recognition requires HTTPS when published on GitHub Pages. Simulating speech practice mode now!");
+                            simulateVoiceInput();
+                        } else if (event.error === 'no-speech') {
+                            showMicWarning("No speech detected. Tap the mic button again or type below!");
+                        } else {
+                            showMicWarning(`Speech notice (${event.error}). You can type your sentence or click quick prompts below!`);
+                        }
+                    };
+
+                    recognition.onend = function() {
+                        isListening = false;
+                        updateMicUI(false);
+                    };
+                } catch(err) {
+                    console.warn("Speech API instantiation failed:", err);
+                }
+            } else {
+                showMicWarning("Note: Web Speech API works best over HTTPS (e.g. GitHub Pages). You can click the mic for simulated voice mode or type below!");
+            }
+        }
+
+        function showMicWarning(message) {
+            const warningBox = document.getElementById('mic-warning-box');
+            const warningText = document.getElementById('mic-warning-text');
+            if (warningBox && warningText) {
+                warningText.innerText = message;
+                warningBox.classList.remove('hidden');
+            }
+        }
+
+        function hideMicWarning() {
+            const warningBox = document.getElementById('mic-warning-box');
+            if (warningBox) warningBox.classList.add('hidden');
+        }
+
+        function toggleSpeechRecognition() {
+            if (!recognition) {
+                simulateVoiceInput();
+                return;
+            }
+
+            if (isListening) {
+                try { recognition.stop(); } catch(e){}
+            } else {
+                try {
+                    hideMicWarning();
+                    recognition.start();
+                } catch(e) {
+                    console.error("Failed to start speech recognition:", e);
+                    simulateVoiceInput();
+                }
+            }
+        }
+
+        function simulateVoiceInput() {
+            showMicWarning("Simulating speech input practice with Jojo...");
+            updateMicUI(true);
+            setTimeout(() => {
+                updateMicUI(false);
+                const samplePrompts = [
+                    "Hello Jojo! I would like to practice speaking English with you today.",
+                    "Can you help me check if my sentence grammar is correct?",
+                    "How do I order a cup of cappuccino politely at a cafe?"
+                ];
+                const randomPrompt = samplePrompts[Math.floor(Math.random() * samplePrompts.length)];
+                document.getElementById('user-transcript').innerText = `"${randomPrompt}"`;
+                processUserInput(randomPrompt);
+            }, 1200);
+        }
+
+        function updateMicUI(listening) {
+            const micBtn = document.getElementById('mic-btn');
+            const micIcon = document.getElementById('mic-icon');
+            if (listening) {
+                micBtn.classList.add('animate-pulse-ring', 'from-rose-500', 'to-red-600');
+                micIcon.className = "fa-solid fa-microphone-slash";
+            } else {
+                micBtn.classList.remove('animate-pulse-ring', 'from-rose-500', 'to-red-600');
+                micBtn.classList.add('from-cyan-500', 'to-blue-600');
+                micIcon.className = "fa-solid fa-microphone";
+            }
+        }
+
+        function handleTextSubmit() {
+            const inputEl = document.getElementById('text-input');
+            const text = inputEl.value.trim();
+            if (text) {
+                document.getElementById('user-transcript').innerText = `"${text}"`;
+                processUserInput(text);
+                inputEl.value = '';
+            }
+        }
+
+        function sendQuickPrompt(promptText) {
+            document.getElementById('user-transcript').innerText = `"${promptText}"`;
+            processUserInput(promptText);
+        }
+
+        // AI Engine Logic - Generates Jojo's ELSA-like Responses & Grammar Evaluations
+        function processUserInput(input) {
+            setAvatarMood('encouraging');
+            
+            // Show Visualizer
+            document.getElementById('visualizer-bar').style.opacity = '1';
+
+            // Simulate Smart Grammar & Pronunciation Evaluation
+            setTimeout(() => {
+                const analysis = evaluateEnglishInput(input, activeMode);
+                
+                // Update Response Box
+                document.getElementById('jojo-response').innerText = analysis.reply;
+                document.getElementById('better-expression').innerText = `"${analysis.betterWay}"`;
+                document.getElementById('phonetic-tip').innerText = analysis.phoneticTip;
+
+                // Accuracy Badge
+                const scoreBadge = document.getElementById('score-badge');
+                scoreBadge.classList.remove('hidden');
+                scoreBadge.innerText = `${analysis.score}% Grammar Score`;
+
+                // Speak Response using SpeechSynthesis
+                speakText(analysis.reply);
+            }, 600);
+        }
+
+        function evaluateEnglishInput(text, mode) {
+            const lower = text.toLowerCase();
+            
+            let score = 90 + Math.floor(Math.random() * 10);
+            let reply = "That was great! You expressed yourself clearly. Let's keep going!";
+            let betterWay = text;
+            let phoneticTip = "fluency -> /ˈfluː.ən.si/";
+
+            if (mode === 'roleplay') {
+                reply = `Nice answer! As your conversational partner, I'd say: "That sounds wonderful! What should we try next?"`;
+                betterWay = `Could I please have an iced coffee with almond milk?`;
+                phoneticTip = `coffee -> /ˈkɑː.fi/`;
+            } else if (lower.includes('check') || lower.includes('grammar') || mode === 'grammar') {
+                score = 85;
+                reply = "Good effort! In English, tweaking your word order makes your sentences sound much more natural.";
+                betterWay = "Could you please check if my grammar is correct in this sentence?";
+                phoneticTip = "grammar -> /ˈɡræm.ər/";
+            } else if (lower.includes('how are you') || lower.includes('day')) {
+                reply = "I'm feeling fantastic today, especially now that we're practicing together! How are you feeling?";
+                betterWay = "How has your day been going so far?";
+                phoneticTip = "fantastic -> /fænˈtæs.tɪk/";
+            }
+
+            return { score, reply, betterWay, phoneticTip };
+        }
+
+        // Text To Speech Output with Jojo Visual Lip-Sync
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Clear queued speech
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                utterance.pitch = 1.0; // Male Handsome Pitch
+
+                // Select male voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const maleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Natural')));
+                if (maleVoice) utterance.voice = maleVoice;
+
+                utterance.onstart = function() {
+                    isSpeaking = true;
+                    document.getElementById('visualizer-bar').style.opacity = '1';
+                };
+
+                utterance.onend = function() {
+                    isSpeaking = false;
+                    document.getElementById('visualizer-bar').style.opacity = '0';
+                    setAvatarMood('smile');
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function speakCurrentResponse() {
+            const currentResponse = document.getElementById('jojo-response').innerText;
+            speakText(currentResponse);
+        }
+
+        // Mode Switching Logic
+        function switchMode(mode) {
+            activeMode = mode;
+            
+            const btnFree = document.getElementById('mode-free');
+            const btnGrammar = document.getElementById('mode-grammar');
+            const btnRoleplay = document.getElementById('mode-roleplay');
+            const roleplayOpts = document.getElementById('roleplay-options');
+
+            // Reset Styles
+            [btnFree, btnGrammar, btnRoleplay].forEach(btn => {
+                btn.className = "py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800/50";
+            });
+
+            if (mode === 'free') {
+                btnFree.className = "py-2 px-3 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md";
+                roleplayOpts.classList.add('hidden');
+                document.getElementById('jojo-response').innerText = "Free Conversation Mode active! Tell me what's on your mind today.";
+            } else if (mode === 'grammar') {
+                btnGrammar.className = "py-2 px-3 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md";
+                roleplayOpts.classList.add('hidden');
+                document.getElementById('jojo-response').innerText = "Grammar & Phrasing Mode active! Speak or type any sentence and I'll polish it for you.";
+            } else if (mode === 'roleplay') {
+                btnRoleplay.className = "py-2 px-3 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md";
+                roleplayOpts.classList.remove('hidden');
+                document.getElementById('jojo-response').innerText = "Roleplay Mode active! Pick a scenario above to start practicing real-life scenarios.";
+            }
+        }
+
+        function selectScenario(scenario) {
+            document.getElementById('jojo-response').innerText = `Scenario selected: ${scenario}. I'll start! "Welcome! How can I help you today?"`;
+            speakText(`Welcome to our ${scenario} practice! How can I help you today?`);
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initSpeechRecognition();
+        });
+    </script>
+</body>
+</html>
