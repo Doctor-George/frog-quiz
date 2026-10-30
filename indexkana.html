@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kana Writing Guide — prepared by Dr. George Cabrera</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<style>
+*{box-sizing:border-box}html,body{height:100%;max-height:100vh;overflow:hidden;font-family:'UD デジタル 教科書体 NK-B','UD Digi Kyokasho NK-B','UD Digi Kyokasho',sans-serif;touch-action:manipulation}
+canvas{touch-action:none}
+#guide{background-image:linear-gradient(to bottom,transparent 24.5%,#dbeafe 24.5%,#dbeafe 25%,transparent 25%),linear-gradient(to bottom,transparent 49.5%,#60a5fa 49.5%,#60a5fa 50%,transparent 50%),linear-gradient(to bottom,transparent 74.5%,#dbeafe 74.5%,#dbeafe 75%,transparent 75%);background-size:100% 100%}
+.scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none}
+</style></head>
+<body class="h-screen w-screen flex flex-col bg-amber-50/50 text-slate-800 select-none overflow-hidden p-2 sm:p-3">
+<header class="w-full bg-white rounded-2xl border-2 border-yellow-300 shadow-sm px-3 py-2 flex items-center justify-between shrink-0 gap-2">
+ <div class="flex items-center gap-2"><div class="bg-amber-400 text-amber-950 rounded-xl p-2"><i class="fa-solid fa-pen-nib"></i></div><div><h1 class="text-sm sm:text-lg font-bold">Kana Writing Guide <span class="font-medium text-slate-500">— prepared by Dr. George Cabrera</span></h1><p id="subtitle" class="text-xs font-semibold text-amber-700">ひらがな · Hiragana</p></div></div>
+ <div class="flex items-center gap-2"><select id="category" aria-label="Kana category" class="bg-white border border-slate-300 rounded-lg text-xs font-bold px-2 py-2"><option value="gojuon">Basic kana · Gojūon</option><option value="dakuon">Voiced kana · Dakuon</option><option value="handakuon">P-sound kana · Handakuon</option><option value="yoon">Combined sounds · Yōon</option></select><select id="script" class="bg-white border border-slate-300 rounded-lg text-xs font-bold px-2 py-2"><option value="h">Hiragana ひらがな</option><option value="k">Katakana カタカナ</option></select><select id="row" class="bg-white border border-slate-300 rounded-lg text-xs font-bold px-2 py-2"></select></div>
+ <div class="flex items-center gap-2"><div class="bg-amber-100 border-2 border-amber-300 px-3 py-1 rounded-xl text-xs font-bold">Characters: <span id="position">1 / 46</span></div></div>
+</header>
+<div class="w-full bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm shrink-0 my-1 overflow-hidden"><div class="w-full overflow-x-auto scrollbar-none"><div id="kanaBar" class="flex gap-1 min-w-max px-1"></div></div></div>
+<main class="w-full flex-1 min-h-0 py-1 flex items-center justify-center overflow-hidden">
+ <div class="h-full w-full max-w-6xl grid grid-cols-2 gap-2 sm:gap-4 items-center justify-center">
+  <section class="h-full min-h-0 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm p-2 sm:p-3">
+   <div class="w-full flex justify-between items-center mb-1"><div><h2 class="font-bold text-sm sm:text-base">Watch the stroke order</h2><div class="flex items-center gap-2 flex-wrap"><p id="romaji" class="text-xs text-teal-700 font-bold">あ · a</p><button id="soundKana" type="button" class="rounded-lg bg-sky-100 text-sky-900 border border-sky-200 px-3 py-1.5 font-bold text-xs sm:text-sm" aria-label="Hear kana pronunciation">🔊 Hear sound</button></div></div><div id="strokeLabel" class="text-xs font-bold text-indigo-700">Stroke 1</div></div>
+   <div class="relative w-full flex-1 min-h-0 flex items-center justify-center"><div id="guide" class="h-full max-w-full aspect-square border border-slate-200 rounded-xl bg-white relative overflow-hidden flex" aria-label="Animated numbered stroke guide"></div></div>
+   <div id="status" class="text-xs sm:text-sm font-bold text-indigo-700 text-center min-h-5 mt-1">Loading stroke-order guide…</div>
+   <div class="flex gap-2 mt-2 w-full"><button id="replay" class="flex-1 rounded-xl bg-indigo-600 text-white font-bold text-xs sm:text-sm py-2">↻ Replay</button><button id="nextStroke" class="flex-1 rounded-xl bg-indigo-100 text-indigo-900 font-bold text-xs sm:text-sm py-2">↻ Restart animation</button><button id="prev" class="rounded-xl bg-slate-100 px-3 font-bold">←</button><button id="next" class="rounded-xl bg-slate-100 px-3 font-bold">→</button></div>
+  </section>
+  <section class="h-full min-h-0 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm p-2 sm:p-3">
+   <div class="w-full flex justify-between items-center mb-1 gap-2"><h2 class="font-bold text-sm sm:text-base">Your turn — write it</h2><div class="flex items-center gap-2"><button id="traceToggle" type="button" aria-pressed="false" class="rounded-lg bg-teal-100 text-teal-900 border border-teal-200 px-3 py-2 font-bold text-xs sm:text-sm">Show tracing guide</button><span class="text-xs text-slate-500 hidden sm:inline">Finger / stylus / mouse</span></div></div>
+   <div class="relative w-full flex-1 min-h-0 flex items-center justify-center"><canvas id="practice" width="500" height="500" class="h-full max-w-full aspect-square border border-slate-200 rounded-xl bg-white"></canvas></div>
+   <div class="flex gap-2 mt-2 w-full"><button id="clear" class="flex-1 rounded-xl bg-slate-100 font-bold text-xs sm:text-sm py-2">Clear</button><button id="undo" class="flex-1 rounded-xl bg-slate-100 font-bold text-xs sm:text-sm py-2">Undo</button><button id="done" class="flex-1 rounded-xl bg-amber-400 text-amber-950 font-bold text-xs sm:text-sm py-2">Finished ✓</button></div>
+   <p id="feedback" class="text-xs sm:text-sm text-slate-600 text-center mt-1 min-h-5">Follow the numbered strokes, then practise.</p>
+  </section>
+ </div>
+</main>
+<script>
+const kanaCategories={
+gojuon:[
+["あ行 / A",["あ","い","う","え","お"],["ア","イ","ウ","エ","オ"],["a","i","u","e","o"]],
+["か行 / K",["か","き","く","け","こ"],["カ","キ","ク","ケ","コ"],["ka","ki","ku","ke","ko"]],
+["さ行 / S",["さ","し","す","せ","そ"],["サ","シ","ス","セ","ソ"],["sa","shi","su","se","so"]],
+["た行 / T",["た","ち","つ","て","と"],["タ","チ","ツ","テ","ト"],["ta","chi","tsu","te","to"]],
+["な行 / N",["な","に","ぬ","ね","の"],["ナ","ニ","ヌ","ネ","ノ"],["na","ni","nu","ne","no"]],
+["は行 / H",["は","ひ","ふ","へ","ほ"],["ハ","ヒ","フ","ヘ","ホ"],["ha","hi","fu","he","ho"]],
+["ま行 / M",["ま","み","む","め","も"],["マ","ミ","ム","メ","モ"],["ma","mi","mu","me","mo"]],
+["や行 / Y",["や","ゆ","よ"],["ヤ","ユ","ヨ"],["ya","yu","yo"]],
+["ら行 / R",["ら","り","る","れ","ろ"],["ラ","リ","ル","レ","ロ"],["ra","ri","ru","re","ro"]],
+["わ行 / W",["わ","を","ん"],["ワ","ヲ","ン"],["wa","wo","n"]]
+],
+dakuon:[
+["が行 / G",["が","ぎ","ぐ","げ","ご"],["ガ","ギ","グ","ゲ","ゴ"],["ga","gi","gu","ge","go"]],
+["ざ行 / Z",["ざ","じ","ず","ぜ","ぞ"],["ザ","ジ","ズ","ゼ","ゾ"],["za","ji","zu","ze","zo"]],
+["だ行 / D",["だ","ぢ","づ","で","ど"],["ダ","ヂ","ヅ","デ","ド"],["da","ji","zu","de","do"]],
+["ば行 / B",["ば","び","ぶ","べ","ぼ"],["バ","ビ","ブ","ベ","ボ"],["ba","bi","bu","be","bo"]]
+],
+handakuon:[
+["ぱ行 / P",["ぱ","ぴ","ぷ","ぺ","ぽ"],["パ","ピ","プ","ペ","ポ"],["pa","pi","pu","pe","po"]]
+],
+yoon:[
+["きゃ行 / Kya",["きゃ","きゅ","きょ"],["キャ","キュ","キョ"],["kya","kyu","kyo"]],
+["しゃ行 / Sha",["しゃ","しゅ","しょ"],["シャ","シュ","ショ"],["sha","shu","sho"]],
+["ちゃ行 / Cha",["ちゃ","ちゅ","ちょ"],["チャ","チュ","チョ"],["cha","chu","cho"]],
+["にゃ行 / Nya",["にゃ","にゅ","にょ"],["ニャ","ニュ","ニョ"],["nya","nyu","nyo"]],
+["ひゃ行 / Hya",["ひゃ","ひゅ","ひょ"],["ヒャ","ヒュ","ヒョ"],["hya","hyu","hyo"]],
+["みゃ行 / Mya",["みゃ","みゅ","みょ"],["ミャ","ミュ","ミョ"],["mya","myu","myo"]],
+["りゃ行 / Rya",["りゃ","りゅ","りょ"],["リャ","リュ","リョ"],["rya","ryu","ryo"]],
+["ぎゃ行 / Gya",["ぎゃ","ぎゅ","ぎょ"],["ギャ","ギュ","ギョ"],["gya","gyu","gyo"]],
+["じゃ行 / Ja",["じゃ","じゅ","じょ"],["ジャ","ジュ","ジョ"],["ja","ju","jo"]],
+["ぢゃ行 / Ja",["ぢゃ","ぢゅ","ぢょ"],["ヂャ","ヂュ","ヂョ"],["ja","ju","jo"]],
+["びゃ行 / Bya",["びゃ","びゅ","びょ"],["ビャ","ビュ","ビョ"],["bya","byu","byo"]],
+["ぴゃ行 / Pya",["ぴゃ","ぴゅ","ぴょ"],["ピャ","ピュ","ピョ"],["pya","pyu","pyo"]]
+]};
+let category="gojuon", rows=kanaCategories[category];
+let script="h",ri=0,ci=0,animation=null,strokes=[],drawing=false,loadToken=0,sequenceTimers=[],activeStrokeAnimations=[];
+const $=id=>document.getElementById(id);
+function char(){return rows[ri][script==="h"?1:2][ci]}function romaji(){return rows[ri][3][ci]}
+function drawBar(){ $("kanaBar").innerHTML=rows[ri][script==="h"?1:2].map((c,i)=>`<button data-i="${i}" class="px-3 py-2 rounded-lg border text-lg font-bold ${i===ci?'bg-indigo-600 text-white border-indigo-700':'bg-slate-50 border-slate-200 hover:bg-indigo-50'}">${c}</button>`).join("");$("kanaBar").querySelectorAll("button").forEach(b=>b.onclick=()=>{ci=+b.dataset.i;render()});}
+function drawRows(){ $("row").innerHTML=rows.map((r,i)=>`<option value="${i}">${r[0]}</option>`).join("");$("row").value=ri;}
+function render(){ if("speechSynthesis" in window)window.speechSynthesis.cancel(); $("subtitle").textContent=script==="h"?"ひらがな · Hiragana":"カタカナ · Katakana";$("position").textContent=`${rows.slice(0,ri).reduce((n,r)=>n+r[script==="h"?1:2].length,0)+ci+1} / ${rows.reduce((n,r)=>n+r[script==="h"?1:2].length,0)}`; $("romaji").textContent=`${char()} · ${romaji()}`;drawBar();resetGuide();clearCanvas();}
+function resetGuide(){if(animation)clearInterval(animation);sequenceTimers.forEach(clearTimeout);sequenceTimers=[];activeStrokeAnimations.forEach(a=>{try{a.cancel()}catch(e){}});activeStrokeAnimations=[];$("guide").style.alignItems="center";$("guide").style.justifyContent="center";$("guide").innerHTML="";$("status").textContent="Loading animated stroke guide…";loadKanaGuide(char());}
+
+async function fetchSvgText(c){
+  const decimal=c.codePointAt(0);
+  const urls=[
+    `https://raw.githubusercontent.com/parsimonhi/animCJK/master/svgsJaKana/${decimal}.svg`,
+    `https://raw.githubusercontent.com/parsimonhi/animCJK/master/svgsKana/${decimal}.svg`
+  ];
+  for(const url of urls){
+    try{
+      const res=await fetch(url,{cache:"no-cache"});
+      if(res.ok){
+        const txt=await res.text();
+        if(txt.includes("<svg")&&txt.includes("<path"))return txt;
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+async function loadKanaGuide(c){
+  const token=++loadToken;
+  const chars=Array.from(c);
+  const guide=$("guide");
+
+  if(chars.length===1){
+    const svgText=await fetchSvgText(chars[0]);
+    if(token!==loadToken)return;
+    if(!svgText){fallback();return;}
+    
+    guide.innerHTML=`<div class="w-full h-full p-2 flex items-center justify-center relative">${svgText}</div>`;
+    const svg=guide.querySelector("svg");
+    if(svg){svg.setAttribute("width","100%");svg.setAttribute("height","100%");svg.style.overflow="visible";}
+    
+    const paths=guide.querySelectorAll("path[id^='kv:']");
+    $("strokeLabel").textContent=`${paths.length} strokes · looping animation`;
+    $("status").textContent=`Watch ${c} being written stroke by stroke.`;
+    
+    // Animate single kana
+    let delay=0;
+    paths.forEach((p,idx)=>{
+      const len=p.getTotalLength();
+      p.style.strokeDasharray=len;
+      p.style.strokeDashoffset=len;
+      p.style.animation=`drawStroke 0.8s ease forwards ${delay}s infinite`;
+      delay+=0.8;
+    });
+    return;
+  }
+
+  // Yōon: keep the original AnimCJK SVG animation intact, but stagger
+  // the small kana's built-in stroke delays until the large kana is complete.
+  const [svg1Text,svg2Text]=await Promise.all([
+    fetchSvgText(chars[0]),fetchSvgText(chars[1])
+  ]);
+  if(token!==loadToken)return;
+  if(!svg1Text||!svg2Text){fallback();return;}
+
+  function prepareYoonSvg(svgText,prefix,delayOffset=0){
+    const doc=new DOMParser().parseFromString(svgText,"image/svg+xml");
+    const svg=doc.documentElement;
+    if(!svg||svg.localName!=="svg")return null;
+
+    // Two inline SVGs can contain identical IDs. Prefix IDs and every
+    // fragment reference so clip-paths remain attached to their own kana.
+    const idMap=new Map();
+    svg.querySelectorAll("[id]").forEach(el=>{
+      const oldId=el.getAttribute("id");
+      const newId=prefix+oldId;
+      idMap.set(oldId,newId);
+      el.setAttribute("id",newId);
+    });
+    const rewriteRefs=value=>{
+      let result=value;
+      for(const [oldId,newId] of idMap){
+        result=result.replaceAll(`url(#${oldId})`,`url(#${newId})`);
+        if(result===`#${oldId}`)result=`#${newId}`;
+      }
+      return result;
+    };
+    svg.querySelectorAll("*").forEach(el=>{
+      [...el.attributes].forEach(attr=>{
+        const updated=rewriteRefs(attr.value);
+        if(updated!==attr.value)el.setAttribute(attr.name,updated);
+      });
+    });
+    svg.querySelectorAll("style").forEach(style=>{
+      style.textContent=rewriteRefs(style.textContent);
+    });
+
+    // AnimCJK's actual animated paths are path[clip-path], not path[id^="kv:"].
+    // Its own CSS draws the stroke medians and clips them to the kana strokes.
+    const strokePaths=[...svg.querySelectorAll("path[clip-path]")];
+    strokePaths.forEach((path,index)=>{
+      const current=path.style.getPropertyValue("--d").trim();
+      const match=current.match(/^([\d.]+)\s*(s|ms)$/);
+      const baseDelay=match
+        ? Number(match[1])*(match[2]==="ms"?0.001:1)
+        : index+1;
+      path.style.setProperty("--d",`${baseDelay+delayOffset}s`);
+    });
+    return new XMLSerializer().serializeToString(svg);
+  }
+
+  const firstDoc=new DOMParser().parseFromString(svg1Text,"image/svg+xml");
+  const firstStrokeCount=firstDoc.querySelectorAll("path[clip-path]").length;
+  if(!firstStrokeCount){fallback();return;}
+
+  // AnimCJK's delays are one second apart and each stroke takes about 0.8s.
+  // Offset the small kana by the number of large-kana strokes: its first
+  // stroke therefore starts just after the large kana's final stroke ends.
+  const svg1=prepareYoonSvg(svg1Text,"yoonLarge_",0);
+  const svg2=prepareYoonSvg(svg2Text,"yoonSmall_",firstStrokeCount);
+  if(!svg1||!svg2){fallback();return;}
+
+  guide.style.alignItems="flex-end";
+  guide.style.justifyContent="center";
+  guide.innerHTML=`
+    <div class="w-[66%] h-[88%] flex items-center justify-center relative">
+      ${svg1}
+    </div>
+    <div class="w-[34%] h-[58%] self-end mb-[7%] flex items-center justify-center relative">
+      ${svg2}
+    </div>`;
+
+  guide.querySelectorAll("svg").forEach(svg=>{
+    svg.setAttribute("width","100%");
+    svg.setAttribute("height","100%");
+    svg.style.overflow="visible";
+  });
+
+  const smallStrokeCount=new DOMParser()
+    .parseFromString(svg2,"image/svg+xml")
+    .querySelectorAll("path[clip-path]").length;
+
+  $("strokeLabel").textContent=
+    `${firstStrokeCount+smallStrokeCount} strokes · Large kana, then small kana`;
+  $("status").textContent=
+    `First ${chars[0]} is written completely; then ${chars[1]} begins.`;
+
+}
+
+// Inject keyframes dynamically
+const styleTag=document.createElement("style");
+styleTag.innerHTML=`
+@keyframes drawStroke {
+  0% { stroke-dashoffset: var(--path-len, 1000); opacity: 0.2; }
+  10% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+`;
+document.head.appendChild(styleTag);
+
+function fallback(){
+  const box=$("guide");box.innerHTML="";
+  const t=document.createElement("div");
+  t.textContent=char();t.style.cssText="position:absolute;inset:0;display:grid;place-items:center;font-size:min(55vw,180px);color:#d8e1ee;font-family:serif";
+  box.appendChild(t);
+  $("strokeLabel").textContent="Guide unavailable";
+  $("status").textContent="The animated guide could not load. Check internet connection.";
+}
+
+$("replay").onclick=()=>loadKanaGuide(char());
+$("nextStroke").onclick=()=>loadKanaGuide(char());
+
+function playKanaSound(){
+  if(!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(char());
+  u.lang="ja-JP";u.rate=0.78;
+  window.speechSynthesis.speak(u);
+}
+$("soundKana").onclick=playKanaSound;
+$("category").onchange=e=>{category=e.target.value;rows=kanaCategories[category];ri=0;ci=0;drawRows();render()};
+$("script").onchange=e=>{script=e.target.value;ri=0;ci=0;drawRows();render()};
+$("row").onchange=e=>{ri=+e.target.value;ci=0;render()};
+
+function move(d){if(d>0){if(ci<rows[ri][script==="h"?1:2].length-1)ci++;else if(ri<rows.length-1){ri++;ci=0}}else{if(ci>0)ci--;else if(ri>0){ri--;ci=rows[ri][script==="h"?1:2].length-1}}drawRows();render()}
+$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);
+
+const canvas=$("practice"),ctx=canvas.getContext("2d");
+let tracingGuide=false;
+function canvasBase(){
+ ctx.clearRect(0,0,500,500);ctx.fillStyle="#fff";ctx.fillRect(0,0,500,500);
+ ctx.strokeStyle="#e5edf5";ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(250,10);ctx.lineTo(250,490);ctx.moveTo(10,250);ctx.lineTo(490,250);ctx.stroke();ctx.setLineDash([]);
+ if(tracingGuide){
+   ctx.save();ctx.fillStyle="#cbd5e1";ctx.textAlign="center";ctx.textBaseline="middle";
+   const chars=Array.from(char());
+   if(chars.length>1){
+     ctx.font='240px "UD Digi Kyokasho", sans-serif';ctx.fillText(chars[0],160,255);
+     ctx.font='150px "UD Digi Kyokasho", sans-serif';ctx.fillText(chars[1],370,255);
+   }else{ctx.font='300px "UD Digi Kyokasho", sans-serif';ctx.fillText(char(),250,255);}
+   ctx.restore();
+  }
+}
+function toggleTracingGuide(){tracingGuide=!tracingGuide;const b=$("traceToggle");b.textContent=tracingGuide?"Hide tracing guide":"Show tracing guide";redraw();}
+$("traceToggle").onclick=toggleTracingGuide;
+function clearCanvas(){strokes=[];redraw();$("feedback").textContent="Follow the numbered strokes, then practise.";}
+function xy(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*500/r.width,y:(e.clientY-r.top)*500/r.height}}
+canvas.addEventListener("pointerdown",e=>{drawing=true;canvas.setPointerCapture(e.pointerId);const p=xy(e);strokes.push([p]);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.strokeStyle="#183153";ctx.lineWidth=9;ctx.lineCap="round";ctx.lineJoin="round"});
+canvas.addEventListener("pointermove",e=>{if(!drawing)return;const p=xy(e);strokes[strokes.length-1].push(p);ctx.lineTo(p.x,p.y);ctx.stroke()});
+canvas.addEventListener("pointerup",()=>drawing=false);canvas.addEventListener("pointercancel",()=>drawing=false);
+function redraw(){canvasBase();for(const s of strokes){if(!s.length)continue;ctx.beginPath();ctx.moveTo(s[0].x,s[0].y);s.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.strokeStyle="#183153";ctx.lineWidth=9;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke()}}
+$("clear").onclick=clearCanvas;$("undo").onclick=()=>{strokes.pop();redraw()};
+$("done").onclick=()=>{
+  if(!strokes.length){$("feedback").textContent="Write the character in the box first.";return;}
+  $("feedback").textContent=`✓ Great effort practicing ${char()}! Keep up the good work.`;
+  $("feedback").style.color="#15803d";
+};
+
+drawRows();canvasBase();render();
+</script></body></html>
