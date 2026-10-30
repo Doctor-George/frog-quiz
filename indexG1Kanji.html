@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Grade 1 Kanji Writing Guide — prepared by Dr. George Cabrera</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box}html,body{height:100%;max-height:100vh;overflow:hidden;font-family:'UD デジタル 教科書体 NK-B','UD Digi Kyokasho NK-B','UD Digi Kyokasho',sans-serif;touch-action:manipulation}
+body{margin:0}canvas{touch-action:none}#guide{background-image:linear-gradient(to bottom,transparent 24.5%,#dbeafe 24.5%,#dbeafe 25%,transparent 25%),linear-gradient(to bottom,transparent 49.5%,#60a5fa 49.5%,#60a5fa 50%,transparent 50%),linear-gradient(to bottom,transparent 74.5%,#dbeafe 74.5%,#dbeafe 75%,transparent 75%);background-size:100% 100%}
+.scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none}
+#guide svg{max-width:100%;max-height:100%;overflow:visible}
+.stroke-number{font-family:Arial,sans-serif;font-size:30px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.stroke-number-circle{fill:#e11d48;stroke:#fff;stroke-width:3;pointer-events:none}
+</style></head>
+<body class="h-screen w-screen flex flex-col bg-amber-50/50 text-slate-800 select-none overflow-hidden p-2 sm:p-3">
+<header class="w-full bg-white rounded-2xl border-2 border-yellow-300 shadow-sm px-3 py-2 flex items-center justify-between shrink-0 gap-2">
+ <div class="flex items-center gap-2 min-w-0"><div class="bg-amber-400 text-amber-950 rounded-xl p-2 text-lg">筆</div><div class="min-w-0"><h1 class="text-sm sm:text-lg font-bold truncate">Grade 1 Kanji Writing Guide <span class="font-medium text-slate-500">— prepared by Dr. George Cabrera</span></h1><p class="text-xs font-semibold text-amber-700">小学1年生の漢字 · 80 Basic Kanji</p></div></div>
+ <div class="flex items-center gap-2 shrink-0"><div class="bg-amber-100 border-2 border-amber-300 px-2 sm:px-3 py-1 rounded-xl text-xs font-bold">Kanji: <span id="position">1 / 80</span></div></div>
+</header>
+<div class="w-full flex gap-1.5 shrink-0 my-1">
+ <select id="category" aria-label="Kanji category" class="min-w-0 flex-1 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm font-bold px-2 py-2"></select>
+ <div class="bg-white border border-slate-200 rounded-lg px-2 py-2 text-[10px] sm:text-xs font-bold text-slate-600 whitespace-nowrap" id="categoryCount">13 kanji</div>
+</div>
+<div class="w-full bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm shrink-0 mb-1 overflow-hidden"><div class="w-full overflow-x-auto scrollbar-none"><div id="kanjiBar" class="flex gap-1 min-w-max px-1"></div></div></div>
+<main class="w-full flex-1 min-h-0 py-1 flex items-center justify-center overflow-hidden">
+ <div class="h-full w-full max-w-6xl grid grid-cols-2 gap-2 sm:gap-4 items-center justify-center">
+  <section class="h-full min-h-0 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm p-2 sm:p-3">
+   <div class="w-full flex justify-between items-center mb-1 gap-2"><div class="min-w-0"><h2 class="font-bold text-sm sm:text-base">Watch the stroke order</h2><p id="meaning" class="text-xs text-teal-700 font-bold">一 · one</p></div><button id="soundKana" type="button" class="rounded-lg bg-sky-100 text-sky-900 border border-sky-200 px-2 sm:px-3 py-1.5 font-bold text-xs sm:text-sm shrink-0">🔊 Hear reading</button></div>
+   <div class="w-full grid grid-cols-2 gap-1 mb-1 text-center"><div class="rounded-lg bg-indigo-50 px-1 py-1"><div class="text-[10px] text-slate-500 font-bold">HIRAGANA · よみ</div><div id="hira" class="text-sm sm:text-base font-bold text-indigo-800">いち・いつ・ひと</div></div><div class="rounded-lg bg-teal-50 px-1 py-1"><div class="text-[10px] text-slate-500 font-bold">ROMAJI</div><div id="romaji" class="text-[11px] sm:text-xs font-bold text-teal-800">ichi · itsu · hito</div></div></div>
+   <div class="w-full flex justify-between items-center px-1 mb-1"><span class="text-[10px] sm:text-xs text-slate-500 font-bold">RED NUMBERS = STROKE START ORDER</span><span id="strokeLabel" class="text-xs font-bold text-rose-700">1 stroke</span></div>
+   <div class="relative w-full flex-1 min-h-0 flex items-center justify-center"><div id="guide" class="h-full max-w-full aspect-square border border-slate-200 rounded-xl bg-white relative overflow-hidden flex items-center justify-center" aria-label="Animated numbered kanji stroke order"><div class="text-8xl text-slate-200">一</div></div></div>
+   <div id="status" class="text-xs sm:text-sm font-bold text-indigo-700 text-center min-h-5 mt-1">Loading stroke-order guide…</div>
+   <div class="flex gap-2 mt-2 w-full"><button id="replay" class="flex-1 rounded-xl bg-indigo-600 text-white font-bold text-xs sm:text-sm py-2">↻ Replay</button><button id="prev" class="rounded-xl bg-slate-100 px-3 font-bold">←</button><button id="next" class="rounded-xl bg-slate-100 px-3 font-bold">→</button></div>
+  </section>
+  <section class="h-full min-h-0 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm p-2 sm:p-3">
+   <div class="w-full flex justify-between items-center mb-1 gap-2"><h2 class="font-bold text-sm sm:text-base">Your turn — write it</h2><button id="traceToggle" type="button" aria-pressed="false" class="rounded-lg bg-teal-100 text-teal-900 border border-teal-200 px-2 sm:px-3 py-2 font-bold text-xs sm:text-sm">Show tracing guide</button></div>
+   <div class="relative w-full flex-1 min-h-0 flex items-center justify-center"><canvas id="practice" width="500" height="500" class="h-full max-w-full aspect-square border border-slate-200 rounded-xl bg-white"></canvas></div>
+   <div class="flex gap-2 mt-2 w-full"><button id="clear" class="flex-1 rounded-xl bg-slate-100 font-bold text-xs sm:text-sm py-2">Clear</button><button id="undo" class="flex-1 rounded-xl bg-slate-100 font-bold text-xs sm:text-sm py-2">Undo</button><button id="done" class="flex-1 rounded-xl bg-amber-400 text-amber-950 font-bold text-xs sm:text-sm py-2">Finished ✓</button></div>
+   <p id="feedback" class="text-xs sm:text-sm text-slate-600 text-center mt-1 min-h-5">Follow the numbered strokes, then practise.</p>
+  </section>
+ </div>
+</main>
+<script>
+const kanjiData=[["Numbers & Values", "一", "いち・いつ・ひと・ひとつ", "ichi · itsu · hito · hitotsu", "one", 1], ["Numbers & Values", "二", "に・ふた・ふたつ", "ni · futa · futatsu", "two", 2], ["Numbers & Values", "三", "さん・み・みっつ", "san · mi · mittsu", "three", 3], ["Numbers & Values", "四", "し・よん・よ・よっつ", "shi · yon · yo · yottsu", "four", 5], ["Numbers & Values", "五", "ご・いつ・いつつ", "go · itsu · itsutsu", "five", 4], ["Numbers & Values", "六", "ろく・む・むっつ", "roku · mu · muttsu", "six", 4], ["Numbers & Values", "七", "しち・なな・ななつ", "shichi · nana · nanatsu", "seven", 2], ["Numbers & Values", "八", "はち・や・やっつ", "hachi · ya · yattsu", "eight", 2], ["Numbers & Values", "九", "きゅう・く・ここのつ", "kyuu · ku · kokonotsu", "nine", 2], ["Numbers & Values", "十", "じゅう・じゅっ・とお", "juu · ju · too", "ten", 2], ["Numbers & Values", "百", "ひゃく", "hyaku", "hundred", 6], ["Numbers & Values", "千", "せん・ち", "sen · chi", "thousand", 3], ["Numbers & Values", "円", "えん・まる", "en · maru", "yen; circle", 4], ["Nature & Time", "日", "にち・じつ・ひ・か", "nichi · jitsu · hi · ka", "sun; day", 4], ["Nature & Time", "月", "げつ・がつ・つき", "getsu · gatsu · tsuki", "moon; month", 4], ["Nature & Time", "火", "か・ひ", "ka · hi", "fire; Tuesday element", 4], ["Nature & Time", "水", "すい・みず", "sui · mizu", "water; Wednesday element", 4], ["Nature & Time", "木", "もく・ぼく・き・こ", "moku · boku · ki · ko", "tree; wood; Thursday element", 4], ["Nature & Time", "金", "きん・こん・かね・かな", "kin · kon · kane · kana", "gold; money; Friday element", 8], ["Nature & Time", "土", "ど・と・つち", "do · to · tsuchi", "earth; soil; Saturday element", 3], ["Nature & Time", "天", "てん・あめ・あま", "ten · ame · ama", "heaven; sky", 4], ["Nature & Time", "空", "くう・そら・あく・から", "kuu · sora · aku · kara", "sky; empty", 8], ["Nature & Time", "雨", "う・あめ・あま", "u · ame · ama", "rain", 8], ["Nature & Time", "気", "き・け", "ki · ke", "spirit; energy; mood", 6], ["Landscapes & Plants", "山", "さん・やま", "san · yama", "mountain", 3], ["Landscapes & Plants", "川", "せん・かわ", "sen · kawa", "river", 3], ["Landscapes & Plants", "田", "でん・た", "den · ta", "rice field", 5], ["Landscapes & Plants", "石", "せき・しゃく・こく・いし", "seki · shaku · koku · ishi", "stone", 5], ["Landscapes & Plants", "森", "しん・もり", "shin · mori", "forest", 12], ["Landscapes & Plants", "林", "りん・はやし", "rin · hayashi", "woods; grove", 8], ["Landscapes & Plants", "花", "か・はな", "ka · hana", "flower", 7], ["Landscapes & Plants", "草", "そう・くさ", "sou · kusa", "grass", 9], ["Landscapes & Plants", "竹", "ちく・たけ", "chiku · take", "bamboo", 6], ["Landscapes & Plants", "貝", "ばい・かい", "bai · kai", "shellfish; shell", 7], ["Landscapes & Plants", "正", "せい・しょう・ただしい・まさ", "sei · shou · tadashii · masa", "correct; right", 5], ["Animals", "犬", "けん・いぬ", "ken · inu", "dog", 4], ["Animals", "馬", "ば・うま・ま", "ba · uma · ma", "horse", 10], ["Body Parts", "手", "しゅ・て・た", "shu · te · ta", "hand", 4], ["Body Parts", "足", "そく・あし・たる・たりる", "soku · ashi · taru · tariru", "foot; leg", 7], ["Body Parts", "目", "もく・ぼく・め・ま", "moku · boku · me · ma", "eye", 5], ["Body Parts", "耳", "じ・みみ", "ji · mimi", "ear", 6], ["Body Parts", "口", "こう・く・くち", "kou · ku · kuchi", "mouth; opening", 3], ["People & Roles", "人", "じん・にん・ひと", "jin · nin · hito", "person", 2], ["People & Roles", "男", "だん・なん・おとこ", "dan · nan · otoko", "man; male", 7], ["People & Roles", "子", "し・す・こ", "shi · su · ko", "child", 3], ["People & Roles", "女", "じょ・にょ・おんな・め", "jo · nyo · onna · me", "woman; female", 3], ["People & Roles", "王", "おう", "ou", "king", 4], ["Positions & Sizes", "上", "じょう・しょう・うえ・うわ・かみ・あがる・あげる", "jou · shou · ue · uwa · kami · agaru · ageru", "up; above", 3], ["Positions & Sizes", "下", "か・げ・した・しも・もと・さがる・さげる・くだる", "ka · ge · shita · shimo · moto · sagaru · sageru · kudaru", "down; below", 3], ["Positions & Sizes", "左", "さ・ひだり", "sa · hidari", "left", 5], ["Positions & Sizes", "右", "う・ゆう・みぎ", "u · yuu · migi", "right", 5], ["Positions & Sizes", "中", "ちゅう・じゅう・なか", "chuu · juu · naka", "inside; middle", 4], ["Positions & Sizes", "大", "だい・たい・おお・おおきい", "dai · tai · oo · ookii", "big; large", 3], ["Positions & Sizes", "小", "しょう・ちいさい・こ・お", "shou · chiisai · ko · o", "small", 3], ["Movement & Action", "出", "しゅつ・すい・でる・だす", "shutsu · sui · deru · dasu", "go out; take out", 5], ["Movement & Action", "入", "にゅう・じゅ・いる・はいる・いれる", "nyuu · ju · iru · hairu · ireru", "enter; put in", 2], ["Movement & Action", "見", "けん・みる・みえる・みせる", "ken · miru · mieru · miseru", "see; look", 7], ["Movement & Action", "立", "りつ・りゅう・たつ・たてる", "ritsu · ryuu · tatsu · tateru", "stand; set up", 5], ["Movement & Action", "休", "きゅう・やすむ・やすまる・やすめる", "kyuu · yasumu · yasumaru · yasumeru", "rest; holiday", 6], ["Movement & Action", "行", "こう・ぎょう・あん・いく・ゆく・おこなう", "kou · gyou · an · iku · yuku · okonau", "go; travel; do", 6], ["School & Time", "早", "そう・さっ・はやい", "sou · sa · hayai", "early; fast", 6], ["School & Time", "先", "せん・さき", "sen · saki", "ahead; previous", 6], ["School & Time", "生", "せい・しょう・いきる・うまれる・なま", "sei · shou · ikiru · umareru · nama", "life; birth; raw", 5], ["School & Time", "学", "がく・まなぶ", "gaku · manabu", "study; learning", 8], ["School & Time", "校", "こう", "kou", "school", 10], ["School & Time", "年", "ねん・とし", "nen · toshi", "year", 6], ["Words & Study", "本", "ほん・もと", "hon · moto", "book; origin; main", 5], ["Words & Study", "名", "めい・みょう・な", "mei · myou · na", "name; reputation", 6], ["Words & Study", "字", "じ・あざ", "ji · aza", "letter; character", 6], ["Words & Study", "文", "ぶん・もん・ふみ", "bun · mon · fumi", "sentence; writing", 4], ["Society & Objects", "車", "しゃ・くるま", "sha · kuruma", "car; vehicle", 7], ["Society & Objects", "力", "りょく・りき・ちから", "ryoku · riki · chikara", "power; strength", 2], ["Society & Objects", "光", "こう・ひかり・ひかる", "kou · hikari · hikaru", "light; shine", 6], ["Colors", "白", "はく・びゃく・しろ・しら・しろい", "haku · byaku · shiro · shira · shiroi", "white", 5], ["Colors", "赤", "せき・しゃく・あか・あかい", "seki · shaku · aka · akai", "red", 7], ["Colors", "青", "せい・しょう・あお・あおい", "sei · shou · ao · aoi", "blue; green (in some compounds)", 8], ["Culture & Senses", "音", "おん・いん・おと・ね", "on · in · oto · ne", "sound; noise", 9], ["Culture & Senses", "糸", "し・いと", "shi · ito", "thread; string", 6], ["Culture & Senses", "村", "そん・むら", "son · mura", "village", 7], ["Culture & Senses", "町", "ちょう・まち", "chou · machi", "town; street", 7]];
+const categoryOrder=["Numbers & Values", "Nature & Time", "Landscapes & Plants", "Animals", "Body Parts", "People & Roles", "Positions & Sizes", "Movement & Action", "School & Time", "Words & Study", "Society & Objects", "Colors", "Culture & Senses"];
+let index=0,loadToken=0,tracingGuide=false,strokes=[],drawing=false,animationTimers=[];
+const $=id=>document.getElementById(id), current=()=>kanjiData[index];
+const categories=[...new Set(kanjiData.map(x=>x[0]))];
+function setupCategories(){
+ $('category').innerHTML=categories.map(c=>`<option value="${c}">${c} (${kanjiData.filter(x=>x[0]===c).length})</option>`).join('');
+ $('category').onchange=()=>{const first=kanjiData.findIndex(x=>x[0]===$('category').value);if(first>=0){index=first;render();}};
+}
+function drawBar(){
+ const cat=current()[0],items=kanjiData.map((r,i)=>({r,i})).filter(x=>x.r[0]===cat);
+ $('kanjiBar').innerHTML=items.map(({r,i})=>`<button data-i="${i}" class="px-3 py-2 rounded-lg border text-lg font-bold ${i===index?'bg-indigo-600 text-white border-indigo-700':'bg-slate-50 border-slate-200 hover:bg-indigo-50'}">${r[1]}</button>`).join('');
+ $('kanjiBar').querySelectorAll('button').forEach(b=>b.onclick=()=>{index=Number(b.dataset.i);render();});
+ $('category').value=cat;$('categoryCount').textContent=`${items.length} kanji`;
+}
+function render(){
+ const [cat,k,h,r,m,n]=current();
+ if('speechSynthesis'in window)speechSynthesis.cancel();
+ $('position').textContent=`${index+1} / ${kanjiData.length}`;
+ $('meaning').textContent=`${k} · ${m}`;
+ $('hira').textContent=h;$('romaji').textContent=r;
+ drawBar();resetGuide();clearCanvas();
+}
+function resetGuide(){
+ animationTimers.forEach(clearTimeout);animationTimers=[];
+ const token=++loadToken,k=current()[1],guide=$('guide');
+ guide.innerHTML=`<div class="text-8xl text-slate-200">${k}</div>`;
+ $('strokeLabel').textContent=`${current()[5]} strokes`;
+ $('status').textContent='Loading numbered stroke-order guide…';
+ loadKanjiGuide(k,token);
+}
+function addStrokeNumbers(svg,paths){
+ // Put a numbered red marker at the beginning of each stroke path.
+ const rootCTM=svg.getScreenCTM();
+ if(!rootCTM)return;
+ const inverse=rootCTM.inverse();
+ const ns='http://www.w3.org/2000/svg';
+ const layer=document.createElementNS(ns,'g');layer.setAttribute('class','stroke-number-layer');
+ paths.forEach((path,i)=>{
+  let pt;
+  try{pt=path.getPointAtLength(0);}catch(e){return;}
+  const screen=pt.matrixTransform(path.getScreenCTM());
+  const local=screen.matrixTransform(inverse);
+  const circle=document.createElementNS(ns,'circle');
+  circle.setAttribute('cx',local.x);circle.setAttribute('cy',local.y);circle.setAttribute('r','19');circle.setAttribute('class','stroke-number-circle');
+  const text=document.createElementNS(ns,'text');
+  text.setAttribute('x',local.x);text.setAttribute('y',local.y+1);text.setAttribute('class','stroke-number');text.textContent=String(i+1);
+  layer.appendChild(circle);layer.appendChild(text);
+ });
+ svg.appendChild(layer);
+}
+async function loadKanjiGuide(k,token){
+ const urls=[
+  `https://raw.githubusercontent.com/parsimonhi/animCJK/master/svgsJa/${k.codePointAt(0)}.svg`,
+  `https://raw.githubusercontent.com/parsimonhi/animCJK/master/svgs/${k.codePointAt(0)}.svg`
+ ];
+ let svgText=null;
+ for(const url of urls){try{const res=await fetch(url,{cache:'no-cache'});if(res.ok){const t=await res.text();if(t.includes('<svg')&&t.includes('<path')){svgText=t;break;}}}catch(e){}}
+ if(token!==loadToken)return;
+ if(!svgText){fallback(k);return;}
+ const guide=$('guide');guide.innerHTML=`<div class="w-full h-full p-2 flex items-center justify-center relative">${svgText}</div>`;
+ const svg=guide.querySelector('svg');if(!svg){fallback(k);return;}
+ svg.setAttribute('width','100%');svg.setAttribute('height','100%');svg.style.overflow='visible';
+ const paths=[...svg.querySelectorAll('path[clip-path]')];
+ if(paths.length){
+  addStrokeNumbers(svg,paths);
+  paths.forEach((p,i)=>{
+   const v=p.style.getPropertyValue('--d').trim(),match=v.match(/^([\d.]+)\s*(s|ms)$/);
+   const delay=match?Number(match[1])*(match[2]==='ms'?.001:1):i+1;
+   p.style.setProperty('--d',`${delay}s`);
+  });
+  $('strokeLabel').textContent=`${paths.length} strokes · numbered 1–${paths.length}`;
+  $('status').textContent=`Red numbers show where each stroke begins. Follow 1, 2, 3…`;
+  let step=0;
+  const tick=()=>{if(token!==loadToken)return;step=(step%paths.length)+1;$('strokeLabel').textContent=`Stroke ${step} / ${paths.length}`;animationTimers.push(setTimeout(tick,1000));};
+  tick();
+ }else{
+  const paths2=[...svg.querySelectorAll('path[id*="-s"]')];
+  if(paths2.length){addStrokeNumbers(svg,paths2);$('strokeLabel').textContent=`${paths2.length} strokes · numbered`; $('status').textContent='Red numbers indicate the stroke sequence.';}
+  else{$('strokeLabel').textContent=`${current()[5]} strokes`;$('status').textContent='Diagram loaded; stroke numbering unavailable for this source.';}
+ }
+}
+function fallback(k){
+ $('guide').innerHTML=`<div class="absolute inset-0 grid place-items-center text-slate-200" style="font-size:min(55vw,220px)">${k}</div>`;
+ $('strokeLabel').textContent=`${current()[5]} strokes`;
+ $('status').textContent='Online stroke-order diagram unavailable. Check internet connection.';
+}
+$('replay').onclick=resetGuide;
+function playSound(){
+ if(!('speechSynthesis'in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(current()[1]);u.lang='ja-JP';u.rate=.78;speechSynthesis.speak(u);
+}
+$('soundKana').onclick=playSound;
+function move(d){index=(index+d+kanjiData.length)%kanjiData.length;render();}
+$('prev').onclick=()=>move(-1);$('next').onclick=()=>move(1);
+const canvas=$('practice'),ctx=canvas.getContext('2d');
+function canvasBase(){
+ ctx.clearRect(0,0,500,500);ctx.fillStyle='#fff';ctx.fillRect(0,0,500,500);
+ ctx.strokeStyle='#e5edf5';ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(250,10);ctx.lineTo(250,490);ctx.moveTo(10,250);ctx.lineTo(490,250);ctx.stroke();ctx.setLineDash([]);
+ if(tracingGuide){ctx.save();ctx.fillStyle='#cbd5e1';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='300px "UD Digi Kyokasho",sans-serif';ctx.fillText(current()[1],250,255);ctx.restore();}
+}
+function redraw(){canvasBase();for(const s of strokes){if(!s.length)continue;ctx.beginPath();ctx.moveTo(s[0].x,s[0].y);s.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.strokeStyle='#183153';ctx.lineWidth=9;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}}
+function clearCanvas(){strokes=[];redraw();$('feedback').textContent='Follow the numbered strokes, then practise.';$('feedback').style.color='';}
+function xy(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*500/r.width,y:(e.clientY-r.top)*500/r.height};}
+canvas.addEventListener('pointerdown',e=>{drawing=true;canvas.setPointerCapture(e.pointerId);strokes.push([xy(e)]);redraw();});
+canvas.addEventListener('pointermove',e=>{if(!drawing)return;strokes[strokes.length-1].push(xy(e));redraw();});
+canvas.addEventListener('pointerup',()=>drawing=false);canvas.addEventListener('pointercancel',()=>drawing=false);
+$('traceToggle').onclick=()=>{tracingGuide=!tracingGuide;$('traceToggle').textContent=tracingGuide?'Hide tracing guide':'Show tracing guide';$('traceToggle').setAttribute('aria-pressed',String(tracingGuide));redraw();};
+$('clear').onclick=clearCanvas;$('undo').onclick=()=>{strokes.pop();redraw();};
+$('done').onclick=()=>{if(!strokes.length){$('feedback').textContent='Write the character in the box first.';return;}$('feedback').textContent=`✓ Great effort practising ${current()[1]}! Keep it up!`;$('feedback').style.color='#15803d';};
+setupCategories();render();
+</script></body></html>
