@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TalkPartner – Practice speaking, get corrected</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef4f2;--card:#fff;--ink:#12302f;--mute:#5a7371;--line:#d5e2df;--pri:#0f6e6a;--pri-ink:#fff;--co:#ff6b57;--soft:#e1efec;--me:#12302f;--me-ink:#fff;--bad:#c93a2b;--ok:#0b8f5a;--badbg:#ffe9e5;--okbg:#def5e8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1a1a;--card:#13292a;--ink:#e4f2ef;--mute:#92b0ac;--line:#25413f;--pri:#4fd1c5;--pri-ink:#0c1a1a;--soft:#1b3a3a;--me:#4fd1c5;--me-ink:#0c1a1a;--bad:#ff8a7a;--ok:#5fe0a0;--badbg:#3b1f1c;--okbg:#17382a}}
+:root[data-theme="dark"]{--bg:#0c1a1a;--card:#13292a;--ink:#e4f2ef;--mute:#92b0ac;--line:#25413f;--pri:#4fd1c5;--pri-ink:#0c1a1a;--soft:#1b3a3a;--me:#4fd1c5;--me-ink:#0c1a1a;--bad:#ff8a7a;--ok:#5fe0a0;--badbg:#3b1f1c;--okbg:#17382a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;margin:0;letter-spacing:-.02em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--co);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:20px clamp(14px,3vw,32px)}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+header h1{font-size:28px;font-weight:800}
+header p{margin:0;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.setup{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:3px}
+select,textarea,input[type=password],input[type=text]{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.btn{background:var(--pri);color:var(--pri-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer}
+.btn.sec{background:var(--soft);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+details.keys{margin-bottom:14px}
+details.keys summary{cursor:pointer;font-weight:600}
+.keygrid{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-top:12px}
+@media(max-width:620px){.keygrid{grid-template-columns:1fr}}
+.main{display:grid;grid-template-columns:1fr 280px;gap:14px}
+.chat{display:flex;flex-direction:column;height:min(70vh,640px)}
+.log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px 12px}
+.m{max-width:86%;display:flex;flex-direction:column;gap:6px}
+.m.me{align-self:flex-end;align-items:flex-end}
+.b{padding:10px 14px;border-radius:16px;white-space:pre-wrap}
+.m.t .b{background:var(--soft);border-bottom-left-radius:4px}
+.m.me .b{background:var(--me);color:var(--me-ink);border-bottom-right-radius:4px}
+mark{background:transparent;color:inherit;text-decoration:underline wavy var(--co);text-underline-offset:4px;text-decoration-thickness:2px}
+.fix{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--co);border-radius:12px;padding:10px 12px;font-size:14px;width:100%;color:var(--ink)}
+.fix.good{border-left-color:var(--ok)}
+.fix div+div{margin-top:8px}
+.x{background:var(--badbg);color:var(--bad);text-decoration:line-through;padding:0 5px;border-radius:5px}
+.v{background:var(--okbg);color:var(--ok);font-weight:600;padding:0 5px;border-radius:5px}
+.why{color:var(--mute);display:block}
+.tag{font-size:12px;background:var(--soft);padding:1px 8px;border-radius:12px;margin-left:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button,.chip{background:none;border:1px solid var(--line);border-radius:20px;padding:3px 11px;font-size:13px;cursor:pointer;color:var(--mute)}
+.chip{color:var(--ink);background:var(--card)}
+.en{font-size:14px;color:var(--mute);font-style:italic}
+.bar{display:flex;gap:8px;align-items:flex-end;padding-top:10px;border-top:1px solid var(--line)}
+.bar textarea{resize:none;height:48px}
+.mic{width:48px;height:48px;border-radius:50%;border:0;background:var(--soft);cursor:pointer;font-size:20px;flex:none}
+.mic.on{background:var(--co);animation:p 1.2s infinite}
+@keyframes p{50%{opacity:.6}}
+@media(prefers-reduced-motion:reduce){.mic.on{animation:none}}
+.typing{color:var(--mute);font-size:14px}
+.side h3{font-size:17px;margin-bottom:8px}
+.big{font:800 40px 'Bricolage Grotesque',sans-serif;line-height:1}
+.row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:14px}
+.note{font-size:13px;color:var(--mute)}
+.ban{background:var(--badbg);color:var(--bad);padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:14px}
+ul{margin:6px 0;padding-left:18px;font-size:14px}
+@media(max-width:820px){.main{grid-template-columns:1fr}.chat{height:70vh}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>TalkPartner</h1><p>Chat in your new language. Mistakes get fixed right away.</p></div><button class="btn sec" id="rep">Download session report</button></header>
+<div id="ban"></div>
+
+<details class="card keys" id="keys">
+ <summary>AI settings (API key)</summary>
+ <div class="keygrid">
+  <div><label for="key">Anthropic API key</label><input type="password" id="key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false"></div>
+  <div><label for="model">Model</label><input type="text" id="model" value="claude-sonnet-4-6" spellcheck="false"></div>
+  <button class="btn sec" id="savekey">Save</button>
+ </div>
+ <p class="note" style="margin:10px 0 0">Your key is saved only in this browser (localStorage) and is sent only to api.anthropic.com. Anyone using this browser profile can read it, so don’t use this on a shared computer.</p>
+</details>
+
+<div class="card setup">
+ <div><label for="lang">Language</label><select id="lang"><option>Spanish</option><option>French</option><option>German</option><option>Japanese</option><option>English</option></select></div>
+ <div><label for="lvl">Level</label><select id="lvl"><option value="A1">A1 – Beginner</option><option value="A2" selected>A2 – Elementary</option><option value="B1">B1 – Intermediate</option><option value="B2">B2 – Upper intermediate</option></select></div>
+ <div><label for="scn">Topic</label><select id="scn"><option>Ordering at a café</option><option>Introducing yourself</option><option>Asking for directions</option><option>Talking about school</option><option>Planning a weekend</option><option>Free chat</option></select></div>
+ <div><label for="sty">Corrections</label><select id="sty"><option value="full">Detailed explanations</option><option value="brief">Short fixes only</option></select></div>
+ <button class="btn" id="go">Start conversation</button>
+</div>
+<div class="main">
+ <div class="card chat"><div class="log" id="log" aria-live="polite"><div class="note" style="margin:auto;text-align:center">Pick a language and topic, then press Start conversation.<br>You can type or use the microphone.</div></div>
+ <div class="bar"><button class="mic" id="mic" aria-label="Speak" aria-pressed="false" type="button" hidden>🎤</button><textarea id="inp" rows="2" placeholder="Write or speak your answer…" disabled></textarea><button class="btn" id="send" disabled>Send</button></div></div>
+ <div class="card side" id="side"></div>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LC={Spanish:'es-ES',French:'fr-FR',German:'de-DE',Japanese:'ja-JP',English:'en-US'};
+let S=null,busy=false,retry=false;
+
+/* ---------- settings (API key + model), stored in this browser only ---------- */
+const store={
+ get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},
+ set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+};
+$('#key').value=store.get('tp_key');
+$('#model').value=store.get('tp_model')||'claude-sonnet-4-6';
+if(!$('#key').value)$('#keys').open=true;
+$('#savekey').onclick=()=>{
+ const ok=store.set('tp_key',$('#key').value.trim())&store.set('tp_model',$('#model').value.trim()||'claude-sonnet-4-6');
+ $('#ban').innerHTML=ok?'':'<div class="ban">Couldn’t save to browser storage. The key will work until you reload the page.</div>';
+ if(ok)$('#keys').open=false;
+};
+const getKey=()=>$('#key').value.trim();
+const getModel=()=>$('#model').value.trim()||'claude-sonnet-4-6';
+
+function newSession(){return{lang:$('#lang').value,lvl:$('#lvl').value,scn:$('#scn').value,sty:$('#sty').value,msgs:[],scores:[],errs:{},fixes:[]}}
+function sys(){return`You are a warm, patient ${S.lang} conversation tutor for a school student at CEFR level ${S.lvl}. Topic: ${S.scn}. Rules:
+- "reply": your next line, ONLY in ${S.lang}, 1-3 short sentences at ${S.lvl} level, ending with an easy question. Never be harsh.
+- Check ONLY the student's latest message for real mistakes: grammar, conjugation, gender/agreement, word order, spelling, accents, word choice. Do not nitpick style or punctuation. If the message is mostly English, gently encourage trying in ${S.lang} and give the ${S.lang} version as one correction.
+- "corrections": each "original" must be an EXACT substring of the student's message. "why" is a ${S.sty==='brief'?'very short (under 10 words)':'clear, friendly 1-2 sentence'} explanation in English.
+- "reply_en": English translation of your reply. "praise": one short English sentence naming something they did well. "score": 0-100 accuracy of the latest message. "suggestions": 2 short possible student replies in ${S.lang}.
+Return ONLY JSON, no markdown: {"reply":"","reply_en":"","corrections":[{"original":"","corrected":"","why":"","type":"grammar|vocabulary|spelling|word order|other"}],"praise":"","score":100,"suggestions":["",""]}`}
+
+/* ---------- direct call to the Anthropic Messages API ---------- */
+async function callClaude(system,user){
+ const key=getKey();
+ if(!key){const e=new Error('no key');e.code='no_key';throw e}
+ let res;
+ try{
+  res=await fetch('https://api.anthropic.com/v1/messages',{
+   method:'POST',
+   headers:{
+    'content-type':'application/json',
+    'x-api-key':key,
+    'anthropic-version':'2023-06-01',
+    'anthropic-dangerous-direct-browser-access':'true'
+   },
+   body:JSON.stringify({model:getModel(),max_tokens:1200,system,messages:[{role:'user',content:user}]})
+  });
+ }catch(err){const e=new Error('network');e.code='network';throw e}
+ if(!res.ok){
+  const e=new Error('http '+res.status);
+  e.code=res.status===401||res.status===403?'bad_key':res.status===429?'rate_limited':res.status===404?'bad_model':'http';
+  try{e.detail=(await res.json()).error.message}catch(_){}
+  throw e;
+ }
+ const data=await res.json();
+ return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+}
+async function ask(student){
+ const hist=S.msgs.slice(-10).map(m=>(m.who==='me'?'Student: ':'Tutor: ')+m.text).join('\n');
+ const p='Conversation so far:\n'+(hist||'(none)')+'\n\n'+(student===null?'Start the conversation with a friendly greeting and a simple question. corrections must be [] and score 100.':'Student\'s latest message: '+student);
+ const t=await callClaude(sys(),p);
+ const a=t.indexOf('{'),b=t.lastIndexOf('}');
+ try{return JSON.parse(t.slice(a,b+1))}catch(_){const e=new Error('parse');e.code='parse';throw e}
+}
+
+function hl(text,cs){const rg=[];(cs||[]).forEach(c=>{const i=c.original?text.indexOf(c.original):-1;if(i>=0)rg.push([i,i+c.original.length])});rg.sort((x,y)=>x[0]-y[0]);let o='',p=0;rg.forEach(([a,b])=>{if(a<p)return;o+=esc(text.slice(p,a))+'<mark>'+esc(text.slice(a,b))+'</mark>';p=b});return o+esc(text.slice(p))}
+function render(){
+ const L=$('#log');if(!S)return;
+ L.innerHTML=S.msgs.map((m,i)=>m.who==='me'?`<div class="m me"><div class="b">${hl(m.text,m.cs)}</div>${m.cs?(m.cs.length?`<div class="fix">${m.cs.map(c=>`<div><span class="x">${esc(c.original)}</span> → <span class="v">${esc(c.corrected)}</span><span class="tag">${esc(c.type||'')}</span><span class="why">${esc(c.why)}</span></div>`).join('')}<div class="acts"><button data-r="${i}">Try it again</button></div></div>`:`<div class="fix good">✓ No mistakes. ${esc(m.praise||'')}</div>`):'<div class="typing">Checking…</div>'}</div>`:`<div class="m t"><div class="b">${esc(m.text)}</div><div class="acts"><button data-sp="${i}" aria-label="Listen">🔊 Listen</button><button data-tr="${i}">Translate</button></div>${m.show?`<div class="en">${esc(m.en)}</div>`:''}${i===S.msgs.length-1&&m.sug?`<div class="acts">${m.sug.map(s=>`<button class="chip" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:''}</div>`).join('')+(busy?'<div class="typing">Tutor is typing…</div>':'');
+ L.scrollTop=L.scrollHeight;
+ const n=S.scores.length,av=n?Math.round(S.scores.reduce((a,b)=>a+b,0)/n):null;const et=Object.entries(S.errs).sort((a,b)=>b[1]-a[1]);
+ $('#side').innerHTML=`<h3>Your progress</h3><div class="big">${av===null?'–':av+'%'}</div><div class="note">Average accuracy over ${n} message${n===1?'':'s'}</div><h3 style="margin-top:16px">Mistake types</h3>${et.length?et.map(([k,v])=>`<div class="row"><span>${esc(k)}</span><b>${v}</b></div>`).join(''):'<div class="note">None yet. Keep talking!</div>'}<h3 style="margin-top:16px">Phrases to review</h3>${S.fixes.length?`<ul>${S.fixes.slice(-6).map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:'<div class="note">Corrected phrases will collect here.</div>'}`;
+}
+function setBusy(b){busy=b;$('#send').disabled=b||!S;$('#inp').disabled=b||!S}
+function fail(e){
+ setBusy(false);const c=e&&e.code;
+ const msg=c==='no_key'?'Add your Anthropic API key in AI settings first.'
+  :c==='bad_key'?'The API key was rejected. Check it in AI settings.'
+  :c==='bad_model'?'That model name wasn’t found. Check the model in AI settings.'
+  :c==='rate_limited'?'The API is rate limiting you. Wait a moment and try again.'
+  :c==='network'?'Couldn’t reach api.anthropic.com. Check your internet connection.'
+  :c==='parse'?'The tutor sent a reply that couldn’t be read. Please try again.'
+  :'Something went wrong reaching the tutor.'+(e&&e.detail?' ('+e.detail+')':'')+' Please try again.';
+ $('#ban').innerHTML=`<div class="ban">${esc(msg)}</div>`;
+ if(c==='no_key'||c==='bad_key')$('#keys').open=true;
+ render();
+}
+function addTutor(r){S.msgs.push({who:'t',text:r.reply||'…',en:r.reply_en,sug:(r.suggestions||[]).slice(0,2)})}
+$('#go').onclick=async()=>{
+ if(!getKey()){fail({code:'no_key'});return}
+ $('#ban').innerHTML='';S=newSession();render();setBusy(true);render();
+ try{const r=await ask(null);addTutor(r);setBusy(false);render();$('#inp').focus()}catch(e){fail(e)}};
+async function send(){
+ const t=$('#inp').value.trim();if(!t||busy||!S)return;$('#inp').value='';$('#inp').placeholder='Write or speak your answer…';retry=false;
+ $('#ban').innerHTML='';
+ const m={who:'me',text:t};S.msgs.push(m);setBusy(true);render();
+ try{const r=await ask(t);const cs=(r.corrections||[]).filter(c=>c&&c.corrected);m.cs=cs;m.praise=r.praise;
+  S.scores.push(Math.max(0,Math.min(100,+r.score||0)));cs.forEach(c=>{const k=c.type||'other';S.errs[k]=(S.errs[k]||0)+1;S.fixes.push(c.corrected)});
+  addTutor(r);setBusy(false);render();$('#inp').focus()}catch(e){S.msgs.pop();$('#inp').value=t;fail(e)}}
+$('#send').onclick=send;
+$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+$('#log').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;
+ if(b.dataset.s){$('#inp').value=b.dataset.s;$('#inp').focus()}
+ else if(b.dataset.tr){const m=S.msgs[+b.dataset.tr];m.show=!m.show;render()}
+ else if(b.dataset.sp){speak(S.msgs[+b.dataset.sp].text)}
+ else if(b.dataset.r){$('#inp').value='';$('#inp').placeholder='Type your message again, correctly…';$('#inp').focus();retry=true}});
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=LC[S.lang];u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+/* ---------- microphone (Web Speech API) ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
+const micBtn=$('#mic');
+function micMsg(t){$('#ban').innerHTML=t?`<div class="ban">${esc(t)}</div>`:''}
+function micOff(){rec=null;micBtn.classList.remove('on');micBtn.setAttribute('aria-pressed','false');micBtn.setAttribute('aria-label','Speak')}
+micBtn.hidden=false;
+if(!SR){micBtn.style.opacity='.5';micBtn.title='Speech input isn’t supported in this browser'}
+micBtn.onclick=()=>{
+ if(!SR){micMsg('Speech input isn’t supported in this browser. Use Chrome, Edge or Safari, and not Firefox.');return}
+ if(!window.isSecureContext){micMsg('The microphone only works on https:// pages (or localhost). Open the GitHub Pages https link.');return}
+ if(!S){micMsg('Press Start conversation first, then use the microphone.');return}
+ if(busy)return;
+ if(rec){rec.stop();return}
+ const r=new SR();
+ r.lang=LC[S.lang];r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
+ const base=$('#inp').value.trim();
+ r.onstart=()=>{micMsg('');micBtn.classList.add('on');micBtn.setAttribute('aria-pressed','true');micBtn.setAttribute('aria-label','Stop listening')};
+ r.onresult=e=>{
+  let txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
+  $('#inp').value=(base?base+' ':'')+txt.trim();
+ };
+ r.onerror=e=>{
+  const c=e.error;
+  if(c==='aborted')return;
+  micMsg(
+   c==='not-allowed'||c==='service-not-allowed'?'Microphone access is blocked. Click the lock icon in the address bar, allow the microphone for this site, then reload the page.'
+   :c==='no-speech'?'I didn’t hear anything. Press the microphone and try speaking again.'
+   :c==='audio-capture'?'No microphone was found. Check that one is connected and not used by another app.'
+   :c==='network'?'The speech service couldn’t be reached. Chrome and Edge need an internet connection for this, and some browsers (such as Brave) block it.'
+   :c==='language-not-supported'?'This browser doesn’t support speech input for '+S.lang+'.'
+   :'Speech input failed ('+c+'). You can still type your answer.');
+ };
+ r.onend=()=>{micOff();$('#inp').focus()};
+ rec=r;
+ try{r.start()}catch(err){micOff();micMsg('Couldn’t start the microphone. Reload the page and try again.')}
+};
+$('#rep').onclick=()=>{if(!S||!S.msgs.length){alert('Start a conversation first.');return}
+ const n=S.scores.length,av=n?Math.round(S.scores.reduce((a,b)=>a+b,0)/n):0;
+ let t=`TalkPartner session report\nLanguage: ${S.lang}  Level: ${S.lvl}  Topic: ${S.scn}\nMessages: ${n}  Average accuracy: ${av}%\nMistake types: ${Object.entries(S.errs).map(([k,v])=>k+' x'+v).join(', ')||'none'}\n\n`;
+ S.msgs.forEach(m=>{t+=(m.who==='me'?'Student: ':'Tutor: ')+m.text+'\n';(m.cs||[]).forEach(c=>{t+=`   Fix: "${c.original}" -> "${c.corrected}" (${c.why})\n`})});
+ const url=URL.createObjectURL(new Blob([t],{type:'text/plain;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download='talkpartner-report.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+render();
+</script>
+</body>
+</html>
