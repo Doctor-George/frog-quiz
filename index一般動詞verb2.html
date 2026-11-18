@@ -947,6 +947,7 @@
 
         // Cloudflare D1 API. This is the public Worker URL supplied by the teacher.
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
+        const QUIZ_ID = "general-verbs";
         let cloudBestScore = null;
         let bestLookupToken = 0;
         let teacherPasswordForSession = "";
@@ -1088,7 +1089,7 @@
                 loginBestStickerContainer.classList.remove("show");
             }
             try {
-                const data = await apiRequest(`/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}`);
+                const data = await apiRequest(`/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}&quizId=${encodeURIComponent(QUIZ_ID)}`);
                 if (token !== bestLookupToken) return;
                 cloudBestScore = Number(data.bestScore || 0);
                 const bestToShow = Math.max(Number(localBest || 0), cloudBestScore);
@@ -1177,7 +1178,7 @@
                     return;
                 }
                 try {
-                    const data = await apiRequest(`/api/best?name=${encodeURIComponent(studentName)}&class=${encodeURIComponent(studentClass)}`);
+                    const data = await apiRequest(`/api/best?name=${encodeURIComponent(studentName)}&class=${encodeURIComponent(studentClass)}&quizId=${encodeURIComponent(QUIZ_ID)}`);
                     cloudBestScore = Number(data.bestScore || 0);
                     const localBestRaw = localStorage.getItem(`verb_best_${studentName}_${studentClass}`);
                     const localBest = Number(localBestRaw || 0);
@@ -1298,6 +1299,7 @@
                     body: JSON.stringify({
                         studentName,
                         className: studentClass,
+                        quizId: QUIZ_ID,
                         score,
                         total: activeQuestions.length
                     })
@@ -1371,7 +1373,7 @@
             setRecordsStatus("Refreshing records from Cloudflare D1...");
 
             try {
-                const data = await apiRequest(`/api/admin/records?_=${Date.now()}`, {
+                const data = await apiRequest(`/api/admin/records?_=${Date.now()}&quizId=${encodeURIComponent(QUIZ_ID)}`, {
                     method: "GET",
                     headers: { "X-Teacher-Password": teacherPasswordForSession }
                 });

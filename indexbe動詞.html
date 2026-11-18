@@ -872,7 +872,8 @@
         let answered = false;
         
         // Set this to the URL of the separate Be-verb Quiz Cloudflare Worker after deployment.
-        const BE_VERB_API_URL = "https://be-verb-quiz-api.gerek25.workers.dev";
+        const BE_VERB_API_URL = "https://general-verbs-quiz-api.gerek25.workers.dev";
+        const QUIZ_ID = "be-verbs";
         let teacherPasswordForSession = "";
         let sharedAttempts = [];
 
@@ -934,7 +935,7 @@
             let bestNum = parseInt(localStorage.getItem(studentKey) || "0", 10) || 0;
             if (apiIsConfigured()) {
                 try {
-                    const url = `${BE_VERB_API_URL}/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}`;
+                    const url = `${BE_VERB_API_URL}/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}&quizId=${encodeURIComponent(QUIZ_ID)}`;
                     const response = await fetch(url);
                     if (response.ok) {
                         const data = await response.json();
@@ -1124,7 +1125,7 @@
             }
             // Send every completed attempt to the shared database. Local quiz results still display if offline.
             if (apiIsConfigured()) {
-                apiRequest("/api/attempt", {method:"POST", body:JSON.stringify({studentName, className:studentClass, score, total:questions.length})})
+                apiRequest("/api/attempt", {method:"POST", body:JSON.stringify({studentName, className:studentClass, score, total:questions.length, quizId:QUIZ_ID})})
                     .then(data => {
                         studentBest = Math.max(studentBest, Number(data.bestScore || 0));
                         bestScoreText.innerText = `Personal Best Score: ${studentBest} / ${questions.length}`;
@@ -1187,7 +1188,7 @@
             if (!teacherPasswordForSession) return;
             recordsStatus.textContent = "Loading shared student records…";
             try {
-                const data = await apiRequest("/api/admin/records", {method:"GET"});
+                const data = await apiRequest(`/api/admin/records?quizId=${encodeURIComponent(QUIZ_ID)}`, {method:"GET"});
                 sharedAttempts = Array.isArray(data.attempts) ? data.attempts : [];
                 const classes = [...new Set(sharedAttempts.map(a => a.class_name))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
                 const oldClass = classFilter.value;

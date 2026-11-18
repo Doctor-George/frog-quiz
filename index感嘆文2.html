@@ -1054,6 +1054,7 @@
 
         // Shared Cloudflare Worker/D1 connection used by the other English quizzes.
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
+        const QUIZ_ID = "exclamatory";
         let cloudBestScore = null;
         let teacherPasswordForSession = "";
         let cloudAttempts = [];
@@ -1214,7 +1215,7 @@
             loginBestStickerContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
 
             // Refresh the student's best score from the shared database in the background.
-            apiRequest(`/api/best?name=${encodeURIComponent(currentUser.name)}&class=${encodeURIComponent(currentUser.cls)}`)
+            apiRequest(`/api/best?name=${encodeURIComponent(currentUser.name)}&class=${encodeURIComponent(currentUser.cls)}&quizId=${encodeURIComponent(QUIZ_ID)}`)
                 .then(data => {
                     cloudBestScore = Number(data.bestScore || 0);
                     const combinedBest = Math.max(Number(userStats.bestScore || 0), cloudBestScore);
@@ -1394,6 +1395,7 @@
                 body: JSON.stringify({
                     studentName: currentUser.name,
                     className: currentUser.cls,
+                    quizId: QUIZ_ID,
                     score,
                     total: questions.length
                 })
@@ -1493,7 +1495,7 @@
             setRecordsStatus("Refreshing records from Cloudflare D1...");
 
             try {
-                const data = await apiRequest(`/api/admin/records?_=${Date.now()}`, {
+                const data = await apiRequest(`/api/admin/records?_=${Date.now()}&quizId=${encodeURIComponent(QUIZ_ID)}`, {
                     method: "GET",
                     headers: { "X-Teacher-Password": teacherPasswordForSession }
                 });

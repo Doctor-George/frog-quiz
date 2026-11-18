@@ -1236,6 +1236,7 @@
 
         // Cloudflare D1 connection shared with the Be-verb and General-verbs quizzes.
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
+        const QUIZ_ID = "personal-pronouns";
         let cloudBestScore = null;
         let bestLookupToken = 0;
         let teacherPasswordForSession = "";
@@ -1377,7 +1378,7 @@
             showStudentBest(name, localBest);
 
             try {
-                const data = await apiRequest(`/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}`);
+                const data = await apiRequest(`/api/best?name=${encodeURIComponent(name)}&class=${encodeURIComponent(cls)}&quizId=${encodeURIComponent(QUIZ_ID)}`);
                 if (lookupToken !== bestLookupToken) return;
                 cloudBestScore = Number(data.bestScore || 0);
                 const best = Math.max(localBest, cloudBestScore);
@@ -1480,7 +1481,7 @@
 
             // Retrieve the cloud score in the background; it is not required to
             // display or answer quiz questions.
-            apiRequest(`/api/best?name=${encodeURIComponent(studentName)}&class=${encodeURIComponent(studentClass)}`)
+            apiRequest(`/api/best?name=${encodeURIComponent(studentName)}&class=${encodeURIComponent(studentClass)}&quizId=${encodeURIComponent(QUIZ_ID)}`)
                 .then(bestData => {
                     cloudBestScore = Number(bestData.bestScore || 0);
                 })
@@ -1603,6 +1604,7 @@
                     body: JSON.stringify({
                         studentName,
                         className: studentClass,
+                        quizId: QUIZ_ID,
                         score,
                         total: activeQuestions.length
                     })
@@ -1677,7 +1679,7 @@
             setRecordsStatus("Refreshing records from Cloudflare D1...");
 
             try {
-                const data = await apiRequest(`/api/admin/records?_=${Date.now()}`, {
+                const data = await apiRequest(`/api/admin/records?_=${Date.now()}&quizId=${encodeURIComponent(QUIZ_ID)}`, {
                     method: "GET",
                     headers: { "X-Teacher-Password": teacherPasswordForSession }
                 });
