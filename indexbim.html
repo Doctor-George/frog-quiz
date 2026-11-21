@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caregiving NC II: Emergency First Aid Interactive Lesson</title>
+<style>
+  :root {
+    --primary: #0f766e;
+    --primary-dark: #115e59;
+    --primary-light: #ccfbf1;
+    --accent: #e11d48;
+    --accent-light: #ffe4e6;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding-bottom: 40px;
+  }
+  header {
+    background: linear-gradient(135deg, #0f766e, #134e4a);
+    color: white;
+    padding: 24px 16px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-size: 22px;
+    line-height: 1.3;
+    max-width: 700px;
+    margin: 0 auto 8px;
+  }
+  header p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  .container {
+    max-width: 820px;
+    margin: 20px auto;
+    padding: 0 16px;
+  }
+  .progress-wrap {
+    background: var(--card);
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-dark);
+  }
+  .progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 20%;
+    transition: width 0.3s ease;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    display: none;
+  }
+  .card.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  h2 {
+    font-size: 20px;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 8px;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 16px 0 8px;
+    color: #0f172a;
+  }
+  .audio-box {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 14px 0 18px;
+  }
+  .audio-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-play { background: var(--primary); color: white; }
+  .btn-play:hover { background: var(--primary-dark); }
+  .btn-stop { background: #e2e8f0; color: #334155; }
+  .script-box {
+    background: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #334155;
+    border-left: 3px solid var(--primary);
+    font-style: italic;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .info-tile {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    background: #fafafa;
+  }
+  .info-tile.danger { background: var(--accent-light); border-color: #fecdd3; }
+  .info-tile.warn { background: var(--amber-light); border-color: #fde68a; }
+  .info-tile h4 { font-size: 15px; margin-bottom: 6px; color: #0f172a; }
+  .info-tile.danger h4 { color: #be123c; }
+  .info-tile p, .info-tile li { font-size: 13.5px; }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin-bottom: 6px; font-size: 14.5px; }
+  .alert-box {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: 14px;
+    border-radius: 8px;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .rice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .rice-item {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .rice-letter {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .scenario-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 18px;
+  }
+  .option-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    margin: 8px 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .option-btn:hover { background: #f1f5f9; }
+  .option-btn.correct { background: #dcfce7; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .option-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .feedback { margin-top: 8px; font-size: 13.5px; font-weight: 600; }
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .quiz-q {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .score-banner {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 18px;
+    margin-top: 16px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">CAREGIVING NC II • INTERACTIVE MODULE</div>
+  <h1>3. Heat-Related, Head &amp; Spine, at Bones, Joints &amp; Muscle Injuries</h1>
+  <p>Gabay sa Unang Lunas (Emergency First Aid) na may Tagalog Audio Narration</p>
+</header>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span id="step-label">Bahagi 1 sa 5: Panimula</span>
+      <span id="step-percent">20%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="goStep(0)">1. Panimula</button>
+    <button class="tab-btn" onclick="goStep(1)">2. Heat Injuries</button>
+    <button class="tab-btn" onclick="goStep(2)">3. Head &amp; Spine</button>
+    <button class="tab-btn" onclick="goStep(3)">4. Bones &amp; Muscles</button>
+    <button class="tab-btn" onclick="goStep(4)">5. Pagsusulit</button>
+  </div>
+
+  <!-- STEP 0: PANIMULA -->
+  <section class="card active" id="step-0">
+    <h2>Panimula: Papel ng Caregiver sa Emergency</h2>
+    <div class="audio-box">
+      <div class="audio-controls">
+        <button class="btn btn-play" onclick="speakText('script-0')">Pakinggan ang Audio (Tagalog)</button>
+        <button class="btn btn-stop" onclick="stopSpeech()">Ihinto</button>
+      </div>
+      <div class="script-box" id="script-0">
+        Magandang araw, future caregivers! Ngayong araw, pag-aaralan natin ang tamang pagresponde sa Heat-Related Injuries, Head at Spine Injuries, at ang Bones, Joints, at Muscle Injuries. Bilang caregiver, lalo na kapag nag-aalaga ng mga senior citizens, napakahalaga na alam natin kung paano kumilos nang mabilis, kalmado, at ligtas.
+      </div>
+    </div>
+    <p>Sa araling ito, matututuhan mo kung paano:</p>
+    <ul>
+      <li>Matukoy ang pagkakaiba ng <strong>Heat Cramps, Heat Exhaustion, at Heat Stroke</strong>.</li>
+      <li>Mailapat ang <strong>Golden Rule</strong> kapag may pinaghihinalaang pinsala sa ulo at gulugod (spine).</li>
+      <li>Maibigay ang tamang pangunang lunas gamit ang <strong>R.I.C.E. Method</strong> para sa sprain at strain.</li>
+    </ul>
+    <div class="footer-nav">
+      <span></span>
+      <button class="btn btn-play" onclick="goStep(1)">Susunod: Heat Injuries →</button>
+    </div>
+  </section>
+
+  <!-- STEP 1: HEAT INJURIES -->
+  <section class="card" id="step-1">
+    <h2>Segment 1: Heat-Related Injuries (Pinsala Dulot ng Init)</h2>
+    <div class="audio-box">
+      <div class="audio-controls">
+        <button class="btn btn-play" onclick="speakText('script-1')">Pakinggan ang Audio (Tagalog)</button>
+        <button class="btn btn-stop" onclick="stopSpeech()">Ihinto</button>
+      </div>
+      <div class="script-box" id="script-1">
+        May tatlong antas ang Heat-Related Injuries: una ang Heat Cramps o pulikat dahil sa init; pangalawa ang Heat Exhaustion kung saan ang pasyente ay pinagpapawisan nang malamig, namumutla, at nahihilo; at ang pinakadelikado, ang Heat Stroke. Sa Heat Stroke, sobrang taas ng temperatura ng pasyente, mainit at tuyo ang balat, at maaaring mawalan ng malay. Tumawag agad ng emergency hotline at huwag painumin ang pasyenteng walang malay!
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="info-tile">
+        <h4>1. Heat Cramps</h4>
+        <p><strong>Palatandaan:</strong> Pananakit o pulikat sa kalamnan (binti o tiyan), labis na pagpapawis.</p>
+        <p><strong>Lunas:</strong> Dalhin sa lilim, ipahinga, at painumin ng tubig nang dahan-dahan.</p>
+      </div>
+      <div class="info-tile warn">
+        <h4>2. Heat Exhaustion</h4>
+        <p><strong>Palatandaan:</strong> Malamig at mamasa-masang balat, pamumutla, pagkahilo, pagsusuka.</p>
+        <p><strong>Lunas:</strong> Pahigain sa malamig na lugar, luwagan ang damit, punasan ng basang tuwalya, at painumin ng tubig kung gising.</p>
+      </div>
+      <div class="info-tile danger">
+        <h4>3. Heat Stroke (EMERGENCY!)</h4>
+        <p><strong>Palatandaan:</strong> Lagnat 40°C pataas, mainit na balat, pagkalito, o pagkawala ng malay.</p>
+        <p><strong>Lunas:</strong> Tumawag agad ng 911! Lagyan ng ice pack sa leeg, kilikili, at singit. <strong>HUWAG painumin</strong> kung walang malay.</p>
+      </div>
+    </div>
+
+    <div class="scenario-box">
+      <h3>Interactive Check 1</h3>
+      <p>Nahimatay sa initan ang 80-anyos mong pasyente at mainit na mainit ang kaniyang balat. Ano ang HINDI mo dapat gawin?</p>
+      <button class="option-btn" onclick="checkSingle(this, false, 'fb-1')">A. Tumawag agad ng emergency hotline (911)</button>
+      <button class="option-btn" onclick="checkSingle(this, true, 'fb-1')">B. Piliting painumin siya ng malamig na tubig habang walang malay</button>
+      <button class="option-btn" onclick="checkSingle(this, false, 'fb-1')">C. Maglagay ng cold compress sa leeg, kilikili, at singit</button>
+      <div class="feedback" id="fb-1"></div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="btn btn-stop" onclick="goStep(0)">← Nakaraan</button>
+      <button class="btn btn-play" onclick="goStep(2)">Susunod: Head &amp; Spine →</button>
+    </div>
+  </section>
+
+  <!-- STEP 2: HEAD & SPINE -->
+  <section class="card" id="step-2">
+    <h2>Segment 2: Head and Spine Injuries (Ulo at Gulugod)</h2>
+    <div class="audio-box">
+      <div class="audio-controls">
+        <button class="btn btn-play" onclick="speakText('script-2')">Pakinggan ang Audio (Tagalog)</button>
+        <button class="btn btn-stop" onclick="stopSpeech()">Ihinto</button>
+      </div>
+      <div class="script-box" id="script-2">
+        Sa trabaho natin bilang caregiver, ang pagkadulas o pagkahulog ng pasyente ay seryosong sitwasyon. Kapag bumagsak ang pasyente at tumama ang ulo o likod, narito ang ating Golden Rule: HUWAG SIYANG TATAYUIN AT HUWAG IGAGALAW ANG KANIYANG ULO AT LEEG. Ang maling pagbuhat ay maaaring magdulot ng habambuhay na pagkaparalisa.
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <strong>GOLDEN RULE:</strong> Huwag igagalaw o itatayo ang pasyenteng may pinaghihinalaang pinsala sa ulo, leeg, o likod—maliban kung nasa agarang panganib tulad ng sunog.
+    </div>
+
+    <h3>Mga Palatandaan ng Panganib (Red Flags):</h3>
+    <ul>
+      <li>Pagkawala ng malay o matinding pagkaantok pagkatapos mabagok.</li>
+      <li>Pagdurugo o paglabas ng malinaw na likido sa ilong o tainga.</li>
+      <li>Pamamanhid, panghihina, o hindi maigalaw ang mga kamay o paa.</li>
+      <li>Matinding pananakit ng leeg o gulugod (spine).</li>
+    </ul>
+
+    <div class="scenario-box">
+      <h3>Interactive Check 2</h3>
+      <p>Nadulas si Lolo Pedro sa banyo at sinasabing masakit ang kaniyang leeg. Gusto siyang buhatin ng kasama mo papunta sa kama. Ano ang tamang gawin?</p>
+      <button class="option-btn" onclick="checkSingle(this, true, 'fb-2')">A. Pigilan ang pagbuhat, panatilihing nakapirmi ang ulo niya, at tumawag ng ambulansya</button>
+      <button class="option-btn" onclick="checkSingle(this, false, 'fb-2')">B. Paupuin muna siya sa silya para makapagpahinga</button>
+      <div class="feedback" id="fb-2"></div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="btn btn-stop" onclick="goStep(1)">← Nakaraan</button>
+      <button class="btn btn-play" onclick="goStep(3)">Susunod: Bones &amp; Muscles →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: BONES, JOINTS, MUSCLES -->
+  <section class="card" id="step-3">
+    <h2>Segment 3: Bones, Joints, and Muscle Injuries</h2>
+    <div class="audio-box">
+      <div class="audio-controls">
+        <button class="btn btn-play" onclick="speakText('script-3')">Pakinggan ang Audio (Tagalog)</button>
+        <button class="btn btn-stop" onclick="stopSpeech()">Ihinto</button>
+      </div>
+      <div class="script-box" id="script-3">
+        Pag-aralan natin ang apat na karaniwang pinsala: ang Fracture ay bali sa buto; ang Dislocation ay pagkalinsad ng kasukasuan; ang Sprain ay pilay sa ligament; at ang Strain ay sobrang pagkabanat ng kalamnan. Kapag may fracture o dislocation, huwag hihilahin o hihilotin! Para sa simpleng sprain o strain, gamitin ang R-I-C-E method: Rest, Ice, Compression, at Elevation.
+      </div>
+    </div>
+
+    <ul>
+      <li><strong>Fracture (Bali):</strong> May lamat o putol sa buto. Huwag gagalawin; lagyan ng splint kung marunong at dalhin sa ospital.</li>
+      <li><strong>Dislocation (Linsad):</strong> Natanggal ang buto sa kasukasuan (hal. balikat). <strong>Huwag ibabalik sa porma!</strong></li>
+      <li><strong>Sprain (Pilay):</strong> Nabanat o napunit ang <em>ligament</em> sa kasukasuan (tulad ng bukong-bukong).</li>
+      <li><strong>Strain:</strong> Nabanat o napunit ang <em>muscle</em> o <em>tendon</em>.</li>
+    </ul>
+
+    <h3>Unang Lunas sa Sprain at Strain: R.I.C.E. Method</h3>
+    <div class="rice-grid">
+      <div class="rice-item"><div class="rice-letter">R</div><strong>Rest</strong><p>Ipahinga ang napinsalang bahagi.</p></div>
+      <div class="rice-item"><div class="rice-letter">I</div><strong>Ice</strong><p>Cold compress nang 15–20 minuto (may sapin na tuwalya).</p></div>
+      <div class="rice-item"><div class="rice-letter">C</div><strong>Compression</strong><p>Marahang benda (hindi sobrang higpit).</p></div>
+      <div class="rice-item"><div class="rice-letter">E</div><strong>Elevation</strong><p>Itaas ang bahagi nang mas mataas sa puso.</p></div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="btn btn-stop" onclick="goStep(2)">← Nakaraan</button>
+      <button class="btn btn-play" onclick="goStep(4)">Susunod: Pagsusulit →</button>
+    </div>
+  </section>
+
+  <!-- STEP 4: QUIZ -->
+  <section class="card" id="step-4">
+    <h2>Pangwakas na Pagsusulit (Caregiver Assessment)</h2>
+    <p style="margin-bottom:14px;">Piliin ang pinakatamang sagot sa bawat tanong:</p>
+
+    <div class="quiz-q" data-ans="1">
+      <p><strong>1. Alin sa mga sumusunod ang pinsala sa <em>ligament</em> na nagdurugtong sa dalawang buto?</strong></p>
+      <button class="option-btn" onclick="answerQuiz(this, 0)">A. Strain</button>
+      <button class="option-btn" onclick="answerQuiz(this, 1)">B. Sprain</button>
+      <button class="option-btn" onclick="answerQuiz(this, 2)">C. Dislocation</button>
+    </div>
+
+    <div class="quiz-q" data-ans="2">
+      <p><strong>2. Ano ang tamang unang gawin kung may hinihinalang bali sa leeg o gulugod ang pasyente?</strong></p>
+      <button class="option-btn" onclick="answerQuiz(this, 0)">A. Ihiga siya nang patagilid</button>
+      <button class="option-btn" onclick="answerQuiz(this, 1)">B. Buhatin agad papunta sa sasakyan</button>
+      <button class="option-btn" onclick="answerQuiz(this, 2)">C. Panatilihing nakapirmi ang ulo at leeg at tumawag ng emergency</button>
+    </div>
+
+    <div class="quiz-q" data-ans="0">
+      <p><strong>3. Ano ang ibig sabihin ng titik "E" sa R.I.C.E. Method?</strong></p>
+      <button class="option-btn" onclick="answerQuiz(this, 0)">A. Elevation (Itaas ang napinsalang bahagi)</button>
+      <button class="option-btn" onclick="answerQuiz(this, 1)">B. Exercise (Igalaw nang dahan-dahan)</button>
+      <button class="option-btn" onclick="answerQuiz(this, 2)">C. Examination (Pindutin ang buto)</button>
+    </div>
+
+    <div class="score-banner" id="score-banner"></div>
+
+    <div class="footer-nav">
+      <button class="btn btn-stop" onclick="goStep(3)">← Nakaraan</button>
+      <button class="btn btn-play" onclick="resetQuiz()">Ulitin ang Pagsusulit</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  const stepNames = [
+    "Bahagi 1 sa 5: Panimula",
+    "Bahagi 2 sa 5: Heat-Related Injuries",
+    "Bahagi 3 sa 5: Head & Spine Injuries",
+    "Bahagi 4 sa 5: Bones, Joints & Muscles",
+    "Bahagi 5 sa 5: Pangwakas na Pagsusulit"
+  ];
+
+  function goStep(index) {
+    stopSpeech();
+    document.querySelectorAll('.card').forEach((c, i) => c.classList.toggle('active', i === index));
+    document.querySelectorAll('.tab-btn').forEach((t, i) => t.classList.toggle('active', i === index));
+    document.getElementById('step-label').textContent = stepNames[index];
+    const pct = ((index + 1) * 20) + "%";
+    document.getElementById('step-percent').textContent = pct;
+    document.getElementById('progress-fill').style.width = pct;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function speakText(elementId) {
+    if (!('speechSynthesis' in window)) {
+      alert("Paumanhin, hindi suportado ng browser na ito ang audio speech. Pakibuksan sa Safari o Chrome.");
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const text = document.getElementById(elementId).innerText;
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const tlVoice = voices.find(v => v.lang.includes('fil') || v.lang.includes('tl'));
+    if (tlVoice) utterance.voice = tlVoice;
+    utterance.lang = 'fil-PH';
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stopSpeech() {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
+  function checkSingle(btn, isCorrect, fbId) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+    const fb = document.getElementById(fbId);
+    if (isCorrect) {
+      btn.classList.add('correct');
+      fb.style.color = '#15803d';
+      fb.textContent = "Tama! Ligtas at wasto ang iyong aksyon bilang caregiver.";
+    } else {
+      btn.classList.add('wrong');
+      fb.style.color = '#b91c1c';
+      fb.textContent = "Subukan muli. Balikan ang gabay sa itaas.";
+    }
+  }
+
+  let quizAnswers = {};
+  function answerQuiz(btn, choiceIdx) {
+    const qDiv = btn.parentElement;
+    const qIndex = Array.from(document.querySelectorAll('.quiz-q')).indexOf(qDiv);
+    const correctIdx = parseInt(qDiv.getAttribute('data-ans'));
+    qDiv.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+    if (choiceIdx === correctIdx) {
+      btn.classList.add('correct');
+      quizAnswers[qIndex] = true;
+    } else {
+      btn.classList.add('wrong');
+      quizAnswers[qIndex] = false;
+    }
+    if (Object.keys(quizAnswers).length === 3) {
+      const score = Object.values(quizAnswers).filter(Boolean).length;
+      const banner = document.getElementById('score-banner');
+      banner.style.display = 'block';
+      banner.textContent = `🎉 Nakakuha ka ng ${score} sa 3 tamang sagot!`;
+    }
+  }
+
+  function resetQuiz() {
+    quizAnswers = {};
+    document.querySelectorAll('#step-4 .option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+    document.getElementById('score-banner').style.display = 'none';
+  }
+</script>
+</body>
+</html>
