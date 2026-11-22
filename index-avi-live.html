@@ -18,14 +18,12 @@
       --muted: #64748b;
       --border: #e2e8f0;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", "Noto Sans KR", sans-serif;
     }
-
     body {
       background: radial-gradient(circle at top, #dbeafe 0%, var(--bg) 60%, #e0f2fe 100%);
       color: var(--text);
@@ -36,7 +34,6 @@
       justify-content: center;
       padding: 16px;
     }
-
     .phone-frame {
       width: 100%;
       max-width: 430px;
@@ -52,327 +49,91 @@
       position: relative;
       overflow: hidden;
     }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .lang-group {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
+    .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .lang-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .lang-btn {
-      border: 1.5px solid var(--border);
-      background: #f8fafc;
-      color: var(--text);
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      border: 1.5px solid var(--border); background: #f8fafc; color: var(--text);
+      padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s ease;
     }
-
-    .lang-btn.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-    }
-
-    .icon-actions {
-      display: flex;
-      gap: 6px;
-    }
-
+    .lang-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .icon-actions { display: flex; gap: 6px; }
     .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      background: #f8fafc;
-      font-size: 16px;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
+      width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
+      background: #f8fafc; font-size: 16px; cursor: pointer; display: grid; place-items: center;
     }
-
     .stage {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px 8px;
-      gap: 18px;
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 20px 8px; gap: 18px;
     }
-
-    .buddy-wrap {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      display: grid;
-      place-items: center;
-    }
-
+    .buddy-wrap { position: relative; width: 170px; height: 170px; display: grid; place-items: center; }
     .pulse-ring {
-      position: absolute;
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      background: rgba(37, 99, 235, 0.14);
-      transform: scale(0.92);
-      opacity: 0;
-      transition: all 0.25s ease;
+      position: absolute; width: 170px; height: 170px; border-radius: 50%;
+      background: rgba(37, 99, 235, 0.14); transform: scale(0.92); opacity: 0; transition: all 0.25s ease;
     }
-
-    .phone-frame.listening .pulse-ring {
-      background: rgba(22, 163, 74, 0.2);
-      animation: pulse 1.4s infinite;
-    }
-
-    .phone-frame.speaking .pulse-ring {
-      background: rgba(37, 99, 235, 0.22);
-      animation: pulse 1.1s infinite;
-    }
-
+    .phone-frame.listening .pulse-ring { background: rgba(22, 163, 74, 0.2); animation: pulse 1.4s infinite; }
+    .phone-frame.speaking .pulse-ring { background: rgba(37, 99, 235, 0.22); animation: pulse 1.1s infinite; }
     @keyframes pulse {
       0% { transform: scale(0.92); opacity: 0.8; }
       100% { transform: scale(1.28); opacity: 0; }
     }
-
     .buddy {
-      width: 138px;
-      height: 138px;
-      border-radius: 42px;
-      background: linear-gradient(145deg, #60a5fa, #2563eb);
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 2;
-      transition: transform 0.2s ease;
+      width: 138px; height: 138px; border-radius: 42px; background: linear-gradient(145deg, #60a5fa, #2563eb);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; position: relative; z-index: 2; transition: transform 0.2s ease;
     }
-
-    .phone-frame.speaking .buddy {
-      transform: scale(1.05);
-    }
-
-    .eyes {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 12px;
-    }
-
-    .eye {
-      width: 16px;
-      height: 20px;
-      background: #ffffff;
-      border-radius: 999px;
-      position: relative;
-    }
-
+    .phone-frame.speaking .buddy { transform: scale(1.05); }
+    .eyes { display: flex; gap: 24px; margin-bottom: 12px; }
+    .eye { width: 16px; height: 20px; background: #ffffff; border-radius: 999px; position: relative; }
     .eye::after {
-      content: "";
-      width: 8px;
-      height: 8px;
-      background: #0f172a;
-      border-radius: 50%;
-      position: absolute;
-      bottom: 3px;
-      left: 4px;
+      content: ""; width: 8px; height: 8px; background: #0f172a; border-radius: 50%;
+      position: absolute; bottom: 3px; left: 4px;
     }
-
-    .mouth {
-      width: 34px;
-      height: 14px;
-      border-bottom: 4px solid #ffffff;
-      border-radius: 0 0 20px 20px;
-      transition: all 0.15s ease;
-    }
-
-    .phone-frame.speaking .mouth {
-      height: 20px;
-      border: none;
-      background: #ffffff;
-      border-radius: 999px;
-    }
-
-    .buddy-name {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-
+    .mouth { width: 34px; height: 14px; border-bottom: 4px solid #ffffff; border-radius: 0 0 20px 20px; transition: all 0.15s ease; }
+    .phone-frame.speaking .mouth { height: 20px; border: none; background: #ffffff; border-radius: 999px; }
+    .buddy-name { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
+      background: #f1f5f9; color: var(--muted); font-size: 14px; font-weight: 700;
     }
-
-    .phone-frame.listening .status-pill {
-      background: #dcfce7;
-      color: var(--green-dark);
-    }
-
-    .phone-frame.speaking .status-pill {
-      background: #dbeafe;
-      color: var(--primary-dark);
-    }
-
-    .phone-frame.thinking .status-pill {
-      background: #fef3c7;
-      color: #b45309;
-    }
-
-    .hint-box {
-      max-width: 340px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .call-controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 8px;
-    }
-
+    .phone-frame.listening .status-pill { background: #dcfce7; color: var(--green-dark); }
+    .phone-frame.speaking .status-pill { background: #dbeafe; color: var(--primary-dark); }
+    .phone-frame.thinking .status-pill { background: #fef3c7; color: #b45309; }
+    .hint-box { max-width: 340px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+    .call-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-bottom: 8px; }
     .call-btn {
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      border: none;
-      background: var(--green);
-      color: #ffffff;
-      font-size: 30px;
-      cursor: pointer;
-      box-shadow: 0 12px 24px rgba(22, 163, 74, 0.32);
+      width: 78px; height: 78px; border-radius: 50%; border: none; background: var(--green);
+      color: #ffffff; font-size: 30px; cursor: pointer; box-shadow: 0 12px 24px rgba(22, 163, 74, 0.32);
       transition: transform 0.15s ease, background 0.15s ease;
     }
-
-    .call-btn:active {
-      transform: scale(0.95);
-    }
-
-    .phone-frame.in-call .call-btn {
-      background: var(--red);
-      box-shadow: 0 12px 24px rgba(220, 38, 38, 0.3);
-    }
-
-    .call-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-    }
-
-    /* Drawer & Modal for Parent / Settings */
+    .call-btn:active { transform: scale(0.95); }
+    .phone-frame.in-call .call-btn { background: var(--red); box-shadow: 0 12px 24px rgba(220, 38, 38, 0.3); }
+    .call-label { font-size: 13px; font-weight: 700; color: var(--muted); }
     .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.45);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 20;
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); display: none;
+      align-items: flex-end; justify-content: center; z-index: 20;
     }
-
-    .overlay.open {
-      display: flex;
-    }
-
+    .overlay.open { display: flex; }
     .sheet {
-      width: 100%;
-      max-width: 430px;
-      max-height: 82vh;
-      background: #ffffff;
-      border-radius: 24px 24px 0 0;
-      padding: 20px;
-      overflow-y: auto;
+      width: 100%; max-width: 430px; max-height: 82vh; background: #ffffff;
+      border-radius: 24px 24px 0 0; padding: 20px; overflow-y: auto;
     }
-
-    .sheet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .sheet-title {
-      font-size: 17px;
-      font-weight: 800;
-    }
-
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .sheet-title { font-size: 17px; font-weight: 800; }
     .close-btn {
-      border: none;
-      background: #f1f5f9;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 16px;
-      cursor: pointer;
+      border: none; background: #f1f5f9; width: 32px; height: 32px;
+      border-radius: 50%; font-size: 16px; cursor: pointer;
     }
-
-    .log-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 10px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .log-item .said {
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .log-item .fixed {
-      color: var(--green-dark);
-      font-weight: 700;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin: 10px 0 6px;
-    }
-
+    .log-item { border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.45; }
+    .log-item .said { color: var(--muted); margin-bottom: 4px; }
+    .log-item .fixed { color: var(--green-dark); font-weight: 700; }
+    label { display: block; font-size: 13px; font-weight: 700; margin: 10px 0 6px; }
     input[type="password"], select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      font-size: 14px;
+      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--border); font-size: 14px;
     }
-
     .save-btn {
-      margin-top: 14px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: var(--primary);
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
+      margin-top: 14px; width: 100%; padding: 12px; border: none; border-radius: 12px;
+      background: var(--primary); color: #ffffff; font-weight: 700; font-size: 14px; cursor: pointer;
     }
   </style>
 </head>
@@ -390,50 +151,32 @@
         <button class="icon-btn" id="openSettingsBtn" title="Settings" aria-label="Open settings">⚙</button>
       </div>
     </div>
-
     <div class="stage">
       <div class="buddy-wrap">
         <div class="pulse-ring"></div>
         <div class="buddy" id="buddy">
-          <div class="eyes">
-            <div class="eye"></div>
-            <div class="eye"></div>
-          </div>
+          <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
           <div class="mouth"></div>
         </div>
       </div>
-
       <div class="buddy-name">Avi</div>
-
-      <div class="status-pill" id="statusPill">
-        <span id="statusText">Ready to talk</span>
-      </div>
-
-      <p class="hint-box" id="hintText">
-        Choose a language, tap the green phone button, and start speaking. Avi will help you practice!
-      </p>
+      <div class="status-pill" id="statusPill"><span id="statusText">Ready to talk</span></div>
+      <p class="hint-box" id="hintText">Choose a language, tap the green phone button, and start speaking. Avi will help you practice!</p>
     </div>
-
     <div class="call-controls">
       <button class="call-btn" id="callBtn" aria-label="Start voice call">☎</button>
       <div class="call-label" id="callLabel">Tap to start voice call</div>
     </div>
   </div>
-
-  <!-- Parent Grammar Review Sheet -->
   <div class="overlay" id="logOverlay">
     <div class="sheet">
       <div class="sheet-header">
         <div class="sheet-title">Parent & Teacher Conversation Log</div>
         <button class="close-btn" id="closeLogBtn">×</button>
       </div>
-      <div id="logList">
-        <p style="color:#64748b; font-size:13px;">No turns recorded yet. Start a call to see the conversation here.</p>
-      </div>
+      <div id="logList"><p style="color:#64748b; font-size:13px;">No turns recorded yet. Start a call to see the conversation here.</p></div>
     </div>
   </div>
-
-  <!-- Settings Sheet -->
   <div class="overlay" id="settingsOverlay">
     <div class="sheet">
       <div class="sheet-header">
@@ -444,7 +187,6 @@
       <p style="font-size:12px; line-height:1.5; color:#64748b;">Avi speaks naturally in real time. Use the language buttons at the top to choose the practice language. End the call before changing languages.</p>
     </div>
   </div>
-
   <script>
   const WORKER_TOKEN_URL = "https://avi-voice-backend.gerek25.workers.dev/token";
   const MODEL = "models/gemini-3.8-live";
@@ -462,7 +204,31 @@
   function stopPlayback(){for(const source of state.activeSources){try{source.stop();}catch(_){}}state.activeSources.clear();if(state.audioContext)state.nextPlayTime=state.audioContext.currentTime;}
   function handleGeminiMessage(message){if(message.setupComplete){state.setupReady=true;setVisualState("listening","Listening... Speak naturally!");startMicrophoneProcessing();state.socket.send(JSON.stringify({realtimeInput:{text:`Start our ${state.targetLabel} practice. Greet me briefly in ${state.targetLabel}, then ask a simple friendly question.`}}));return;}const content=message.serverContent;if(!content)return;if(content.interrupted){stopPlayback();setVisualState("listening","Listening... Your turn!");}if(content.inputTranscription?.text)state.inputText+=content.inputTranscription.text;if(content.outputTranscription?.text)state.outputText+=content.outputTranscription.text;for(const part of(content.modelTurn?.parts||[])){const audio=part.inlineData||part.inline_data;if(audio?.data)playPcm24k(audio.data);if(part.text)state.outputText+=part.text;}if(content.turnComplete){addLogEntry(state.inputText.trim(),state.outputText.trim());state.inputText="";state.outputText="";if(state.inCall)setVisualState("listening","Listening... Speak naturally!");}}
   async function startMicrophoneProcessing(){if(!state.inCall||!state.setupReady||state.processor)return;try{state.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});if(!state.inCall){state.stream.getTracks().forEach(t=>t.stop());return;}const context=state.audioContext,source=context.createMediaStreamSource(state.stream),processor=context.createScriptProcessor(4096,1,1),silent=context.createGain();silent.gain.value=0;processor.onaudioprocess=event=>{if(!state.inCall||!state.setupReady||state.socket?.readyState!==WebSocket.OPEN)return;const resampled=resampleTo16k(event.inputBuffer.getChannelData(0),context.sampleRate),pcm=floatToPcm16(resampled);state.socket.send(JSON.stringify({realtimeInput:{audio:{data:bytesToBase64(pcm),mimeType:"audio/pcm;rate=16000"}}}));};source.connect(processor);processor.connect(silent);silent.connect(context.destination);state.micSource=source;state.processor=processor;setVisualState("listening","Listening... Speak naturally!");}catch(error){console.error(error);setVisualState(null,"Microphone unavailable. Allow microphone access and try again.");await endCall(false);}}
-  async function startCall(){if(!navigator.mediaDevices?.getUserMedia||!window.WebSocket){setVisualState(null,"This browser cannot start a live voice call. Please use an up-to-date browser over HTTPS.");return;}state.inCall=true;state.stopping=false;state.setupReady=false;state.inputText="";state.outputText="";updateCallButton();setVisualState("thinking","Connecting to Avi...");try{state.audioContext=new(window.AudioContext||window.webkitAudioContext)();await state.audioContext.resume();const response=await fetch(WORKER_TOKEN_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language:state.targetLang})});const data=await response.json().catch(()=>({}));if(!response.ok||!data.token)throw new Error(data.error||"Could not get a secure Gemini session token.");const url=`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=${encodeURIComponent(data.token)}`,socket=new WebSocket(url);state.socket=socket;socket.onopen=()=>{if(state.inCall)socket.send(JSON.stringify({setup:{model:MODEL,...data.config}}));};socket.onmessage=event=>{try{handleGeminiMessage(JSON.parse(event.data));}catch(error){console.error("Could not process Gemini message",error);}};socket.onerror=()=>{if(state.inCall)setVisualState("thinking","Connection issue. Please try again.");};socket.onclose=event=>{if(state.inCall&&!state.stopping){console.warn("Gemini Live socket closed",event.code,event.reason);setVisualState(null,"Avi's connection ended. Tap the phone to try again.");endCall(false);}};}catch(error){console.error(error);setVisualState(null,error.message||"Could not connect. Please try again.");await endCall(false);}}
+  async function startCall(){if(!navigator.mediaDevices?.getUserMedia||!window.WebSocket){setVisualState(null,"This browser cannot start a live voice call. Please use an up-to-date browser over HTTPS.");return;}state.inCall=true;state.stopping=false;state.setupReady=false;state.inputText="";state.outputText="";updateCallButton();setVisualState("thinking","Connecting to Avi...");try{state.audioContext=new(window.AudioContext||window.webkitAudioContext)();await state.audioContext.resume();const response=await fetch(WORKER_TOKEN_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language:state.targetLang})});const data=await response.json().catch(()=>({}));if(!response.ok||!data.token)throw new Error(data.error||"Could not get a secure Gemini session token.");const url=`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=${encodeURIComponent(data.token)}`,socket=new WebSocket(url);state.socket=socket;socket.onopen=()=>{if(state.inCall)socket.send(JSON.stringify({setup:{model:MODEL,...data.config}}));};
+
+  // Safari may deliver WebSocket messages as Blob rather than string.
+  // Convert the payload to text before parsing JSON.
+  socket.onmessage=async event=>{
+    try {
+      let raw=event.data;
+      if(raw instanceof Blob){
+        raw=await raw.text();
+      }else if(raw instanceof ArrayBuffer){
+        raw=new TextDecoder().decode(raw);
+      }
+      const message=typeof raw==="string"?JSON.parse(raw):raw;
+      if(!message||typeof message!=="object"){
+        console.warn("Gemini sent an unexpected message format:",raw);
+        return;
+      }
+      handleGeminiMessage(message);
+    }catch(error){
+      console.error("Could not process Gemini message:",error);
+      console.error("Gemini message data type:",event.data?.constructor?.name);
+    }
+  };
+
+  socket.onerror=()=>{if(state.inCall)setVisualState("thinking","Connection issue. Please try again.");};socket.onclose=event=>{if(state.inCall&&!state.stopping){console.warn("Gemini Live socket closed",event.code,event.reason);setVisualState(null,"Avi's connection ended. Tap the phone to try again.");endCall(false);}};}catch(error){console.error(error);setVisualState(null,error.message||"Could not connect. Please try again.");await endCall(false);}}
   async function endCall(showEnded=true){state.stopping=true;state.inCall=false;state.setupReady=false;if(state.processor){state.processor.onaudioprocess=null;try{state.processor.disconnect();}catch(_){}state.processor=null;}if(state.micSource){try{state.micSource.disconnect();}catch(_){}state.micSource=null;}if(state.stream){state.stream.getTracks().forEach(t=>t.stop());state.stream=null;}stopPlayback();if(state.socket){const socket=state.socket;state.socket=null;socket.onclose=null;try{socket.close(1000,"Call ended by user");}catch(_){}}if(state.audioContext){try{await state.audioContext.close();}catch(_){}state.audioContext=null;}updateCallButton();setVisualState(null,showEnded?"Call ended":"Ready to talk");state.stopping=false;}
   callBtn.addEventListener("click",()=>{if(state.inCall)endCall(true);else startCall();});
   document.getElementById("openLogBtn").addEventListener("click",()=>logOverlay.classList.add("open"));document.getElementById("closeLogBtn").addEventListener("click",()=>logOverlay.classList.remove("open"));document.getElementById("openSettingsBtn").addEventListener("click",()=>settingsOverlay.classList.add("open"));document.getElementById("closeSettingsBtn").addEventListener("click",()=>settingsOverlay.classList.remove("open"));[logOverlay,settingsOverlay].forEach(overlay=>overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.classList.remove("open");}));updateCallButton();
