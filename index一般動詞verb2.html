@@ -275,6 +275,19 @@
             border: 1px solid #b2f5ea;
         }
 
+        .question-timer {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #166534;
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 7px 10px;
+            margin: 0 0 8px;
+        }
+        .question-timer.warning { color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
+
         .instruction-box {
             background: #f0fdf4;
             border-left: 4px solid var(--secondary-color);
@@ -726,6 +739,7 @@
                 <div class="progress-indicator" id="progress-text">Question 1 of 30</div>
                 <div class="score-tracker">Score: <span id="current-score">0</span></div>
             </div>
+            <div id="question-timer" class="question-timer" aria-live="polite">Time remaining: 20 seconds</div>
 
             <div class="instruction-box">
                 次の文の( )内に最もよくあてはまる語を選びなさい。
@@ -944,6 +958,11 @@
         let studentName = "";
         let studentClass = "";
         let answered = false;
+        const TIME_LIMIT = 20;
+        let timeRemaining = TIME_LIMIT;
+        let questionTimerInterval = null;
+        let kingRedirectFallbackTimer = null;
+        const FROGGY_GAME_URL = "https://doctor-george.github.io/frog-quiz/index-froggy.html";
 
         // Cloudflare D1 API. This is the public Worker URL supplied by the teacher.
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
@@ -1007,6 +1026,7 @@
         const feedbackDiv = document.getElementById("feedback");
         const nextContainer = document.getElementById("next-container");
         const nextBtn = document.getElementById("next-btn");
+        const questionTimerDisplay = document.getElementById("question-timer");
 
         const resultNameClass = document.getElementById("result-name-class");
         const finalScoreSpan = document.getElementById("final-score");
@@ -1197,6 +1217,37 @@
             }
         });
 
+        function stopQuestionTimer() {
+            if (questionTimerInterval !== null) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+        }
+
+        function startQuestionTimer() {
+            stopQuestionTimer();
+            timeRemaining = TIME_LIMIT;
+            questionTimerDisplay.textContent = `Time remaining: ${timeRemaining} seconds`;
+            questionTimerDisplay.classList.remove("warning");
+            questionTimerInterval = setInterval(() => {
+                if (answered) { stopQuestionTimer(); return; }
+                timeRemaining--;
+                questionTimerDisplay.textContent = `Time remaining: ${timeRemaining} seconds`;
+                if (timeRemaining <= 5) questionTimerDisplay.classList.add("warning");
+                if (timeRemaining <= 0) {
+                    stopQuestionTimer();
+                    feedbackDiv.className = "feedback-container feedback-incorrect show";
+                    feedbackDiv.innerHTML = `⏰ Time is up! The correct answer is: <strong>${activeQuestions[currentQuestionIndex].answer}</strong>`;
+                    answered = true;
+                    optionsContainer.querySelectorAll(".option-btn").forEach(btn => {
+                        btn.disabled = true;
+                        if (btn.innerText.trim().toLowerCase() === activeQuestions[currentQuestionIndex].answer.trim().toLowerCase()) btn.classList.add("correct-choice");
+                    });
+                    nextContainer.classList.add("show");
+                }
+            }, 1000);
+        }
+
         function loadQuestion() {
             answered = false;
             feedbackDiv.className = "feedback-container";
@@ -1227,11 +1278,13 @@
                     optionsContainer.appendChild(btn);
                 });
             }
+            startQuestionTimer();
         }
 
         function submitAnswer(chosenOption) {
             if (answered) return;
             answered = true;
+            stopQuestionTimer();
 
             const q = activeQuestions[currentQuestionIndex];
             const isCorrect = (chosenOption.trim().toLowerCase() === q.answer.trim().toLowerCase());
@@ -1269,6 +1322,7 @@
         });
 
         async function showResults() {
+            stopQuestionTimer();
             quizScreen.classList.remove("active");
             resultsScreen.classList.add("active");
             const studentKey = `verb_best_${studentName}_${studentClass}`.toLowerCase();
@@ -1287,6 +1341,13 @@
             void pondResultBox.offsetWidth;
             pondResultBox.classList.add("pop-out-anim");
             const matchedTier = getMatchedTier(score);
+            if (matchedTier.tier === "king") {
+                if (kingRedirectFallbackTimer !== null) clearTimeout(kingRedirectFallbackTimer);
+                // Backup redirect in case the Cloudflare score request never responds.
+                kingRedirectFallbackTimer = setTimeout(() => {
+                    window.location.assign(FROGGY_GAME_URL);
+                }, 5000);
+            }
             pondStageContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
             pondMessageText.innerText = matchedTier.desc;
             pondMessageJp.innerText = matchedTier.descJp || "";
@@ -1315,6 +1376,13 @@
                 saveStatus.textContent = "⚠ Could not sync this result to the class database. A local backup was kept. Please tell your teacher.";
                 console.error("Quiz result save failed:", error);
             }
+            if (matchedTier.tier === "king") {
+                if (kingRedirectFallbackTimer !== null) {
+                    clearTimeout(kingRedirectFallbackTimer);
+                    kingRedirectFallbackTimer = null;
+                }
+                setTimeout(() => window.location.assign(FROGGY_GAME_URL), 1500);
+            }
             if (score >= 20) triggerConfetti();
         }
 
@@ -1325,6 +1393,7 @@
         }
 
         restartBtn.addEventListener("click", () => {
+            stopQuestionTimer();
             currentQuestionIndex = 0;
             score = 0;
             resultsScreen.classList.remove("active");
