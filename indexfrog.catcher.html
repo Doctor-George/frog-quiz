@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Game &amp; Watch: Frog Catcher</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Share+Tech+Mono&family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Custom Retro Game & Watch Hardware & LCD Styling (Marsh Pond Edition) */
+    :root {
+      --casing-red: #1f5c3a;
+      --casing-red-dark: #113822;
+      --casing-gold: #c7a967;
+      --casing-gold-light: #e3c98b;
+      --casing-gold-dark: #8c7138;
+      --lcd-bg: #9aa78c;
+      --lcd-bg-inner: #919f83;
+      --lcd-on: #1d241b;
+      --lcd-ghost: rgba(29, 36, 27, 0.085);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 35%, #233029 0%, #101713 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      padding: 12px;
+      overflow-x: hidden;
+    }
+
+    /* Main Handheld Shell */
+    .gw-handheld {
+      width: 100%;
+      max-width: 820px;
+      background: linear-gradient(145deg, #2a784c 0%, var(--casing-red) 45%, var(--casing-red-dark) 100%);
+      border-radius: 28px;
+      padding: 14px;
+      box-shadow:
+        0 26px 55px rgba(0, 0, 0, 0.72),
+        0 4px 12px rgba(0, 0, 0, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.35),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.65);
+      border: 3px solid #0b2616;
+      position: relative;
+    }
+
+    /* Metallic Brushed Gold/Silver Faceplate */
+    .gw-faceplate {
+      background: linear-gradient(160deg, var(--casing-gold-light) 0%, var(--casing-gold) 48%, #b3924f 100%);
+      border-radius: 20px;
+      padding: 14px 16px 18px;
+      border: 2px solid var(--casing-gold-dark);
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.7),
+        inset 0 -2px 5px rgba(74, 56, 20, 0.45);
+      position: relative;
+    }
+
+    /* Subtle brushed metal texture overlay */
+    .gw-faceplate::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 0px,
+        rgba(255, 255, 255, 0.04) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      pointer-events: none;
+    }
+
+    /* Top Header Branding */
+    .gw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 0 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .gw-brand-badge {
+      background: #1a1918;
+      color: #e5d2a3;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+      letter-spacing: 0.14em;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1.5px solid #6e592c;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .gw-title-plate {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      font-size: clamp(0.85rem, 2.4vw, 1.2rem);
+      color: #163d25;
+      letter-spacing: 0.08em;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
+
+    .gw-wide-badge {
+      background: #1b5233;
+      color: #f4e6c3;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.58rem, 1.5vw, 0.72rem);
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #0d2b1a;
+    }
+
+    /* Main Deck Grid: Left Controls | Center LCD | Right Controls */
+    .gw-deck {
+      display: grid;
+      grid-template-columns: 112px 1fr 112px;
+      gap: 14px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* LCD Screen Bezel */
+    .lcd-bezel {
+      background: linear-gradient(180deg, #163623 0%, #0d2115 100%);
+      padding: 12px;
+      border-radius: 14px;
+      border: 3px solid #6b5324;
+      box-shadow:
+        inset 0 3px 8px rgba(0, 0, 0, 0.85),
+        0 2px 4px rgba(255, 255, 255, 0.45);
+    }
+
+    .lcd-inner-frame {
+      background: #6a7360;
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.65);
+    }
+
+    /* Reflective Monochrome LCD Screen */
+    .lcd-screen-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: radial-gradient(ellipse at 45% 40%, #a5b397 0%, var(--lcd-bg) 62%, #869479 100%);
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow:
+        inset 3px 4px 10px rgba(20, 28, 18, 0.42),
+        inset -2px -2px 6px rgba(255, 255, 255, 0.22);
+    }
+
+    /* Glass Glare Reflection Overlay */
+    .lcd-screen-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        125deg,
+        rgba(255, 255, 255, 0.14) 0%,
+        rgba(255, 255, 255, 0.03) 38%,
+        transparent 40%
+      );
+      pointer-events: none;
+    }
+
+    canvas#lcdCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Side Control Columns */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      gap: 14px;
+      padding: 4px 0;
+    }
+
+    /* Small Pill Buttons (Game A, Game B, Time/Reset, Sound) */
+    .pill-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .pill-btn-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .gw-pill-btn {
+      width: 54px;
+      height: 20px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f2efe9 0%, #cbc5b9 70%, #a69f92 100%);
+      border: 2px solid #4f483d;
+      box-shadow:
+        0 3px 0 #3d362c,
+        0 5px 7px rgba(0, 0, 0, 0.45),
+        inset 0 1px 1px #ffffff;
+      cursor: pointer;
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+    }
+
+    .gw-pill-btn:active,
+    .gw-pill-btn.pressed {
+      transform: translateY(2px);
+      box-shadow:
+        0 1px 0 #3d362c,
+        0 2px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    .gw-pill-btn.active-mode {
+      background: linear-gradient(180deg, #ffe79e 0%, #e0b94f 75%, #b58d26 100%);
+      border-color: #4f3a08;
+    }
+
+    .btn-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: #3d2d10;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Large Red Tactile Direction Buttons */
+    .dpad-btn-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gw-action-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #e03543 0%, #b31926 60%, #7a0d16 100%);
+      border: 3px solid #3d070c;
+      box-shadow:
+        0 6px 0 #3b080c,
+        0 10px 14px rgba(0, 0, 0, 0.5),
+        inset 0 3px 5px rgba(255, 190, 195, 0.55),
+        inset 0 -4px 6px rgba(55, 4, 8, 0.7);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 240, 240, 0.85);
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+      position: relative;
+    }
+
+    .gw-action-btn::after {
+      content: "";
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      position: absolute;
+    }
+
+    .gw-action-btn:active,
+    .gw-action-btn.pressed {
+      transform: translateY(4px);
+      box-shadow:
+        0 2px 0 #3b080c,
+        0 4px 6px rgba(0, 0, 0, 0.45),
+        inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .action-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #163d25;
+      letter-spacing: 0.08em;
+      background: rgba(255, 255, 255, 0.35);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(92, 69, 26, 0.35);
+    }
+
+    /* Speaker Grille Dots */
+    .speaker-grille {
+      display: grid;
+      grid-template-columns: repeat(4, 5px);
+      gap: 4px;
+      opacity: 0.65;
+    }
+
+    .speaker-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #3d2e12;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    /* Responsive Mobile/Portrait Layout */
+    @media (max-width: 680px) {
+      .gw-handheld {
+        padding: 10px;
+        border-radius: 22px;
+      }
+      .gw-faceplate {
+        padding: 10px 10px 14px;
+        border-radius: 16px;
+      }
+      .gw-deck {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 12px;
+      }
+      .lcd-bezel {
+        grid-column: 1 / -1;
+        order: 1;
+        padding: 8px;
+      }
+      .side-panel.left-panel {
+        order: 2;
+        flex-direction: row;
+        justify-content: space-around;
+        background: rgba(92, 68, 24, 0.12);
+        border-radius: 12px;
+        padding: 8px;
+      }
+      .side-panel.right-panel {
+        order: 3;
+        flex-direction: row-reverse;
+        justify-content: space-around;
+        background: rgba(92, 68, 24, 0.12);
+        border-radius: 12px;
+        padding: 8px;
+      }
+      .gw-action-btn {
+        width: 68px;
+        height: 68px;
+      }
+      .speaker-grille {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Handheld Game & Watch Unit -->
+  <main class="gw-handheld" aria-label="Nintendo Game & Watch Style Frog Catcher">
+    <div class="gw-faceplate">
+
+      <!-- Top Metallic Branding Bar -->
+      <header class="gw-header">
+        <div class="gw-brand-badge">GAME &amp; WATCH</div>
+        <div class="gw-title-plate">FROG CATCHER</div>
+        <div class="gw-wide-badge">WIDE SCREEN</div>
+      </header>
+
+      <!-- Main Deck: Left Controls | LCD Screen | Right Controls -->
+      <div class="gw-deck">
+
+        <!-- Left Side Controls -->
+        <section class="side-panel left-panel" aria-label="Left Controls">
+          <div class="pill-group">
+            <div class="pill-btn-wrap">
+              <button id="btnGameA" class="gw-pill-btn active-mode" title="Start Game A (3 Active Leaves)" aria-label="Game A"></button>
+              <span class="btn-label">GAME A</span>
+            </div>
+            <div class="pill-btn-wrap">
+              <button id="btnGameB" class="gw-pill-btn" title="Start Game B (Fast / All 4 Leaves)" aria-label="Game B"></button>
+              <span class="btn-label">GAME B</span>
+            </div>
+          </div>
+
+          <div class="speaker-grille" aria-hidden="true">
+            <span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span>
+            <span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span>
+          </div>
+
+          <div class="dpad-btn-wrap">
+            <button id="btnLeft" class="gw-action-btn" title="Hop Left (Left Arrow / A)" aria-label="Hop Left">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15 4l-8 8 8 8V4z"/>
+              </svg>
+            </button>
+            <span class="action-label">LEFT</span>
+          </div>
+        </section>
+
+        <!-- Center Reflective Monochrome LCD Screen -->
+        <section class="lcd-bezel" aria-label="LCD Screen">
+          <div class="lcd-inner-frame">
+            <div class="lcd-screen-wrap" id="lcdWrap">
+              <canvas id="lcdCanvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Side Controls -->
+        <section class="side-panel right-panel" aria-label="Right Controls">
+          <div class="pill-group">
+            <div class="pill-btn-wrap">
+              <button id="btnTimeReset" class="gw-pill-btn" title="Clock Mode / Reset" aria-label="Time and Reset"></button>
+              <span class="btn-label">TIME / RST</span>
+            </div>
+            <div class="pill-btn-wrap">
+              <button id="btnMute" class="gw-pill-btn active-mode" title="Toggle Piezo Sound" aria-label="Toggle Sound"></button>
+              <span class="btn-label" id="soundLabel">SOUND ON</span>
+            </div>
+          </div>
+
+          <div class="speaker-grille" aria-hidden="true">
+            <span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span>
+            <span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span><span class="speaker-dot"></span>
+          </div>
+
+          <div class="dpad-btn-wrap">
+            <button id="btnRight" class="gw-action-btn" title="Hop Right (Right Arrow / D)" aria-label="Hop Right">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 4l8 8-8 8V4z"/>
+              </svg>
+            </button>
+            <span class="action-label">RIGHT</span>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Subtle Bottom Helper Strip -->
+  <footer class="mt-3 text-center text-xs text-stone-400 tracking-wide px-4">
+    Controls: <span class="text-stone-200 font-semibold">&larr; / &rarr;</span> or <span class="text-stone-200 font-semibold">A / D</span> to hop the frog &bull; <span class="text-stone-200 font-semibold">1 / 2 / Enter</span> for Game A / B &bull; <span class="text-stone-200 font-semibold">R</span> for Time/Reset
+  </footer>
+
+  <script>
+    /**
+     * GAME & WATCH: FROG CATCHER (1980s LCD Simulation)
+     * Single-file self-contained implementation with:
+     * - Authentic fixed-segment LCD rendering (active dark liquid crystal + faint ghost segments)
+     * - Full-colour frog artwork hopping across 4 pond lily-pad slots catching matching frog eggs
+     * - Game A (normal speed, max 3 active leaf chutes at a time) & Game B (faster, all 4 leaf chutes active)
+     * - Live 7-segment LCD digital clock demo mode when idle / Time button pressed
+     */
+
+    (function () {
+      'use strict';
+
+      // ==========================================
+      // 1. RETRO PIEZO BUZZER AUDIO ENGINE
+      // ==========================================
+      class PiezoAudio {
+        constructor() {
+          this.ctx = null;
+          this.enabled = true;
+        }
+
+        ensureContext() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+              this.ctx = new AudioCtx();
+            }
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+          }
+        }
+
+        playTone(freq, duration = 0.045, type = 'square', volume = 0.09, delay = 0) {
+          if (!this.enabled) return;
+          try {
+            this.ensureContext();
+            if (!this.ctx) return;
+
+            const now = this.ctx.currentTime + delay;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(volume, now + 0.005);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + duration + 0.01);
+          } catch (e) {
+            // Ignore audio restrictions if not yet interacted
+          }
+        }
+
+        // Authentic Game & Watch sound effects
+        tick(laneIndex) {
+          // Each egg step emits a crisp short piezo bubble tick pitched slightly by lane
+          const lanePitches = [540, 610, 680, 750];
+          this.playTone(lanePitches[laneIndex % 4], 0.028, 'square', 0.055);
+        }
+
+        move() {
+          // Cute frog hop chirp
+          this.playTone(760, 0.018, 'square', 0.05, 0);
+          this.playTone(980, 0.02, 'square', 0.045, 0.016);
+        }
+
+        catchEgg() {
+          this.playTone(1046.5, 0.045, 'square', 0.1, 0);
+          this.playTone(1396.9, 0.065, 'square', 0.1, 0.045);
+        }
+
+        bonusClear() {
+          const notes = [784, 987.77, 1174.66, 1567.98];
+          notes.forEach((n, i) => this.playTone(n, 0.07, 'square', 0.11, i * 0.065));
+        }
+
+        miss() {
+          this.playTone(220, 0.11, 'sawtooth', 0.13, 0);
+          this.playTone(146.83, 0.22, 'sawtooth', 0.13, 0.11);
+        }
+
+        gameOver() {
+          const notes = [440, 392, 349.23, 329.63, 261.63];
+          notes.forEach((n, i) => this.playTone(n, 0.14, 'square', 0.11, i * 0.14));
+        }
+
+        startGame() {
+          this.playTone(659.25, 0.06, 'square', 0.1, 0);
+          this.playTone(880, 0.06, 'square', 0.1, 0.07);
+          this.playTone(1318.5, 0.11, 'square', 0.1, 0.14);
+        }
+      }
+
+      const audio = new PiezoAudio();
+
+      // ==========================================
+      // 2. GAME STATE & CONFIGURATION
+      // ==========================================
+      const LCD_ON = '#1c241a';
+      const LCD_GHOST = 'rgba(28, 36, 26, 0.08)';
+      const TOTAL_LANES = 4;      // 0: Far-Left Leaf, 1: Mid-Left Leaf, 2: Mid-Right Leaf, 3: Far-Right Leaf
+      const STEPS_PER_LANE = 5;   // 0..4 along the leaf ramp; step 5 checks catch by the frog!
+
+      const state = {
+        mode: 'CLOCK', // 'CLOCK' | 'PLAYING' | 'MISS_PAUSE' | 'GAME_OVER'
+        gameType: 'A', // 'A' (3 active lanes at a time) or 'B' (all 4 lanes active, faster)
+        frogPos: 1,    // 0, 1, 2, 3 (left to right discrete lily-pad spots)
+        frogFacing: 1, // -1 (left) or 1 (right)
+        score: 0,
+        highScoreA: 0,
+        highScoreB: 0,
+        misses: 0,
+        maxMisses: 3,
+        eggs: [],      // { id, lane, step }
+        splatLane: -1, // Which lane currently displays splashed frog egg / tadpole
+        splatTimer: 0,
+        catchFlashLane: -1,
+        catchFlashTimer: 0,
+        stepIndex: 0,
+        tickAccumulator: 0,
+        spawnCooldown: 0,
+        nextEggId: 1,
+        bonusDragonflyTimer: 0 // Dragonfly cheer animation on 100-pt milestones
+      };
+
+      // Load saved high scores safely
+      try {
+        state.highScoreA = parseInt(localStorage.getItem('gw_frog_hi_a') || '0', 10) || 0;
+        state.highScoreB = parseInt(localStorage.getItem('gw_frog_hi_b') || '0', 10) || 0;
+      } catch (e) {}
+
+      function saveHighScores() {
+        try {
+          localStorage.setItem('gw_frog_hi_a', String(state.highScoreA));
+          localStorage.setItem('gw_frog_hi_b', String(state.highScoreB));
+        } catch (e) {}
+      }
+
+      // Compute current tick interval (ms) based on score and Game A / B
+      function getCurrentTickInterval() {
+        const base = state.gameType === 'A' ? 275 : 210;
+        const speedTier = Math.min(18, Math.floor(state.score / 8));
+        return Math.max(95, base - speedTier * 8);
+      }
+
+      // ==========================================
+      // 3. GAMEPLAY ACTIONS & SIMULATION LOOP
+      // ==========================================
+      function startNewGame(type) {
+        audio.ensureContext();
+        state.gameType = type;
+        state.mode = 'PLAYING';
+        state.frogPos = 1;
+        state.frogFacing = -1;
+        state.score = 0;
+        state.misses = 0;
+        state.eggs = [];
+        state.splatLane = -1;
+        state.splatTimer = 0;
+        state.catchFlashLane = -1;
+        state.catchFlashTimer = 0;
+        state.stepIndex = 0;
+        state.tickAccumulator = 0;
+        state.spawnCooldown = 1;
+        state.bonusDragonflyTimer = 0;
+
+        updateModeButtonUI();
+        audio.startGame();
+      }
+
+      function switchToClockMode() {
+        audio.ensureContext();
+        state.mode = 'CLOCK';
+        state.eggs = [];
+        state.splatLane = -1;
+        state.misses = 0;
+        audio.move();
+      }
+
+      function moveFrog(dir) {
+        audio.ensureContext();
+        if (state.mode === 'CLOCK' || state.mode === 'GAME_OVER') {
+          if (state.mode === 'CLOCK') {
+            const nextPos = Math.max(0, Math.min(3, state.frogPos + dir));
+            if (nextPos !== state.frogPos) {
+              state.frogPos = nextPos;
+              state.frogFacing = dir;
+              audio.move();
+            }
+          }
+          return;
+        }
+        if (state.mode !== 'PLAYING') return;
+
+        const nextPos = Math.max(0, Math.min(3, state.frogPos + dir));
+        if (nextPos !== state.frogPos) {
+          state.frogPos = nextPos;
+          state.frogFacing = dir;
+          audio.move();
+        }
+      }
+
+      function spawnEggIfNeeded() {
+        if (state.spawnCooldown > 0) {
+          state.spawnCooldown--;
+          return;
+        }
+
+        // Max simultaneous eggs scales with score and Game A/B
+        const maxEggs = state.gameType === 'A'
+          ? Math.min(4, 2 + Math.floor(state.score / 18))
+          : Math.min(7, 3 + Math.floor(state.score / 12));
+
+        if (state.eggs.length >= maxEggs) return;
+
+        // Track currently active lanes
+        const activeLaneSet = new Set(state.eggs.map(e => e.lane));
+
+        // Game A keeps at most 3 lanes active simultaneously (authentic G&W rule!)
+        // Game B allows all 4 lanes to be active at once
+        const maxActiveLanes = state.gameType === 'A' ? 3 : 4;
+
+        let candidateLanes = [0, 1, 2, 3].filter(
+          lane => !state.eggs.some(e => e.lane === lane && e.step <= 1)
+        );
+
+        if (activeLaneSet.size >= maxActiveLanes) {
+          candidateLanes = candidateLanes.filter(lane => activeLaneSet.has(lane));
+        }
+
+        if (candidateLanes.length === 0) return;
+
+        const chosenLane = candidateLanes[Math.floor(Math.random() * candidateLanes.length)];
+
+        state.eggs.push({
+          id: state.nextEggId++,
+          lane: chosenLane,
+          step: 0
+        });
+
+        const minGap = state.score > 40 ? 2 : 3;
+        const maxGap = state.gameType === 'A' ? 5 : 4;
+        state.spawnCooldown = minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
+      }
+
+      function triggerMiss(lane) {
+        state.misses++;
+        state.splatLane = lane;
+        state.splatTimer = 1100;
+        state.mode = 'MISS_PAUSE';
+        state.eggs = [];
+        audio.miss();
+      }
+
+      function advanceGameTick() {
+        if (state.mode !== 'PLAYING') return;
+
+        let anyMoved = false;
+        let caughtThisTick = false;
+
+        // Move eggs from bottom-most step to top-most step
+        state.eggs.sort((a, b) => b.step - a.step);
+
+        for (let i = state.eggs.length - 1; i >= 0; i--) {
+          const egg = state.eggs[i];
+          egg.step += 1;
+          anyMoved = true;
+
+          // Check if frog egg reached the frog's lily-pad catch height (step === STEPS_PER_LANE)
+          if (egg.step >= STEPS_PER_LANE) {
+            if (state.frogPos === egg.lane) {
+              // CAUGHT!
+              state.eggs.splice(i, 1);
+              state.score = Math.min(999, state.score + 1);
+              state.catchFlashLane = egg.lane;
+              state.catchFlashTimer = 220;
+              caughtThisTick = true;
+
+              if (state.gameType === 'A' && state.score > state.highScoreA) {
+                state.highScoreA = state.score;
+                saveHighScores();
+              } else if (state.gameType === 'B' && state.score > state.highScoreB) {
+                state.highScoreB = state.score;
+                saveHighScores();
+              }
+
+              // Classic Game & Watch milestone bonus at 100 / 200 / 300 pts: clear misses + Dragonfly cheer!
+              if (state.score > 0 && state.score % 100 === 0) {
+                state.misses = 0;
+                state.bonusDragonflyTimer = 1800;
+                audio.bonusClear();
+              } else {
+                audio.catchEgg();
+              }
+            } else {
+              // MISSED! Egg splashes into the pond
+              triggerMiss(egg.lane);
+              return;
+            }
+          }
+        }
+
+        spawnEggIfNeeded();
+
+        if (anyMoved && !caughtThisTick) {
+          audio.tick(state.stepIndex);
+        }
+
+        state.stepIndex = (state.stepIndex + 1) % 4;
+      }
+
+      function updateSimulation(dt) {
+        if (state.catchFlashTimer > 0) {
+          state.catchFlashTimer = Math.max(0, state.catchFlashTimer - dt);
+          if (state.catchFlashTimer === 0) state.catchFlashLane = -1;
+        }
+
+        if (state.bonusDragonflyTimer > 0) {
+          state.bonusDragonflyTimer = Math.max(0, state.bonusDragonflyTimer - dt);
+        }
+
+        if (state.mode === 'MISS_PAUSE') {
+          state.splatTimer -= dt;
+          if (state.splatTimer <= 0) {
+            state.splatLane = -1;
+            if (state.misses >= state.maxMisses) {
+              state.mode = 'GAME_OVER';
+              audio.gameOver();
+            } else {
+              state.mode = 'PLAYING';
+              state.spawnCooldown = 1;
+              state.tickAccumulator = 0;
+            }
+          }
+          return;
+        }
+
+        if (state.mode === 'PLAYING') {
+          state.tickAccumulator += dt;
+          const interval = getCurrentTickInterval();
+          if (state.tickAccumulator >= interval) {
+            state.tickAccumulator -= interval;
+            advanceGameTick();
+          }
+        } else if (state.mode === 'CLOCK') {
+          // Gentle demo animation in Clock mode: Frog hops across lily pads
+          state.tickAccumulator += dt;
+          if (state.tickAccumulator >= 650) {
+            state.tickAccumulator = 0;
+            state.stepIndex = (state.stepIndex + 1) % 8;
+            const demoPositions = [0, 1, 2, 3, 2, 1, 0, 1];
+            const prev = state.frogPos;
+            state.frogPos = demoPositions[state.stepIndex];
+            if (state.frogPos !== prev) {
+              state.frogFacing = state.frogPos > prev ? 1 : -1;
+            }
+          }
+        }
+      }
+
+      // ==========================================
+      // 4. SEGMENTED LCD GRAPHICS RENDERER
+      // ==========================================
+      const canvas = document.getElementById('lcdCanvas');
+      const ctx = canvas.getContext('2d');
+      const lcdWrap = document.getElementById('lcdWrap');
+
+      // Custom transparent artwork supplied for this game.
+      // Keep these two PNG files beside indexfrog-catcher.html.
+      const frogArtwork = new Image();
+      frogArtwork.src = 'Frog%20Catcherpng.png';
+
+      const eggArtwork = new Image();
+      eggArtwork.src = 'Frog%20Egg.png';
+
+      // The egg PNG has transparent padding; crop to its visible artwork.
+      const EGG_CROP = { sx: 118, sy: 12, sw: 1071, sh: 1182 };
+
+      // Logical virtual coordinate space (16:10 aspect ratio)
+      const VW = 640;
+      const VH = 400;
+
+      function resizeCanvas() {
+        const rect = lcdWrap.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(320, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(200, Math.floor(rect.height * dpr));
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      // Helper to select active liquid crystal ink vs. unlit faint ghost segment
+      function segColor(isOn) {
+        return isOn ? LCD_ON : LCD_GHOST;
+      }
+
+      // 7-Segment LCD Digit Bitmask Lookup (a, b, c, d, e, f, g)
+      const DIGIT_MAP = {
+        '0': [1, 1, 1, 1, 1, 1, 0],
+        '1': [0, 1, 1, 0, 0, 0, 0],
+        '2': [1, 1, 0, 1, 1, 0, 1],
+        '3': [1, 1, 1, 1, 0, 0, 1],
+        '4': [0, 1, 1, 0, 0, 1, 1],
+        '5': [1, 0, 1, 1, 0, 1, 1],
+        '6': [1, 0, 1, 1, 1, 1, 1],
+        '7': [1, 1, 1, 0, 0, 0, 0],
+        '8': [1, 1, 1, 1, 1, 1, 1],
+        '9': [1, 1, 1, 1, 0, 1, 1],
+        ' ': [0, 0, 0, 0, 0, 0, 0]
+      };
+
+      // Render a single 7-segment LCD digit with both lit and ghost segments
+      function drawSevenSegmentDigit(x, y, w, h, char) {
+        const segs = DIGIT_MAP[char] || DIGIT_MAP[' '];
+        const t = Math.max(2.2, w * 0.17);
+        const halfH = h / 2;
+        const pad = 1.2;
+
+        const drawSeg = (isOn, drawFn) => {
+          ctx.fillStyle = segColor(isOn);
+          ctx.beginPath();
+          drawFn();
+          ctx.closePath();
+          ctx.fill();
+        };
+
+        // Top (a)
+        drawSeg(segs[0], () => {
+          ctx.moveTo(x + pad, y);
+          ctx.lineTo(x + w - pad, y);
+          ctx.lineTo(x + w - t, y + t);
+          ctx.lineTo(x + t, y + t);
+        });
+        // Upper Right (b)
+        drawSeg(segs[1], () => {
+          ctx.moveTo(x + w, y + pad);
+          ctx.lineTo(x + w, y + halfH - pad);
+          ctx.lineTo(x + w - t, y + halfH - t * 0.6);
+          ctx.lineTo(x + w - t, y + t);
+        });
+        // Lower Right (c)
+        drawSeg(segs[2], () => {
+          ctx.moveTo(x + w, y + halfH + pad);
+          ctx.lineTo(x + w, y + h - pad);
+          ctx.lineTo(x + w - t, y + h - t);
+          ctx.lineTo(x + w - t, y + halfH + t * 0.6);
+        });
+        // Bottom (d)
+        drawSeg(segs[3], () => {
+          ctx.moveTo(x + pad, y + h);
+          ctx.lineTo(x + w - pad, y + h);
+          ctx.lineTo(x + w - t, y + h - t);
+          ctx.lineTo(x + t, y + h - t);
+        });
+        // Lower Left (e)
+        drawSeg(segs[4], () => {
+          ctx.moveTo(x, y + halfH + pad);
+          ctx.lineTo(x, y + h - pad);
+          ctx.lineTo(x + t, y + h - t);
+          ctx.lineTo(x + t, y + halfH + t * 0.6);
+        });
+        // Upper Left (f)
+        drawSeg(segs[5], () => {
+          ctx.moveTo(x, y + pad);
+          ctx.lineTo(x, y + halfH - pad);
+          ctx.lineTo(x + t, y + halfH - t * 0.6);
+          ctx.lineTo(x + t, y + t);
+        });
+        // Middle (g)
+        drawSeg(segs[6], () => {
+          const mid = y + halfH;
+          const ht = t * 0.55;
+          ctx.moveTo(x + pad + 1, mid);
+          ctx.lineTo(x + t, mid - ht);
+          ctx.lineTo(x + w - t, mid - ht);
+          ctx.lineTo(x + w - pad - 1, mid);
+          ctx.lineTo(x + w - t, mid + ht);
+          ctx.lineTo(x + t, mid + ht);
+        });
+      }
+
+      // Render a multi-digit 7-segment LCD readout (right-aligned at rightX)
+      function drawLcdNumber(rightX, topY, digitW, digitH, gap, value, numDigits, showColon) {
+        const str = String(value).padStart(numDigits, ' ');
+        const colonW = showColon ? 8 : 0;
+        const totalW = numDigits * digitW + (numDigits - 1) * gap + colonW;
+        let curX = rightX - totalW;
+
+        for (let i = 0; i < numDigits; i++) {
+          if (showColon && i === 2) {
+            const colonOn = Math.floor(Date.now() / 500) % 2 === 0;
+            ctx.fillStyle = segColor(colonOn);
+            ctx.beginPath();
+            ctx.arc(curX + 2, topY + digitH * 0.32, 2.2, 0, Math.PI * 2);
+            ctx.arc(curX + 2, topY + digitH * 0.68, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+            curX += colonW;
+          }
+          drawSevenSegmentDigit(curX, topY, digitW, digitH, str[i]);
+          curX += digitW + gap;
+        }
+      }
+
+      // Draw permanent printed silk-screen background artwork (marsh reeds, leaf ramps, pond surface)
+      function drawSilkscreenBackground() {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(28, 36, 26, 0.36)';
+        ctx.fillStyle = 'rgba(28, 36, 26, 0.36)';
+        ctx.lineWidth = 2.2;
+
+        // Marsh reeds on far left & far right edges
+        ctx.beginPath();
+        ctx.moveTo(22, 366);
+        ctx.quadraticCurveTo(16, 210, 26, 48);
+        ctx.moveTo(32, 366);
+        ctx.quadraticCurveTo(38, 230, 30, 82);
+        ctx.moveTo(VW - 22, 366);
+        ctx.quadraticCurveTo(VW - 16, 210, VW - 26, 48);
+        ctx.moveTo(VW - 32, 366);
+        ctx.quadraticCurveTo(VW - 38, 230, VW - 30, 82);
+        ctx.stroke();
+
+        // Cattail bulbs on reeds
+        ctx.beginPath();
+        ctx.ellipse(25, 62, 3.5, 11, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(VW - 25, 62, 3.5, 11, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4 Curved Leaf Ramps guiding the frog eggs down toward the 4 lily-pad catching lanes
+        const chutes = getChuteCoordinates();
+        chutes.forEach((track, idx) => {
+          const dir = idx < 2 ? 1 : -1;
+          ctx.beginPath();
+          ctx.moveTo(track[0].x - 14 * dir, track[0].y + 11);
+          ctx.quadraticCurveTo(
+            (track[0].x + track[3].x) / 2 - 4 * dir,
+            (track[0].y + track[3].y) / 2 + 16,
+            track[3].x - 2 * dir,
+            track[3].y + 12
+          );
+          ctx.stroke();
+        });
+
+        // 4 Subtle resting lily-pad markers along the pond surface
+        const padSlots = [152, 252, 388, 488];
+        padSlots.forEach(px => {
+          ctx.beginPath();
+          ctx.ellipse(px, 366, 24, 4.5, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        // Pond water surface & gentle ripples at bottom
+        ctx.fillRect(24, 369, VW - 48, 3);
+
+        ctx.beginPath();
+        for (let wx = 28; wx < VW - 36; wx += 28) {
+          ctx.moveTo(wx, 382);
+          ctx.quadraticCurveTo(wx + 7, 376, wx + 14, 382);
+          ctx.quadraticCurveTo(wx + 21, 388, wx + 28, 382);
+        }
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      // Coordinate lookup table for the 4 leaf chutes x 5 discrete LCD frog-egg positions
+      function getChuteCoordinates() {
+        return [
+          // Lane 0 (Upper-Left Leaf -> Frog Slot 0 at x=152)
+          [
+            { x: 96, y: 66 },
+            { x: 112, y: 112 },
+            { x: 128, y: 162 },
+            { x: 142, y: 214 },
+            { x: 152, y: 266 }
+          ],
+          // Lane 1 (Lower-Left Leaf -> Frog Slot 1 at x=252)
+          [
+            { x: 88, y: 136 },
+            { x: 132, y: 168 },
+            { x: 176, y: 202 },
+            { x: 218, y: 236 },
+            { x: 252, y: 268 }
+          ],
+          // Lane 2 (Lower-Right Leaf -> Frog Slot 2 at x=388)
+          [
+            { x: VW - 88, y: 136 },
+            { x: VW - 132, y: 168 },
+            { x: VW - 176, y: 202 },
+            { x: VW - 218, y: 236 },
+            { x: VW - 252, y: 268 }
+          ],
+          // Lane 3 (Upper-Right Leaf -> Frog Slot 3 at x=488)
+          [
+            { x: VW - 96, y: 66 },
+            { x: VW - 112, y: 112 },
+            { x: VW - 128, y: 162 },
+            { x: VW - 142, y: 214 },
+            { x: VW - 152, y: 266 }
+          ]
+        ];
+      }
+
+      // Draw an LCD Marsh Leaf Cluster at the top of each chute (pulses subtly when releasing an egg)
+      function drawLeafNest(x, y, facingRight, isReleasing) {
+        ctx.save();
+        ctx.translate(x, y + (isReleasing ? 2 : 0));
+        if (!facingRight) ctx.scale(-1, 1);
+
+        ctx.fillStyle = LCD_ON;
+        ctx.strokeStyle = LCD_ON;
+        ctx.lineWidth = 2;
+
+        // Broad curved marsh leaf
+        ctx.beginPath();
+        ctx.moveTo(-24, -10);
+        ctx.quadraticCurveTo(2, -18, 26, -2);
+        ctx.quadraticCurveTo(2, 10, -24, 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Leaf stem
+        ctx.beginPath();
+        ctx.moveTo(-24, -4);
+        ctx.lineTo(-34, -12);
+        ctx.stroke();
+
+        // Gelatinous egg sac cluster resting on the leaf
+        ctx.beginPath();
+        ctx.arc(8, -11, 5.5, 0, Math.PI * 2);
+        ctx.arc(16, -9, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Translucent jelly ring & dark embryo dot cutouts
+        ctx.fillStyle = '#9aa78c';
+        ctx.beginPath();
+        ctx.arc(8, -11, 3.2, 0, Math.PI * 2);
+        ctx.arc(16, -9, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = LCD_ON;
+        ctx.beginPath();
+        ctx.arc(8.5, -11, 1.5, 0, Math.PI * 2);
+        ctx.arc(16.5, -9, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // Draw the supplied full-colour frog egg artwork for active falling eggs.
+      // Unoccupied positions retain a faint LCD ghost marker.
+      function drawFrogEggSegment(x, y, angle, isOn) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+
+        if (isOn && eggArtwork.complete && eggArtwork.naturalWidth > 0) {
+          ctx.globalAlpha = 1;
+          ctx.drawImage(
+            eggArtwork,
+            EGG_CROP.sx, EGG_CROP.sy, EGG_CROP.sw, EGG_CROP.sh,
+            -13, -13, 26, 26
+          );
+        } else {
+          ctx.strokeStyle = LCD_GHOST;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, 8.8, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = LCD_GHOST;
+          ctx.beginPath();
+          ctx.arc(1.2, 1.2, 3.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      // Draw the supplied full-colour frog character at the active lily-pad slot.
+      function drawFrogSegment(slotIndex, isOn, isCatching) {
+        const slotX = [152, 252, 388, 488][slotIndex];
+        const baseY = 364;
+        const leanDir = (isOn && state.frogPos === slotIndex)
+          ? state.frogFacing
+          : (slotIndex < 2 ? -1 : 1);
+
+        ctx.save();
+        ctx.translate(slotX, baseY);
+
+        // Keep the original lily-pad marker beneath each frog position.
+        ctx.fillStyle = segColor(isOn);
+        ctx.beginPath();
+        ctx.ellipse(0, -2, 23, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (isOn && frogArtwork.complete && frogArtwork.naturalWidth > 0) {
+          // The supplied character is already posed reaching upward to catch eggs.
+          // Mirror it slightly according to the frog's current facing direction.
+          ctx.save();
+          if (leanDir < 0) ctx.scale(-1, 1);
+          ctx.drawImage(frogArtwork, -48, -111, 96, 111);
+          ctx.restore();
+        } else if (!isOn) {
+          // Subtle ghost marker for the three inactive frog positions.
+          ctx.fillStyle = LCD_GHOST;
+          ctx.beginPath();
+          ctx.ellipse(0, -27, 16, 20, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(-9, -43, 6, 0, Math.PI * 2);
+          ctx.arc(9, -43, 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      // Draw Splashed Frog Egg / Pond Splash LCD Segment at the bottom of a lane
+      function drawSplatSegment(slotIndex, isOn) {
+        const slotX = [152, 252, 388, 488][slotIndex];
+        const y = 358;
+
+        ctx.save();
+        ctx.translate(slotX, y);
+        ctx.fillStyle = segColor(isOn);
+        ctx.strokeStyle = segColor(isOn);
+        ctx.lineWidth = 2;
+
+        // Jelly puddle on water surface
+        ctx.beginPath();
+        ctx.ellipse(0, 4, 18, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Splash droplets & scattered spots
+        ctx.beginPath();
+        ctx.moveTo(-14, 1);
+        ctx.lineTo(-19, -9);
+        ctx.moveTo(-6, 0);
+        ctx.lineTo(-8, -12);
+        ctx.moveTo(6, 0);
+        ctx.lineTo(8, -12);
+        ctx.moveTo(14, 1);
+        ctx.lineTo(19, -9);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(-19, -11, 2.2, 0, Math.PI * 2);
+        ctx.arc(0, -13, 2.5, 0, Math.PI * 2);
+        ctx.arc(19, -11, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // Draw Dragonfly Bonus Cheer Icon (appears on 100-pt milestone bonus!)
+      function drawDragonflyCheer(isOn) {
+        ctx.save();
+        ctx.translate(VW / 2, 126);
+        ctx.fillStyle = segColor(isOn);
+        ctx.strokeStyle = segColor(isOn);
+
+        // Dragonfly segmented tail & thorax
+        ctx.beginPath();
+        ctx.ellipse(0, 4, 2.5, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Head & eyes
+        ctx.beginPath();
+        ctx.arc(0, -11, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Four delicate wings
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(-12, -6, 11, 3.2, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(12, -6, 11, 3.2, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(-10, 1, 9, 2.6, 0.2, 0, Math.PI * 2);
+        ctx.ellipse(10, 1, 9, 2.6, -0.2, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Cheer sparkles
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('✦', -26, -16);
+        ctx.fillText('✦', 18, -16);
+
+        ctx.restore();
+      }
+
+      // Draw Miss Indicator Icon (Tadpole / Cracked Frog Egg Badge at Top Center)
+      function drawMissBadge(x, y, isOn) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.fillStyle = segColor(isOn);
+        ctx.strokeStyle = segColor(isOn);
+        ctx.lineWidth = 2;
+
+        // Cute LCD Tadpole Miss Icon (escaped egg hatched into a tadpole!)
+        ctx.beginPath();
+        ctx.ellipse(-3, 0, 6.5, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Wiggling tadpole tail
+        ctx.beginPath();
+        ctx.moveTo(3, 0);
+        ctx.quadraticCurveTo(8, -4, 12, 0);
+        ctx.quadraticCurveTo(15, 3, 18, -1);
+        ctx.stroke();
+
+        // Tiny eye cutout
+        if (isOn) {
+          ctx.fillStyle = '#9aa78c';
+          ctx.beginPath();
+          ctx.arc(-5, -1.5, 1.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Draw LCD Status Text Labels (GAME A, GAME B, MISS, GAME OVER, TIME)
+      function drawHudSegments() {
+        // Top-Left Mode Indicators
+        ctx.font = '800 13px "Orbitron", sans-serif';
+        ctx.textAlign = 'left';
+
+        ctx.fillStyle = segColor(state.mode !== 'CLOCK' && state.gameType === 'A');
+        ctx.fillText('GAME A', 22, 26);
+
+        ctx.fillStyle = segColor(state.mode !== 'CLOCK' && state.gameType === 'B');
+        ctx.fillText('GAME B', 22, 44);
+
+        ctx.fillStyle = segColor(state.mode === 'CLOCK');
+        ctx.fillText('TIME', 96, 26);
+
+        // Top-Center Miss Icons (3 eggs)
+        ctx.font = '700 11px "Orbitron", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = segColor(state.misses > 0);
+        ctx.fillText('MISS', VW / 2, 18);
+
+        for (let m = 0; m < 3; m++) {
+          const isMissOn = state.misses > m;
+          // Blink newest miss during MISS_PAUSE
+          const blink = (state.mode === 'MISS_PAUSE' && m === state.misses - 1)
+            ? (Math.floor(Date.now() / 160) % 2 === 0)
+            : true;
+          drawMissBadge(VW / 2 - 26 + m * 26, 33, isMissOn && blink);
+        }
+
+        // Top-Right 4-Digit 7-Segment Score / Clock Display
+        if (state.mode === 'CLOCK') {
+          const now = new Date();
+          const hh = now.getHours();
+          const mm = String(now.getMinutes()).padStart(2, '0');
+          const timeNum = `${hh}${mm}`;
+          drawLcdNumber(VW - 20, 14, 18, 32, 6, timeNum, 4, true);
+        } else {
+          drawLcdNumber(VW - 20, 14, 18, 32, 6, state.score, 4, false);
+        }
+
+        // High score subtle LCD readout below main counter
+        const activeHi = state.gameType === 'A' ? state.highScoreA : state.highScoreB;
+        ctx.font = '700 10px "Share Tech Mono", monospace';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = segColor(activeHi > 0);
+        ctx.fillText(`HI-${state.gameType} ${String(activeHi).padStart(3, '0')}`, VW - 20, 58);
+
+        // Center Banner Prompts (GAME OVER or PRESS GAME A / B)
+        ctx.textAlign = 'center';
+        if (state.mode === 'GAME_OVER') {
+          const blink = Math.floor(Date.now() / 350) % 2 === 0;
+          ctx.font = '800 22px "Orbitron", sans-serif';
+          ctx.fillStyle = segColor(blink);
+          ctx.fillText('GAME OVER', VW / 2, 178);
+
+          ctx.font = '700 12px "Orbitron", sans-serif';
+          ctx.fillStyle = segColor(true);
+          ctx.fillText('PRESS GAME A OR GAME B', VW / 2, 200);
+        } else if (state.mode === 'CLOCK') {
+          const blink = Math.floor(Date.now() / 450) % 2 === 0;
+          ctx.font = '800 16px "Orbitron", sans-serif';
+          ctx.fillStyle = segColor(blink);
+          ctx.fillText('PRESS GAME A OR B TO START', VW / 2, 182);
+        }
+      }
+
+      // Master LCD Render Frame
+      function renderLcdScreen() {
+        const scaleX = canvas.width / VW;
+        const scaleY = canvas.height / VH;
+
+        ctx.save();
+        ctx.scale(scaleX, scaleY);
+        ctx.clearRect(0, 0, VW, VH);
+
+        // 1. Static background silk-screen marsh & leaf lines
+        drawSilkscreenBackground();
+
+        // 2. Top-center HUD, Miss tadpole badges, 7-segment Score/Clock
+        drawHudSegments();
+
+        // 3. Four Marsh Leaf Nests on Perches (animate subtle dip when releasing an egg)
+        const recentLane0 = state.eggs.some(e => e.lane === 0 && e.step === 0);
+        const recentLane1 = state.eggs.some(e => e.lane === 1 && e.step === 0);
+        const recentLane2 = state.eggs.some(e => e.lane === 2 && e.step === 0);
+        const recentLane3 = state.eggs.some(e => e.lane === 3 && e.step === 0);
+
+        drawLeafNest(68, 66, true, recentLane0);
+        drawLeafNest(60, 136, true, recentLane1);
+        drawLeafNest(VW - 60, 136, false, recentLane2);
+        drawLeafNest(VW - 68, 66, false, recentLane3);
+
+        // 4. All 20 Frog Egg Artwork Positions (4 lanes x 5 steps)
+        const chutes = getChuteCoordinates();
+        for (let lane = 0; lane < TOTAL_LANES; lane++) {
+          for (let step = 0; step < STEPS_PER_LANE; step++) {
+            const pt = chutes[lane][step];
+            const isOccupied = state.eggs.some(e => e.lane === lane && e.step === step);
+            const tilt = (lane < 2 ? 0.35 : -0.35) * ((step % 2 === 0) ? 1 : -0.4);
+            drawFrogEggSegment(pt.x, pt.y, tilt, isOccupied);
+          }
+        }
+
+        // 5. All 4 Frog Horizontal Lily-Pad Slots (Ghost + Active Position)
+        for (let slot = 0; slot < 4; slot++) {
+          const isActive = state.frogPos === slot;
+          const isCatching = isActive && state.catchFlashLane === slot;
+          drawFrogSegment(slot, isActive, isCatching);
+        }
+
+        // 6. All 4 Pond Splash Segments (Ghost + Active Miss Splash)
+        for (let slot = 0; slot < 4; slot++) {
+          const isSplatActive = state.splatLane === slot && (Math.floor(Date.now() / 130) % 2 === 0);
+          drawSplatSegment(slot, isSplatActive);
+        }
+
+        // 7. Dragonfly Cheer Bonus Segment
+        drawDragonflyCheer(state.bonusDragonflyTimer > 0 && (Math.floor(Date.now() / 150) % 2 === 0));
+
+        ctx.restore();
+      }
+
+      // ==========================================
+      // 5. MAIN ANIMATION LOOP
+      // ==========================================
+      let lastTimestamp = 0;
+
+      function mainLoop(timestamp) {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const dt = Math.min(100, timestamp - lastTimestamp);
+        lastTimestamp = timestamp;
+
+        updateSimulation(dt);
+        renderLcdScreen();
+
+        requestAnimationFrame(mainLoop);
+      }
+
+      // ==========================================
+      // 6. INPUT CONTROLS (BUTTONS, TOUCH, KEYBOARD)
+      // ==========================================
+      const btnLeft = document.getElementById('btnLeft');
+      const btnRight = document.getElementById('btnRight');
+      const btnGameA = document.getElementById('btnGameA');
+      const btnGameB = document.getElementById('btnGameB');
+      const btnTimeReset = document.getElementById('btnTimeReset');
+      const btnMute = document.getElementById('btnMute');
+      const soundLabel = document.getElementById('soundLabel');
+
+      function updateModeButtonUI() {
+        btnGameA.classList.toggle('active-mode', state.gameType === 'A' && state.mode !== 'CLOCK');
+        btnGameB.classList.toggle('active-mode', state.gameType === 'B' && state.mode !== 'CLOCK');
+        btnTimeReset.classList.toggle('active-mode', state.mode === 'CLOCK');
+      }
+
+      function bindTactileButton(el, actionFn) {
+        const trigger = (e) => {
+          e.preventDefault();
+          el.classList.add('pressed');
+          actionFn();
+          setTimeout(() => el.classList.remove('pressed'), 110);
+        };
+        el.addEventListener('pointerdown', trigger);
+      }
+
+      bindTactileButton(btnLeft, () => moveFrog(-1));
+      bindTactileButton(btnRight, () => moveFrog(1));
+      bindTactileButton(btnGameA, () => startNewGame('A'));
+      bindTactileButton(btnGameB, () => startNewGame('B'));
+      bindTactileButton(btnTimeReset, () => {
+        switchToClockMode();
+        updateModeButtonUI();
+      });
+
+      bindTactileButton(btnMute, () => {
+        audio.enabled = !audio.enabled;
+        btnMute.classList.toggle('active-mode', audio.enabled);
+        soundLabel.textContent = audio.enabled ? 'SOUND ON' : 'MUTED';
+        if (audio.enabled) {
+          audio.ensureContext();
+          audio.move();
+        }
+      });
+
+      // Keyboard Support
+      window.addEventListener('keydown', (e) => {
+        if (e.repeat) return;
+
+        switch (e.key) {
+          case 'ArrowLeft':
+          case 'a':
+          case 'A':
+            e.preventDefault();
+            btnLeft.classList.add('pressed');
+            moveFrog(-1);
+            break;
+          case 'ArrowRight':
+          case 'd':
+          case 'D':
+            e.preventDefault();
+            btnRight.classList.add('pressed');
+            moveFrog(1);
+            break;
+          case '1':
+          case 'Enter':
+            if (state.mode === 'CLOCK' || state.mode === 'GAME_OVER' || e.key === '1') {
+              e.preventDefault();
+              startNewGame('A');
+            }
+            break;
+          case '2':
+            e.preventDefault();
+            startNewGame('B');
+            break;
+          case 'r':
+          case 'R':
+          case 'Escape':
+            e.preventDefault();
+            switchToClockMode();
+            updateModeButtonUI();
+            break;
+          case 'm':
+          case 'M':
+            e.preventDefault();
+            audio.enabled = !audio.enabled;
+            btnMute.classList.toggle('active-mode', audio.enabled);
+            soundLabel.textContent = audio.enabled ? 'SOUND ON' : 'MUTED';
+            break;
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          btnLeft.classList.remove('pressed');
+        }
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          btnRight.classList.remove('pressed');
+        }
+      });
+
+      // Swipe support directly on LCD screen for mobile convenience
+      let touchStartX = null;
+      lcdWrap.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+
+      lcdWrap.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 24) {
+          moveFrog(dx > 0 ? 1 : -1);
+        }
+        touchStartX = null;
+      }, { passive: true });
+
+      // Start animation loop on window load
+      window.onload = function () {
+        resizeCanvas();
+        updateModeButtonUI();
+        requestAnimationFrame(mainLoop);
+      };
+    })();
+  </script>
+</body>
+</html>
