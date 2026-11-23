@@ -275,6 +275,30 @@
             border: 1px solid #b2f5ea;
         }
 
+        /* 20-second question timer */
+        .timer-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: var(--secondary-color);
+            transition: width 0.1s linear, background-color 0.3s;
+        }
+        .timer-bar.warning { background: #dc2626; }
+        .timer-text-display {
+            text-align: right;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
         .instruction-box {
             background: #f0fdf4;
             border-left: 4px solid var(--secondary-color);
@@ -1016,6 +1040,11 @@
                 <div class="score-tracker">Score: <span id="current-score">0</span></div>
             </div>
 
+            <div class="timer-text-display">Time remaining: <span id="timer-sec">20</span>s</div>
+            <div class="timer-bar-container">
+                <div id="timer-bar" class="timer-bar"></div>
+            </div>
+
             <div class="instruction-box">
                 次の文の( )内に最もよくあてはまる人称代名詞を選びなさい。
             </div>
@@ -1237,6 +1266,10 @@
         // Cloudflare D1 connection shared with the Be-verb and General-verbs quizzes.
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
         const QUIZ_ID = "personal-pronouns";
+        const FROGGY_GAME_URL = "https://doctor-george.github.io/frog-quiz/index-froggy.html";
+        const TIME_LIMIT = 20;
+        let timeLeft = TIME_LIMIT;
+        let timerInterval = null;
         let cloudBestScore = null;
         let bestLookupToken = 0;
         let teacherPasswordForSession = "";
@@ -1297,6 +1330,8 @@
         const feedbackDiv = document.getElementById("feedback");
         const nextContainer = document.getElementById("next-container");
         const nextBtn = document.getElementById("next-btn");
+        const timerSec = document.getElementById("timer-sec");
+        const timerBar = document.getElementById("timer-bar");
 
         const resultNameClass = document.getElementById("result-name-class");
         const finalScoreSpan = document.getElementById("final-score");
@@ -1492,6 +1527,7 @@
         });
 
         function loadQuestion() {
+            clearInterval(timerInterval);
             answered = false;
             feedbackDiv.className = "feedback-container";
             feedbackDiv.innerHTML = "";
@@ -1520,10 +1556,43 @@
                     optionsContainer.appendChild(btn);
                 });
             }
+
+            // Give students up to 20 seconds for each question.
+            timeLeft = TIME_LIMIT;
+            timerSec.textContent = String(TIME_LIMIT);
+            timerBar.style.width = "100%";
+            timerBar.classList.remove("warning");
+            const timerStartedAt = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = (Date.now() - timerStartedAt) / 1000;
+                timeLeft = Math.max(0, TIME_LIMIT - elapsed);
+                timerBar.style.width = `${(timeLeft / TIME_LIMIT) * 100}%`;
+                timerSec.textContent = String(Math.ceil(timeLeft));
+                if (timeLeft <= 5) timerBar.classList.add("warning");
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut(q.answer);
+                }
+            }, 50);
+        }
+
+        function handleTimeOut(correctAnswer) {
+            if (answered) return;
+            answered = true;
+            optionsContainer.querySelectorAll(".option-btn").forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+                    btn.classList.add("correct-choice");
+                }
+            });
+            feedbackDiv.className = "feedback-container feedback-incorrect show";
+            feedbackDiv.textContent = `Time is up! The correct answer is: ${correctAnswer}`;
+            nextContainer.classList.add("show");
         }
 
         function submitAnswer(chosenOption) {
             if (answered) return;
+            clearInterval(timerInterval);
             answered = true;
 
             const q = activeQuestions[currentQuestionIndex];
@@ -1553,6 +1622,7 @@
         }
 
         nextBtn.addEventListener("click", () => {
+            clearInterval(timerInterval);
             currentQuestionIndex++;
             if (currentQuestionIndex < activeQuestions.length) {
                 loadQuestion();
@@ -1562,6 +1632,7 @@
         });
 
         async function showResults() {
+            clearInterval(timerInterval);
             quizScreen.classList.remove("active");
             resultsScreen.classList.add("active");
 
@@ -1619,6 +1690,14 @@
                 saveStatus.className = "save-status error";
                 saveStatus.textContent = "⚠ Could not sync this result to Cloudflare D1. A local backup was kept. Please tell your teacher.";
                 console.error("Quiz result save failed:", error);
+            } finally {
+                // King Frog winners continue to the Froggy Game after the score-save
+                // request has completed (successfully or unsuccessfully).
+                if (matchedTier.tier === "king") {
+                    setTimeout(() => {
+                        window.location.href = FROGGY_GAME_URL;
+                    }, 1500);
+                }
             }
 
             if (score >= 20) {
@@ -1633,6 +1712,7 @@
         }
 
         restartBtn.addEventListener("click", () => {
+            clearInterval(timerInterval);
             currentQuestionIndex = 0;
             score = 0;
             resultsScreen.classList.remove("active");
