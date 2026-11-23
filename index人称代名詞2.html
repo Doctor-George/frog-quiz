@@ -1270,6 +1270,7 @@
         const TIME_LIMIT = 20;
         let timeLeft = TIME_LIMIT;
         let timerInterval = null;
+        let kingRedirectFallbackTimer = null;
         let cloudBestScore = null;
         let bestLookupToken = 0;
         let teacherPasswordForSession = "";
@@ -1660,6 +1661,15 @@
 
             const matchedTier = getMatchedTier(score);
 
+            // Start a safety redirect immediately for King Frog winners.
+            // This prevents a stalled Cloudflare request from blocking the game transition.
+            if (matchedTier.tier === "king") {
+                clearTimeout(kingRedirectFallbackTimer);
+                kingRedirectFallbackTimer = setTimeout(() => {
+                    window.location.assign(FROGGY_GAME_URL);
+                }, 5000);
+            }
+
             pondStageContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
             pondMessageText.innerText = matchedTier.desc;
             pondMessageJp.innerText = matchedTier.descJp || "";
@@ -1691,11 +1701,12 @@
                 saveStatus.textContent = "⚠ Could not sync this result to Cloudflare D1. A local backup was kept. Please tell your teacher.";
                 console.error("Quiz result save failed:", error);
             } finally {
-                // King Frog winners continue to the Froggy Game after the score-save
-                // request has completed (successfully or unsuccessfully).
+                // If Cloudflare responds, redirect shortly after the save attempt.
+                // The 5-second fallback above still redirects if the request hangs.
                 if (matchedTier.tier === "king") {
-                    setTimeout(() => {
-                        window.location.href = FROGGY_GAME_URL;
+                    clearTimeout(kingRedirectFallbackTimer);
+                    kingRedirectFallbackTimer = setTimeout(() => {
+                        window.location.assign(FROGGY_GAME_URL);
                     }, 1500);
                 }
             }
