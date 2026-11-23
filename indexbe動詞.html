@@ -156,6 +156,20 @@
             font-size: 1.1rem;
         }
 
+        .timer-tracker {
+            background: #fffaf0;
+            color: #9c4221;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .timer-tracker.warning {
+            background: #fff5f5;
+            color: #c53030;
+        }
+
         .score-tracker {
             background: #e6fffa;
             color: #234e52;
@@ -637,6 +651,7 @@
             <div class="creator-tag">Prepared by Dr. George Cabrera</div>
             <div class="quiz-header">
                 <div class="progress-indicator" id="progress-text">Question 1 of 30</div>
+                <div class="timer-tracker" id="timer-display">⏱️ 20s</div>
                 <div class="score-tracker">Score: <span id="current-score">0</span></div>
             </div>
 
@@ -870,6 +885,12 @@
         let studentName = "";
         let studentClass = "";
         let answered = false;
+        const TIME_LIMIT = 20;
+        let timeRemaining = TIME_LIMIT;
+        let questionTimer = null;
+        let kingRedirectTimer = null;
+        let kingFallbackTimer = null;
+        const FROGGY_GAME_URL = "https://doctor-george.github.io/frog-quiz/index-froggy.html";
         
         // Set this to the URL of the separate Be-verb Quiz Cloudflare Worker after deployment.
         const BE_VERB_API_URL = "https://general-verbs-quiz-api.gerek25.workers.dev";
@@ -898,6 +919,7 @@
         const loginBestStickerContainer = document.getElementById("login-best-sticker-container");
 
         const progressText = document.getElementById("progress-text");
+        const timerDisplay = document.getElementById("timer-display");
         const currentScoreSpan = document.getElementById("current-score");
         const questionPrompt = document.getElementById("question-prompt");
         const optionsContainer = document.getElementById("options-container");
@@ -1043,7 +1065,74 @@
             }
         });
 
+        function stopQuestionTimer() {
+            if (questionTimer) {
+                clearInterval(questionTimer);
+                questionTimer = null;
+            }
+        }
+
+        function startQuestionTimer() {
+            stopQuestionTimer();
+            timeRemaining = TIME_LIMIT;
+            timerDisplay.textContent = `⏱️ ${timeRemaining}s`;
+            timerDisplay.classList.remove("warning");
+            questionTimer = setInterval(() => {
+                if (answered) {
+                    stopQuestionTimer();
+                    return;
+                }
+                timeRemaining--;
+                timerDisplay.textContent = `⏱️ ${timeRemaining}s`;
+                if (timeRemaining <= 5) timerDisplay.classList.add("warning");
+                if (timeRemaining <= 0) {
+                    stopQuestionTimer();
+                    handleTimeExpired();
+                }
+            }, 1000);
+        }
+
+        function handleTimeExpired() {
+            if (answered) return;
+            answered = true;
+            const q = questions[currentQuestionIndex];
+            optionsContainer.querySelectorAll(".option-btn").forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText.trim().toLowerCase() === q.answer.trim().toLowerCase()) {
+                    btn.classList.add("correct-choice");
+                }
+            });
+            feedbackDiv.className = "feedback-container feedback-incorrect show";
+            feedbackDiv.innerHTML = `⏰ Time's up! The correct answer is: <strong>${q.answer}</strong>`;
+            nextContainer.classList.add("show");
+        }
+
+        function scheduleKingRedirect() {
+            if (kingRedirectTimer || kingFallbackTimer) return;
+            kingFallbackTimer = setTimeout(() => {
+                window.location.href = FROGGY_GAME_URL;
+            }, 5000);
+            const redirectAfterSave = () => {
+                if (kingFallbackTimer) {
+                    clearTimeout(kingFallbackTimer);
+                    kingFallbackTimer = null;
+                }
+                if (!kingRedirectTimer) {
+                    kingRedirectTimer = setTimeout(() => {
+                        window.location.href = FROGGY_GAME_URL;
+                    }, 1500);
+                }
+            };
+            if (apiIsConfigured()) {
+                // Wait briefly for the shared score request, but never let a stalled request block the redirect.
+                Promise.resolve(window.__beVerbAttemptPromise).then(redirectAfterSave, redirectAfterSave);
+            } else {
+                redirectAfterSave();
+            }
+        }
+
         function loadQuestion() {
+            stopQuestionTimer();
             answered = false;
             feedbackDiv.className = "feedback-container";
             feedbackDiv.innerHTML = "";
@@ -1071,9 +1160,11 @@
                     optionsContainer.appendChild(btn);
                 });
             }
+            startQuestionTimer();
         }
 
         function submitAnswer(chosenOption) {
+            stopQuestionTimer();
             if (answered) return;
             answered = true;
 
@@ -1113,6 +1204,7 @@
         });
 
         function showResults() {
+            stopQuestionTimer();
             quizScreen.classList.remove("active");
             resultsScreen.classList.add("active");
 
@@ -1124,8 +1216,9 @@
                 localStorage.setItem(studentKey, studentBest);
             }
             // Send every completed attempt to the shared database. Local quiz results still display if offline.
+            window.__beVerbAttemptPromise = null;
             if (apiIsConfigured()) {
-                apiRequest("/api/attempt", {method:"POST", body:JSON.stringify({studentName, className:studentClass, score, total:questions.length, quizId:QUIZ_ID})})
+                window.__beVerbAttemptPromise = apiRequest("/api/attempt", {method:"POST", body:JSON.stringify({studentName, className:studentClass, score, total:questions.length, quizId:QUIZ_ID})})
                     .then(data => {
                         studentBest = Math.max(studentBest, Number(data.bestScore || 0));
                         bestScoreText.innerText = `Personal Best Score: ${studentBest} / ${questions.length}`;
@@ -1150,6 +1243,10 @@
             frogStickerContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
             frogDesc.innerText = matchedTier.desc;
             frogDescJp.innerText = matchedTier.descJp || "";
+
+            if (matchedTier.tier === "king") {
+                scheduleKingRedirect();
+            }
 
             if (score >= 20) {
                 triggerConfetti();
