@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greetings! — Classroom Interactive Presentation</title>
+  <style>
+    :root {
+      --bg-sky: linear-gradient(180deg, #60a5fa 0%, #bae6fd 65%, #86efac 65%, #4ade80 100%);
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --primary: #1d4ed8;
+      --accent: #f59e0b;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: "Comic Sans MS", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+      background: #0f172a;
+      color: var(--text-dark);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Slide Stage */
+    .stage {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 48px 90px;
+      text-align: center;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.985); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Slide Backgrounds */
+    .bg-morning {
+      background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 68%, #4ade80 68%, #16a34a 100%);
+    }
+    .bg-soft-blue {
+      background: linear-gradient(135deg, #e0f2fe 0%, #fef9c3 100%);
+    }
+    .bg-weather {
+      background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+    }
+    .bg-day {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    }
+    .bg-date {
+      background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 100%);
+    }
+    .bg-time {
+      background: linear-gradient(135deg, #dcfce7 0%, #cffafe 100%);
+    }
+    .bg-thanks {
+      background: linear-gradient(135deg, #fef08a 0%, #fed7aa 50%, #fbcfe8 100%);
+    }
+
+    /* Typography for Classroom Projection */
+    .question-banner {
+      background: #ffffff;
+      border: 5px solid #2563eb;
+      border-radius: 28px;
+      padding: 18px 44px;
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      font-weight: 900;
+      color: #1e3a8a;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      margin-bottom: 28px;
+    }
+
+    .content-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      max-width: 1200px;
+      flex-wrap: wrap;
+    }
+
+    .answer-box {
+      background: var(--card-bg);
+      border-radius: 32px;
+      padding: 36px 48px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+      border: 4px solid rgba(255, 255, 255, 0.9);
+      min-width: 380px;
+      max-width: 680px;
+      flex: 1;
+    }
+
+    .answer-text {
+      font-size: clamp(2.3rem, 4.8vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.25;
+      color: #0f172a;
+    }
+
+    .highlight {
+      color: #dc2626;
+      text-decoration: underline;
+      text-decoration-thickness: 5px;
+      text-underline-offset: 8px;
+    }
+
+    .highlight-blue {
+      color: #2563eb;
+    }
+
+    .sub-readout {
+      margin-top: 16px;
+      font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+      font-weight: 700;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* GIF / Animated Media Frame */
+    .gif-frame {
+      width: clamp(240px, 28vw, 360px);
+      height: clamp(240px, 28vw, 360px);
+      background: #ffffff;
+      border-radius: 32px;
+      border: 6px solid #ffffff;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .gif-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Built-in CSS Animated SVG Fallbacks (Active if local .gif files aren't linked yet) */
+    .fallback-anim {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 7rem;
+      animation: bounce 2s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-14px) scale(1.06); }
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .spin-sun {
+      display: inline-block;
+      animation: spinSlow 14s linear infinite;
+    }
+
+    /* Slide 1 Hero Title */
+    .hero-title {
+      font-size: clamp(3rem, 6.5vw, 5.8rem);
+      font-weight: 900;
+      line-height: 1.05;
+      color: #0284c7;
+      text-shadow:
+        -3px -3px 0 #fff,
+         3px -3px 0 #fff,
+        -3px  3px 0 #fff,
+         3px  3px 0 #fff,
+         0 8px 18px rgba(0,0,0,0.2);
+      margin-top: 16px;
+    }
+
+    .hero-sub {
+      display: inline-block;
+      margin-top: 10px;
+      background: #ec4899;
+      color: #fff;
+      padding: 8px 32px;
+      border-radius: 999px;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    }
+
+    /* Slide 3 Interactive Weather Buttons */
+    .weather-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .weather-btn {
+      font-family: inherit;
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: 10px 18px;
+      border-radius: 16px;
+      border: 3px solid #cbd5e1;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    }
+
+    .weather-btn:hover {
+      transform: translateY(-2px);
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .weather-btn.selected {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1e40af;
+    }
+
+    /* Click-to-reveal answer toggle for classroom Q&A */
+    .reveal-blur {
+      filter: blur(14px);
+      cursor: pointer;
+      transition: filter 0.25s ease;
+    }
+    .reveal-blur.revealed {
+      filter: none;
+    }
+
+    /* Bottom Navigation Bar */
+    .controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      color: #f8fafc;
+      z-index: 100;
+    }
+
+    .nav-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: #2563eb;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .slide-indicator {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #475569;
+      cursor: pointer;
+      border: none;
+    }
+
+    .dot.active {
+      background: #38bdf8;
+      transform: scale(1.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage" id="stage">
+    <!-- SLIDE 1: Good Morning! Everyone -->
+    <section class="slide bg-morning active" data-slide="1">
+      <div class="gif-frame" style="width: 270px; height: 270px;">
+        <!-- Replace src with your Slide 1 GIF filename (e.g., "good-morning.gif") -->
+        <img src="slide1-good-morning.gif" alt="Good Morning Sun GIF"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="fallback-anim" style="display:none; background:#fef08a;">
+          <span class="spin-sun">☀️</span>
+        </div>
+      </div>
+      <div class="hero-title" id="dynamic-greeting">GOOD MORNING!</div>
+      <div class="hero-sub">EVERYONE</div>
+    </section>
+
+    <!-- SLIDE 2: How are you today? -->
+    <section class="slide bg-soft-blue" data-slide="2">
+      <div class="question-banner">How are you today?</div>
+      <div class="content-row">
+        <div class="gif-frame">
+          <!-- Replace src with your Slide 2 GIF filename -->
+          <img src="slide2-how-are-you.gif" alt="How are you GIF"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="fallback-anim" style="display:none; background:#e0f2fe;">😊👍</div>
+        </div>
+        <div class="answer-box">
+          <div class="answer-text">
+            I'm <span class="highlight-blue">fine</span>, thank you,<br />and you?
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: How is the weather today? -->
+    <section class="slide bg-weather" data-slide="3">
+      <div class="question-banner">How is the weather today?</div>
+      <div class="content-row">
+        <div class="gif-frame">
+          <!-- Replace src with your Slide 3 GIF filename (updates automatically when weather button is clicked) -->
+          <img id="weather-gif" src="slide3-sunny.gif" alt="Weather GIF"
+               onerror="this.style.display='none'; document.getElementById('weather-fallback').style.display='flex';" />
+          <div id="weather-fallback" class="fallback-anim" style="display:none; background:#fef9c3;">☀️</div>
+        </div>
+        <div class="answer-box">
+          <div class="answer-text">
+            It's <span id="weather-word" class="highlight">sunny</span>.
+          </div>
+          <div class="weather-options" role="group" aria-label="Select today's weather">
+            <button class="weather-btn selected" onclick="setWeather('sunny', '☀️', 'slide3-sunny.gif', this)">☀️ Sunny</button>
+            <button class="weather-btn" onclick="setWeather('cloudy', '☁️', 'slide3-cloudy.gif', this)">☁️ Cloudy</button>
+            <button class="weather-btn" onclick="setWeather('rainy', '🌧️', 'slide3-rainy.gif', this)">🌧️ Rainy</button>
+            <button class="weather-btn" onclick="setWeather('windy', '💨', 'slide3-windy.gif', this)">💨 Windy</button>
+            <button class="weather-btn" onclick="setWeather('snowy', '⛄', 'slide3-snowy.gif', this)">⛄ Snowy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: What day is it today? (Real-Time Day) -->
+    <section class="slide bg-day" data-slide="4">
+      <div class="question-banner">What day is it today?</div>
+      <div class="content-row">
+        <div class="gif-frame">
+          <!-- Replace src with your Slide 4 GIF filename -->
+          <img src="slide4-day.gif" alt="Day of the week GIF"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="fallback-anim" style="display:none; background:#ffedd5;">📅</div>
+        </div>
+        <div class="answer-box">
+          <div class="answer-text">
+            It's <span id="live-day-word" class="highlight">Wednesday</span>.
+          </div>
+          <div class="sub-readout" id="live-day-sub">Updated in real time</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: What is the date today? (Real-Time Spelled-Out Date) -->
+    <section class="slide bg-date" data-slide="5">
+      <div class="question-banner">What is the date today?</div>
+      <div class="content-row">
+        <div class="gif-frame">
+          <!-- Replace src with your Slide 5 GIF filename -->
+          <img src="slide5-date.gif" alt="Calendar Date GIF"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="fallback-anim" style="display:none; background:#fce7f3;">🗓️</div>
+        </div>
+        <div class="answer-box">
+          <div class="answer-text">
+            It's <span id="live-month-word" class="highlight-blue">November</span><br />
+            <span id="live-ordinal-word" class="highlight">twenty-fifth</span>.
+          </div>
+          <div class="sub-readout" id="live-numeric-date">November 25, 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: What time is it? (Real-Time Spoken & Digital Clock) -->
+    <section class="slide bg-time" data-slide="6">
+      <div class="question-banner">What time is it?</div>
+      <div class="content-row">
+        <div class="gif-frame">
+          <!-- Replace src with your Slide 6 GIF filename -->
+          <img src="slide6-time.gif" alt="Clock GIF"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="fallback-anim" style="display:none; background:#ccfbf1;">⏰</div>
+        </div>
+        <div class="answer-box">
+          <div class="answer-text">
+            It's <span id="live-spoken-time" class="highlight">about eight o'clock</span>.
+          </div>
+          <div class="sub-readout" id="live-digital-clock">08:00:00 AM</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Thank you! -->
+    <section class="slide bg-thanks" data-slide="7">
+      <div class="gif-frame" style="width: 300px; height: 300px; margin-bottom: 24px;">
+        <!-- Replace src with your Slide 7 GIF filename -->
+        <img src="slide7-thank-you.gif" alt="Thank you GIF"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="fallback-anim" style="display:none; background:#fef9c3;">🎉🙌</div>
+      </div>
+      <div class="hero-title" style="color:#db2777;">Thank you!</div>
+    </section>
+  </div>
+
+  <!-- Presentation Controls -->
+  <footer class="controls">
+    <div class="nav-group">
+      <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)">◀ Prev</button>
+      <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next ▶</button>
+    </div>
+
+    <div class="dots" id="dots-container"></div>
+
+    <div class="nav-group">
+      <button class="nav-btn" id="blur-toggle-btn" onclick="toggleHideAnswers()" title="Hide answers for student practice">👁️ Hide Answers</button>
+      <button class="nav-btn" onclick="toggleFullscreen()" title="Fullscreen for classroom screen">⛶ Fullscreen</button>
+      <span class="slide-indicator" id="slide-counter">1 / 7</span>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll(".slide");
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let hideAnswersMode = false;
+
+    // Build slide dots
+    const dotsContainer = document.getElementById("dots-container");
+    slides.forEach((_, idx) => {
+      const dot = document.createElement("button");
+      dot.className = "dot" + (idx === 0 ? " active" : "");
+      dot.setAttribute("aria-label", `Go to slide ${idx + 1}`);
+      dot.onclick = () => goToSlide(idx);
+      dotsContainer.appendChild(dot);
+    });
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      slides[currentSlide].classList.remove("active");
+      dotsContainer.children[currentSlide].classList.remove("active");
+
+      currentSlide = index;
+
+      slides[currentSlide].classList.add("active");
+      dotsContainer.children[currentSlide].classList.add("active");
+
+      document.getElementById("slide-counter").textContent = `${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById("prev-btn").disabled = currentSlide === 0;
+      document.getElementById("next-btn").disabled = currentSlide === totalSlides - 1;
+    }
+
+    function changeSlide(delta) {
+      goToSlide(currentSlide + delta);
+    }
+
+    // Keyboard navigation (Left/Right arrows, Spacebar, PageUp/PageDown)
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        changeSlide(1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        changeSlide(-1);
+      }
+    });
+
+    // Fullscreen toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Hide/Reveal answers for classroom oral practice
+    function toggleHideAnswers() {
+      hideAnswersMode = !hideAnswersMode;
+      const btn = document.getElementById("blur-toggle-btn");
+      btn.textContent = hideAnswersMode ? "🙈 Reveal Answers" : "👁️ Hide Answers";
+
+      document.querySelectorAll(".answer-text").forEach((el) => {
+        if (hideAnswersMode) {
+          el.classList.add("reveal-blur");
+          el.classList.remove("revealed");
+          el.onclick = () => el.classList.toggle("revealed");
+        } else {
+          el.classList.remove("reveal-blur", "revealed");
+          el.onclick = null;
+        }
+      });
+    }
+
+    // Slide 3: Interactive Weather selector
+    function setWeather(word, emoji, gifFile, btnEl) {
+      document.getElementById("weather-word").textContent = word;
+      document.querySelectorAll(".weather-btn").forEach((b) => b.classList.remove("selected"));
+      btnEl.classList.add("selected");
+
+      const img = document.getElementById("weather-gif");
+      const fallback = document.getElementById("weather-fallback");
+      fallback.textContent = emoji;
+      img.style.display = "block";
+      fallback.style.display = "none";
+      img.src = gifFile;
+    }
+
+    // Helper: Convert day number (1-31) to English ordinal words ("twenty-fifth", "twenty-sixth", etc.)
+    function dayToOrdinalWords(day) {
+      const special = {
+        1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth",
+        6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth", 10: "tenth",
+        11: "eleventh", 12: "twelfth", 13: "thirteenth", 14: "fourteenth",
+        15: "fifteenth", 16: "sixteenth", 17: "seventeenth", 18: "eighteenth",
+        19: "nineteenth", 20: "twentieth", 30: "thirtieth"
+      };
+      if (special[day]) return special[day];
+      if (day > 20 && day < 30) {
+        return "twenty-" + special[day - 20];
+      }
+      if (day === 31) return "thirty-first";
+      return String(day);
+    }
+
+    // Helper: Convert hour/minute into natural classroom English ("about quarter to nine", "about eight o'clock", etc.)
+    function formatSpokenTime(date) {
+      const hourWords = [
+        "twelve", "one", "two", "three", "four", "five",
+        "six", "seven", "eight", "nine", "ten", "eleven"
+      ];
+      let h = date.getHours();
+      let m = date.getMinutes();
+
+      // Round to nearest 5 minutes for natural classroom "about ..." phrasing
+      const roundedMin = Math.round(m / 5) * 5;
+      if (roundedMin === 60) {
+        h = (h + 1) % 24;
+        m = 0;
+      } else {
+        m = roundedMin;
+      }
+
+      const currentHourWord = hourWords[h % 12];
+      const nextHourWord = hourWords[(h + 1) % 12];
+
+      if (m === 0) return `about ${currentHourWord} o'clock`;
+      if (m === 5) return `about five past ${currentHourWord}`;
+      if (m === 10) return `about ten past ${currentHourWord}`;
+      if (m === 15) return `about quarter past ${currentHourWord}`;
+      if (m === 20) return `about twenty past ${currentHourWord}`;
+      if (m === 25) return `about twenty-five past ${currentHourWord}`;
+      if (m === 30) return `about half past ${currentHourWord}`;
+      if (m === 35) return `about twenty-five to ${nextHourWord}`;
+      if (m === 40) return `about twenty to ${nextHourWord}`;
+      if (m === 45) return `about quarter to ${nextHourWord}`;
+      if (m === 50) return `about ten to ${nextHourWord}`;
+      if (m === 55) return `about five to ${nextHourWord}`;
+      return `about ${currentHourWord} o'clock`;
+    }
+
+    // Real-Time Date, Day, and Time Updater
+    function updateClassroomClock() {
+      const now = new Date();
+
+      // 1. Slide 1 Greeting (adapts if used in afternoon/evening, defaults to Good Morning)
+      const hour = now.getHours();
+      const heroTitle = document.getElementById("dynamic-greeting");
+      if (hour < 12) {
+        heroTitle.textContent = "GOOD MORNING!";
+      } else if (hour < 17) {
+        heroTitle.textContent = "GOOD AFTERNOON!";
+      } else {
+        heroTitle.textContent = "GOOD EVENING!";
+      }
+
+      // 2. Slide 4: Day of the week
+      const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(now);
+      document.getElementById("live-day-word").textContent = weekday;
+
+      // 3. Slide 5: Month & spelled-out ordinal day ("November twenty-fifth.")
+      const monthName = new Intl.DateTimeFormat("en-US", { month: "long" }).format(now);
+      const dayNumber = now.getDate();
+      document.getElementById("live-month-word").textContent = monthName;
+      document.getElementById("live-ordinal-word").textContent = dayToOrdinalWords(dayNumber);
+      document.getElementById("live-numeric-date").textContent = new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(now);
+
+      // 4. Slide 6: Spoken classroom time + live digital clock
+      document.getElementById("live-spoken-time").textContent = formatSpokenTime(now);
+      document.getElementById("live-digital-clock").textContent = new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(now);
+    }
+
+    updateClassroomClock();
+    setInterval(updateClassroomClock, 500);
+    goToSlide(0);
+  </script>
+</body>
+</html>
