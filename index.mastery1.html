@@ -1,0 +1,2744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index-grammar-challenge-16-39.html</title>
+    <!-- Confetti Library -->
+    <script async src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1b4d3e;
+            --secondary-color: #2e8b57;
+            --accent-color: #3cb371;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-color: #1a2e26;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d2818 0%, #164e3b 40%, #0f382b 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 8px;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(60, 179, 113, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            background: var(--card-bg);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            padding: 12px 18px;
+            position: relative;
+            z-index: 1;
+            max-height: 98vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .creator-tag {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #4a7c59;
+            margin-bottom: 4px;
+            font-style: italic;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 2px;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: calc(98vh - 30px);
+            padding-right: 2px;
+        }
+
+        .screen.active { display: flex; }
+
+        .login-header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+        }
+
+        .title-center-box { text-align: center; flex-grow: 1; }
+        .title-center-box h1 { color: var(--primary-color); font-size: 1.35rem; line-height: 1.2; }
+        .title-center-box p { color: #334155; font-size: 0.84rem; margin-top: 2px; }
+
+        .score-left-card {
+            min-width: 130px;
+            font-size: 0.82rem;
+            color: #15803d;
+            font-weight: 700;
+            line-height: 1.2;
+            display: none;
+        }
+        .score-left-card.show { display: block; }
+
+        .thumbnail-right-box { display: none; justify-content: center; align-items: center; }
+        .thumbnail-right-box.show { display: flex; }
+        .thumbnail-right-box svg { width: 88px; height: 64px; }
+
+        .performance-tiers-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+        }
+        .performance-tiers-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+        .tiers-grid { display: flex; justify-content: space-between; align-items: center; gap: 6px; overflow-x: auto; }
+        .tier-item {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 4px 2px;
+            text-align: center;
+            flex: 1;
+            min-width: 72px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+        .tier-item svg { width: 46px; height: 34px; display: block; margin: 0 auto; }
+        .tier-score-label { font-size: 0.7rem; font-weight: 700; color: #1e293b; line-height: 1.1; margin-top: 2px; }
+        .tier-rank-label { font-size: 0.63rem; color: #0d9488; font-weight: 600; line-height: 1.1; }
+
+        .mastery-rules-banner {
+            background: #ecfdf5;
+            border: 1.5px solid #6ee7b7;
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            color: #065f46;
+            line-height: 1.35;
+        }
+
+        .form-group { margin-bottom: 6px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 2px; color: #2d3748; font-size: 0.84rem; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 7px 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--secondary-color); }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 4px;
+        }
+        .btn:hover { background-color: #123528; }
+        .btn:active { transform: scale(0.99); }
+        .btn-secondary { background-color: #475569; padding: 7px; font-size: 0.84rem; }
+        .btn-secondary:hover { background-color: #334155; }
+        .btn-danger { background-color: #dc2626; }
+        .btn-bonus {
+            background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);
+            font-size: 1.05rem;
+            padding: 11px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+        }
+        .btn-bonus:hover { background: linear-gradient(135deg, #15803d 0%, #0f766e 100%); }
+
+        /* Mastery HUD Header */
+        .mastery-hud {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .hud-pill {
+            background: #f0fdf4;
+            border: 1.5px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 4px 8px;
+            text-align: center;
+        }
+        .hud-pill.stage-pill {
+            background: #1b4d3e;
+            border-color: #1b4d3e;
+            color: #ffffff;
+        }
+        .hud-pill.bonus-pill {
+            background: #fefce8;
+            border-color: #fde047;
+            color: #854d0e;
+        }
+        .hud-label {
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.85;
+            display: block;
+        }
+        .hud-value {
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        /* Number Strip (No. 16 - No. 39) */
+        .number-progress-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            justify-content: center;
+            margin-bottom: 6px;
+            padding: 4px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .num-dot {
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            color: #64748b;
+            position: relative;
+        }
+        .num-dot.mastered {
+            background: #16a34a;
+            color: #ffffff;
+        }
+        .num-dot.current {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 0 0 2px #bae6fd;
+        }
+        .num-dot.milestone::after {
+            content: "🐸";
+            font-size: 0.58rem;
+            margin-left: 1px;
+        }
+
+        .timer-bar-container { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+        .timer-bar { height: 100%; width: 100%; background: var(--secondary-color); transition: width 0.1s linear, background-color 0.3s; }
+        .timer-bar.warning { background: #dc2626; }
+        .timer-text-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 2px;
+        }
+        .instruction-box {
+            background: #f0fdf4;
+            border-left: 3px solid var(--secondary-color);
+            padding: 5px 8px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.78rem;
+            color: #166534;
+            margin-bottom: 6px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+        .question-card { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; margin-bottom: 4px; }
+        .question-category-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 4px;
+        }
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            text-align: center;
+            line-height: 1.45;
+        }
+        .question-text u {
+            text-decoration: underline;
+            text-decoration-thickness: 2.5px;
+            text-underline-offset: 3px;
+            text-decoration-color: #dc2626;
+            background: #fef2f2;
+            padding: 0 3px;
+            border-radius: 3px;
+        }
+        .rearrange-section { display: flex; flex-direction: column; gap: 6px; }
+        .box-label { font-size: 0.78rem; font-weight: 700; color: #475569; }
+        .typing-input-row { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; }
+        .starter-word-badge { font-weight: 700; font-size: 1rem; color: #1b4d3e; background: #e6fffa; border: 1.5px solid #2e8b57; padding: 6px 12px; border-radius: 5px; white-space: nowrap; }
+        .typing-answer-input { flex: 1; padding: 8px 10px; border: 2px solid #94a3b8; border-radius: 6px; font-size: 1rem; font-weight: 600; color: #0f172a; background: #fff; }
+        .typing-answer-input:focus { outline: none; border-color: var(--secondary-color); }
+
+        /* Choice chips for verb distinction questions (No. 34) */
+        .choice-options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 4px 0;
+        }
+        .choice-option-btn {
+            padding: 8px 16px;
+            background: #ffffff;
+            border: 2px solid #2e8b57;
+            color: #1b4d3e;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .choice-option-btn:hover { background: #ecfdf5; transform: translateY(-1px); }
+        .choice-option-btn.selected { background: #1b4d3e; color: #ffffff; }
+
+        .submit-answer-btn { margin-top: 4px; padding: 8px; background-color: var(--secondary-color); color: white; border: none; border-radius: 6px; font-size: 0.92rem; font-weight: bold; cursor: pointer; }
+        .submit-answer-btn:hover { background-color: var(--primary-color); }
+        .feedback-container { margin-top: 6px; padding: 7px 10px; border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.85rem; display: none; line-height: 1.35; }
+        .feedback-container.show { display: block; }
+        .feedback-correct { background: #f0fff4; color: #15803d; border: 1.5px solid #86efac; }
+        .feedback-incorrect { background: #fef2f2; color: #991b1b; border: 1.5px solid #fca5a5; }
+        .next-btn-container { margin-top: 6px; display: none; }
+        .next-btn-container.show { display: block; }
+
+        /* Bonus Game Unlock Screen & Fullscreen Game Overlay */
+        .bonus-card {
+            background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 3px solid #22c55e;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin: 6px 0;
+        }
+        .bonus-card h2 {
+            color: #15803d;
+            font-size: 1.35rem;
+            margin-bottom: 6px;
+        }
+        .bonus-card p {
+            color: #166534;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .game-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 26, 18, 0.96);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            padding: 8px;
+        }
+        .game-modal-overlay.active { display: flex; }
+        .game-modal-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1b4d3e;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 8px 8px 0 0;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .game-modal-topbar span {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .game-modal-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .game-return-btn {
+            background: #f59e0b;
+            color: #1e293b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 0.84rem;
+            cursor: pointer;
+        }
+        .game-return-btn:hover { background: #fbbf24; }
+        .game-external-link {
+            background: #0284c7;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .game-iframe-wrap {
+            flex: 1;
+            width: 100%;
+            background: #000;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .game-iframe-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .results-header { text-align: center; margin-bottom: 4px; }
+        .results-header h2 { color: var(--primary-color); font-size: 1.15rem; }
+        .student-badge-info { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px; border-radius: 6px; text-align: center; margin-bottom: 5px; font-size: 0.82rem; }
+        @keyframes pop-out-bounce {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.08); opacity: 1; }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pond-result-box {
+            background: linear-gradient(180deg, #1e3a8a 0%, #0369a1 40%, #0284c7 100%);
+            border: 2px solid #38bdf8;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            margin-bottom: 5px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .pop-out-anim { animation: pop-out-bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .pond-stage-container { display: flex; justify-content: center; align-items: center; margin: 2px 0; }
+        .pond-stage-container svg { width: 100px; height: 75px; }
+        .pond-message-text { font-size: 0.88rem; font-weight: 700; color: #fef08a; text-shadow: 0 1px 2px rgba(0,0,0,0.6); margin-top: 2px; }
+        .pond-message-jp { font-size: 0.75rem; font-weight: 600; color: #e0f2fe; }
+        .best-score-display { margin-top: 2px; font-size: 0.75rem; font-weight: 700; color: #bae6fd; }
+
+        .portal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .portal-tabs { display: flex; gap: 5px; margin-bottom: 5px; border-bottom: 2px solid #e2e8f0; padding-bottom: 3px; }
+        .portal-tab-btn { padding: 4px 8px; font-weight: bold; border: none; background: #e2e8f0; border-radius: 4px; cursor: pointer; color: #475569; font-size: 0.78rem; }
+        .portal-tab-btn.active { background: var(--primary-color); color: white; }
+        .portal-section { display: none; overflow-y: auto; max-height: 360px; }
+        .portal-section.active { display: block; }
+        .question-list-container, .reward-list-container { max-height: 150px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px; margin-bottom: 5px; background: #f8fafc; }
+        .question-item-row, .reward-item-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 5px; border-bottom: 1px solid #edf2f7; background: #fff; margin-bottom: 2px; border-radius: 4px; font-size: 0.75rem; }
+        .action-btns button { padding: 2px 5px; font-size: 0.68rem; margin-left: 2px; border-radius: 3px; border: none; cursor: pointer; }
+        .edit-q-btn { background: #0d9488; color: white; }
+        .del-q-btn { background: #dc2626; color: white; }
+
+        .save-status { margin: 8px 0; color: #286db4; font-size: .9rem; }
+        .save-status.error { color: #b91c1c; }
+        #teacher-dashboard-screen { --primary-color:#2d6fb5; --secondary-color:#2d6fb5; color:#334155; background:#fff; padding:0 14px 10px; }
+        #teacher-dashboard-screen .portal-header { margin:8px 0 14px; }
+        #teacher-dashboard-screen .portal-header h2 { color:#2f3b50; }
+        #teacher-dashboard-screen .portal-tabs { flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+        #teacher-dashboard-screen .portal-tab-btn { padding:9px 14px; font-size:.9rem; }
+        #teacher-dashboard-screen .portal-tab-btn.active { background:#2d6fb5; }
+        #teacher-dashboard-screen .portal-section { max-height:none; overflow:visible; }
+        #teacher-dashboard-screen .instruction-box { background:#eaf6ff; border-left-color:#2d6fb5; color:#286db4; }
+        .records-status { background:#eaf6ff; color:#286db4; border-radius:8px; padding:12px; margin:0 0 14px; font-size:.9rem; }
+        .records-status.error { background:#fff1f2; color:#b91c1c; }
+        .records-status.success { background:#eaf6ff; color:#286db4; }
+        .records-toolbar { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-items:end; margin:12px 0 16px; }
+        .records-toolbar .form-group { min-width:0; }
+        .records-toolbar select { width:100%; min-width:0; padding:9px; border:2px solid #dce4ee; border-radius:8px; background:#fff; font-size:.9rem; }
+        .records-actions { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+        .records-actions .btn { display:inline-block; width:auto; margin:0; padding:9px 14px; border-radius:8px; background:#2d6fb5; font-size:.9rem; }
+        .records-actions .btn-secondary { background:#475569; }
+        .records-table-wrap { overflow-x:auto; margin:8px 0 18px; border:1px solid #dce4ee; background:#fff; }
+        .records-table { width:100%; min-width:620px; border-collapse:collapse; font-size:.88rem; }
+        .records-table th,.records-table td { padding:9px 10px; text-align:left; border:1px solid #dce4ee; white-space:nowrap; }
+        .records-table th { background:#edf3f9; color:#26364d; font-weight:700; }
+        .records-note { color:#64748b; font-size:.82rem; line-height:1.45; margin-bottom:8px; }
+        .student-history-title { margin:18px 0 8px; font-size:1rem; }
+
+        /* Custom Modal Notification */
+        .custom-notice-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .custom-notice-modal.active { display: flex; }
+        .custom-notice-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .custom-notice-card p {
+            margin-bottom: 14px;
+            font-size: 0.95rem;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .custom-notice-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        @media(max-width:700px) {
+            .mastery-hud { grid-template-columns: repeat(2, 1fr); }
+            .records-toolbar { grid-template-columns:1fr; }
+            .records-actions .btn { flex:1; }
+            #teacher-dashboard-screen { padding-left:4px; padding-right:4px; }
+            .login-header-wrapper { flex-direction: column; gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- STUDENT LOGIN SCREEN -->
+        <div id="login-screen" class="screen active">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="login-header-wrapper">
+                <div id="login-best-text-card" class="score-left-card">
+                    👋 <span id="welcome-name"></span><br>
+                    Best Mastered:<br>
+                    <strong id="welcome-best-score" style="font-size:1.1rem; color:#15803d;">0</strong> / <span id="welcome-total">24</span> No. 🏆
+                </div>
+                <div class="title-center-box">
+                    <h1>🐸 Grammar Mastery Challenge (No. 16 – No. 39)</h1>
+                    <p>各ナンバーの全問に連続正解して、次のナンバーへ進もう！</p>
+                </div>
+                <div id="login-best-sticker-container" class="thumbnail-right-box"></div>
+            </div>
+
+            <div class="mastery-rules-banner">
+                <strong>🎯 Mastery Rules (完全習得ルール):</strong><br>
+                ① <strong>No. 16 〜 No. 39</strong> まで、各ナンバーの問題を<strong>全問正解</strong>すると次のナンバーへ進めます。<br>
+                ② 1問でも間違えると、<strong>そのナンバーの最初から</strong>やり直し（問題順は毎回シャッフルされます）。<br>
+                ③ <strong>3ナンバー連続クリアごと</strong>に、ボーナスゲーム「🐸 Frog Catcher」に挑戦できます！
+            </div>
+
+            <div class="performance-tiers-box">
+                <h4>🏆 Performance Reward Tiers (マスターナンバー数ランク)</h4>
+                <div class="tiers-grid" id="performance-tiers-grid"></div>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="student-name">Student Name (名前)</label>
+                    <input type="text" id="student-name" required placeholder="Tanaka Kenji">
+                </div>
+                <div class="form-group">
+                    <label for="student-class">Class (クラス / 組)</label>
+                    <input type="text" id="student-class" required placeholder="1-1">
+                </div>
+                <button type="submit" class="btn">Start Mastery Challenge 🚀</button>
+            </form>
+            <div id="resume-session-box" style="display:none; margin-top:6px;">
+                <button type="button" id="resume-session-btn" class="btn btn-bonus">▶ Continue Saved Progress (<span id="resume-no-label">No. 16</span>)</button>
+            </div>
+            <button id="goto-teacher-portal-btn" class="btn btn-secondary">🔒 Teacher Portal</button>
+        </div>
+
+        <!-- TEACHER LOGIN SCREEN -->
+        <div id="teacher-login-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="title-center-box" style="margin: 12px 0;">
+                <h1>🔒 Teacher Portal Login</h1>
+                <p>Enter teacher password to manage quiz content.</p>
+            </div>
+            <form id="teacher-login-form">
+                <div class="form-group">
+                    <label for="teacher-password">Password</label>
+                    <input type="password" id="teacher-password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn">Login to Portal</button>
+                <button type="button" id="back-to-login-btn" class="btn btn-secondary">Back to Student Login</button>
+            </form>
+        </div>
+
+        <!-- TEACHER DASHBOARD SCREEN -->
+        <div id="teacher-dashboard-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="portal-header">
+                <h2 style="font-size:1.05rem;">Teacher Content Manager (No. 16–39)</h2>
+                <button id="logout-teacher-btn" class="btn btn-danger" style="width: auto; padding: 3px 8px; margin:0; font-size:0.75rem;">Logout</button>
+            </div>
+            <div class="portal-tabs">
+                <button class="portal-tab-btn active" onclick="switchPortalTab('questions')">Manage Questions</button>
+                <button class="portal-tab-btn" onclick="switchPortalTab('rewards')">Manage Reward Tiers</button>
+                <button class="portal-tab-btn" onclick="switchPortalTab('records')">Student Scores & Rankings</button>
+            </div>
+
+            <div id="portal-tab-questions" class="portal-section active">
+                <div class="instruction-box">Add, edit, or delete questions grouped by Number (No. 16 to No. 39).</div>
+                <h3 id="form-mode-title" style="margin-bottom: 2px; font-size: 0.8rem; color: var(--primary-color);">Add New Question</h3>
+                <form id="question-edit-form" style="background: #edf2f7; padding: 6px; border-radius: 6px; margin-bottom: 5px;">
+                    <input type="hidden" id="edit-index" value="-1">
+                    <div style="display:grid; grid-template-columns: 110px 1fr; gap:6px; margin-bottom:3px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="input-q-no">Number (No.)</label>
+                            <input type="number" id="input-q-no" min="16" max="39" value="16" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="input-q-text">Question Prompt (HTML &lt;u&gt; allowed)</label>
+                            <input type="text" id="input-q-text" required placeholder="e.g. I play <u>basketball</u>. (下線部を問う疑問文に)">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-q-words">Starting Word(s) Given to Student (optional)</label>
+                        <input type="text" id="input-q-words" placeholder="e.g. What (leave blank for full input or single word fill-in)">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-q-answer">Primary Correct Answer</label>
+                        <input type="text" id="input-q-answer" required placeholder="e.g. What do you play?">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-q-alt">Alternative Accepted Answers (comma-separated, optional)</label>
+                        <input type="text" id="input-q-alt" placeholder="e.g. Do not be sad., Don't be sad.">
+                    </div>
+                    <button type="submit" class="btn" id="save-question-btn" style="padding: 5px;">Save Question</button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display: none; margin-top: 2px;">Cancel Edit</button>
+                </form>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                    <h3 style="font-size: 0.8rem;">Existing Questions (<span id="total-q-count">0</span>)</h3>
+                    <button type="button" id="reset-default-q-btn" class="btn btn-secondary" style="width:auto; padding:2px 8px; font-size:0.72rem; margin:0;">Reset Default No. 16–39 Bank</button>
+                </div>
+                <div class="question-list-container" id="question-list-div"></div>
+            </div>
+
+            <div id="portal-tab-rewards" class="portal-section">
+                <div class="instruction-box">Configure mastered-number thresholds (out of 24 Numbers), frog thumbnails, and encouragement messages.</div>
+                <h3 id="reward-form-title" style="margin-bottom: 2px; font-size: 0.8rem; color: var(--primary-color);">Edit Reward Tier</h3>
+                <form id="reward-edit-form" style="background: #edf2f7; padding: 6px; border-radius: 6px; margin-bottom: 5px;">
+                    <input type="hidden" id="edit-reward-index" value="-1">
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-r-min">Minimum Mastered Numbers Required (0–24)</label>
+                        <input type="number" id="input-r-min" required min="0" max="24">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-r-tier">Frog Thumbnail Tier</label>
+                        <select id="input-r-tier">
+                            <option value="king">King Frog (Top Tier)</option>
+                            <option value="queen">Queen Frog</option>
+                            <option value="ok">OK Frog</option>
+                            <option value="baby">Baby Frog</option>
+                            <option value="threeTadpoles">Three Tadpoles</option>
+                            <option value="oneTadpole">One Tadpole</option>
+                            <option value="egg">Frog Egg</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-r-desc">English Encouragement Message</label>
+                        <input type="text" id="input-r-desc" required placeholder="e.g. Flawless mastery! Outstanding work!">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 3px;">
+                        <label for="input-r-desc-jp">Japanese Translation (日本語訳)</label>
+                        <input type="text" id="input-r-desc-jp" required placeholder="e.g. 完璧な習得です！素晴らしい成果ですね！">
+                    </div>
+                    <button type="submit" class="btn" style="padding: 5px;">Save Reward Tier</button>
+                    <button type="button" id="cancel-reward-edit-btn" class="btn btn-secondary" style="display: none; margin-top: 2px;">Cancel Edit</button>
+                </form>
+                <h3 style="margin-bottom: 2px; font-size: 0.8rem;">Configured Reward Tiers</h3>
+                <div class="reward-list-container" id="reward-list-div"></div>
+            </div>
+
+            <div id="portal-tab-records" class="portal-section">
+                <div class="instruction-box">View quiz attempts collected from students using this quiz on different devices. Rankings are calculated from the shared Cloudflare D1 records.</div>
+                <div id="records-status" class="records-status">Sign in to load student records.</div>
+                <div class="records-toolbar">
+                    <div class="form-group"><label for="records-class-filter">Class</label><select id="records-class-filter"><option value="">All classes</option></select></div>
+                    <div class="form-group"><label for="records-rank-mode">Rank students by</label><select id="records-rank-mode"><option value="best">Highest mastered</option><option value="average">Average mastered</option><option value="latest">Latest mastered</option></select></div>
+                    <div class="form-group"><label for="records-history-student">Individual history</label><select id="records-history-student"><option value="">Select a student</option></select></div>
+                </div>
+                <div class="records-actions">
+                    <button type="button" class="btn" id="refresh-records-btn">Refresh Records</button>
+                    <button type="button" class="btn btn-secondary" id="export-records-btn">Export CSV</button>
+                </div>
+                <h3 style="margin:16px 0 6px;">Student Rankings</h3>
+                <p class="records-note">A student is identified by the combination of name and class. Ties receive the same rank. Average scores are calculated from all recorded attempts.</p>
+                <div class="records-table-wrap"><table class="records-table"><thead><tr><th>Rank</th><th>Student</th><th>Class</th><th>Highest</th><th>Average</th><th>Latest</th><th>Attempts</th></tr></thead><tbody id="student-ranking-body"><tr><td colspan="7">No records loaded.</td></tr></tbody></table></div>
+                <h3 style="margin:16px 0 6px;">Class Comparison</h3>
+                <p class="records-note">Classes are compared by average percentage per student, so students who take the quiz many times do not outweigh students who take it fewer times.</p>
+                <div class="records-table-wrap"><table class="records-table"><thead><tr><th>Rank</th><th>Class</th><th>Students</th><th>Average score</th><th>Average %</th><th>Best score</th><th>Attempts</th></tr></thead><tbody id="class-comparison-body"><tr><td colspan="7">No records loaded.</td></tr></tbody></table></div>
+                <h3 class="student-history-title">Selected Student's Attempt History</h3>
+                <div class="records-table-wrap"><table class="records-table"><thead><tr><th>Date & Time</th><th>Mastered Numbers</th><th>Percentage</th></tr></thead><tbody id="student-history-body"><tr><td colspan="3">Choose a student above.</td></tr></tbody></table></div>
+            </div>
+            <button id="back-to-home-from-portal" class="btn btn-secondary" style="margin-top: 5px;">Return to Quiz Home</button>
+        </div>
+
+        <!-- ACTIVE QUIZ SCREEN -->
+        <div id="quiz-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+
+            <div class="mastery-hud">
+                <div class="hud-pill stage-pill">
+                    <span class="hud-label">Current Stage</span>
+                    <span class="hud-value" id="hud-current-no">No. 16</span>
+                </div>
+                <div class="hud-pill">
+                    <span class="hud-label">Progress in Stage</span>
+                    <span class="hud-value" id="hud-stage-progress">Question 1 of 3</span>
+                </div>
+                <div class="hud-pill">
+                    <span class="hud-label">Mastered Numbers</span>
+                    <span class="hud-value" id="hud-mastered-count">0 / 24</span>
+                </div>
+                <div class="hud-pill bonus-pill">
+                    <span class="hud-label">Next Frog Catcher</span>
+                    <span class="hud-value" id="hud-next-bonus">In 3 No.</span>
+                </div>
+            </div>
+
+            <div class="number-progress-strip" id="number-progress-strip"></div>
+
+            <div class="timer-text-display">
+                <span id="stage-attempt-indicator">Stage Attempt #1 (Rotated Order)</span>
+                <span>Time remaining: <span id="timer-sec">35</span>s</span>
+            </div>
+            <div class="timer-bar-container"><div id="timer-bar" class="timer-bar"></div></div>
+
+            <div class="instruction-box" id="dynamic-instruction-box">
+                指示に従って正しい英語を入力しなさい。（文末の「.」や「?」も忘れずに入力し、全問連続正解を目指そう！）
+            </div>
+
+            <div class="question-card">
+                <div style="text-align:center;">
+                    <span class="question-category-badge" id="question-type-badge">Sentence Transformation</span>
+                </div>
+                <div class="question-text" id="question-prompt">Loading question...</div>
+
+                <div class="rearrange-section" id="typing-section">
+                    <div class="box-label" id="input-box-label">Type your English answer below:</div>
+                    <div class="typing-input-row">
+                        <span class="starter-word-badge" id="starter-word-display">I</span>
+                        <input type="text" id="typing-answer-input" class="typing-answer-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type your answer here...">
+                    </div>
+                </div>
+
+                <div class="choice-options-grid" id="choice-options-grid" style="display:none;"></div>
+
+                <button id="submit-rearrange-btn" class="submit-answer-btn">Submit Answer ✔</button>
+                <div id="feedback" class="feedback-container"></div>
+            </div>
+
+            <div class="next-btn-container" id="next-container">
+                <button id="next-btn" class="btn">Next Question ➔</button>
+            </div>
+        </div>
+
+        <!-- BONUS GAME UNLOCK SCREEN (EVERY 3 MASTERED NUMBERS) -->
+        <div id="bonus-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="bonus-card pop-out-anim">
+                <h2>🎉 3 Numbers Mastered! Bonus Game Unlocked! 🐸</h2>
+                <p id="bonus-milestone-text">
+                    おめでとう！<strong>No. 16 〜 No. 18</strong> を完璧にクリアしました！<br>
+                    ご褒美として <strong>Frog Catcher</strong> ゲームをプレイできます。<br>
+                    ゲームが <strong>Game Over</strong> になったら、自動的にクイズの続き（<strong id="bonus-next-no-text">No. 19</strong>）へ戻ります！
+                </p>
+                <div style="margin: 8px auto; width: 95px; height: 75px;" id="bonus-frog-icon"></div>
+                <button type="button" id="launch-frog-catcher-btn" class="btn btn-bonus">🎮 Play Frog Catcher Now!</button>
+                <button type="button" id="skip-bonus-btn" class="btn btn-secondary" style="margin-top: 8px;">Skip Game & Continue to Next Number ➔</button>
+            </div>
+        </div>
+
+        <!-- FINAL RESULTS SCREEN -->
+        <div id="results-screen" class="screen">
+            <div class="creator-tag">Prepared by Dr. George Cabrera</div>
+            <div class="results-header"><h2>🎉 Challenge Summary! 🎉</h2></div>
+            <div class="student-badge-info">
+                <h3 id="result-name-class">Student Name (Class)</h3>
+                <p>Mastered Numbers: <strong id="final-score" style="color: var(--primary-color);">0</strong> / <span id="final-total">24</span> (Correct Answers: <span id="final-correct-count">0</span>)</p>
+            </div>
+            <div class="pond-result-box pop-out-anim" id="pond-result-box">
+                <div class="pond-stage-container" id="pond-stage-container"></div>
+                <div class="pond-message-text" id="pond-message-text"></div>
+                <div class="pond-message-jp" id="pond-message-jp"></div>
+                <div class="best-score-display" id="best-score-text">Personal Best Mastered: 0 / 24</div>
+                <div class="pond-attempt-counter" id="pond-attempt-counter" style="font-size:0.72rem; color:#bae6fd; margin-top:2px;">Total attempts: 1</div>
+            </div>
+            <div id="cloud-save-status" class="save-status" role="status" aria-live="polite">Your result will be saved to the class database.</div>
+            <button id="restart-btn" class="btn" style="padding: 7px;">Return to Home / Try Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN FROG CATCHER GAME OVERLAY MODAL -->
+    <div id="game-modal-overlay" class="game-modal-overlay">
+        <div class="game-modal-topbar">
+            <span>🐸 Frog Catcher Bonus Time! — Reach Game Over to return to <strong id="modal-next-no-badge">No. 19</strong></span>
+            <div class="game-modal-actions">
+                <a id="external-game-link" href="https://doctor-george.github.io/frog-quiz/indexfrog-catcher.html" target="_blank" rel="noopener" class="game-external-link">Open in New Tab ↗</a>
+                <button type="button" id="manual-return-from-game-btn" class="game-return-btn">Game Over / Return to Quiz ➔</button>
+            </div>
+        </div>
+        <div class="game-iframe-wrap">
+            <iframe id="frog-catcher-iframe" src="about:blank" title="Frog Catcher Bonus Game" allow="autoplay"></iframe>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM / ALERT DIALOG -->
+    <div id="custom-notice-modal" class="custom-notice-modal">
+        <div class="custom-notice-card">
+            <p id="custom-notice-message">Message</p>
+            <div class="custom-notice-actions" id="custom-notice-actions"></div>
+        </div>
+    </div>
+
+    <script>
+        const FROG_SVGS = {
+            king: `
+                <svg viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="150" cy="340" rx="90" ry="12" fill="#d7ccc8"/>
+                    <path d="M 120 340 C 90 320, 80 230, 110 180 C 125 155, 175 155, 190 180 C 220 230, 210 320, 180 340 Z" fill="#1e3a8a" stroke="#ffffff" stroke-width="4"/>
+                    <path d="M 100 200 C 60 220, 40 300, 30 328 C 70 345, 110 330, 115 310 C 95 270, 100 220, 100 200 Z" fill="#1d4ed8"/>
+                    <path d="M 200 200 C 240 220, 260 300, 270 328 C 230 345, 190 330, 185 310 C 205 270, 200 220, 200 200 Z" fill="#1d4ed8"/>
+                    <path d="M 125 330 Q 110 350 90 345 M 175 330 Q 190 350 210 345" fill="none" stroke="#65a30d" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M 115 180 C 100 210, 105 280, 125 310 L 175 310 C 195 280, 200 210, 185 180 Z" fill="#1e40af" stroke="#f59e0b" stroke-width="3"/>
+                    <path d="M 130 180 L 150 290 L 170 180 Z" fill="#84cc16"/>
+                    <line x1="180" y1="210" x2="130" y2="280" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="128" cy="282" r="8" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+                    <circle cx="150" cy="115" r="48" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="180" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="8" fill="#fef08a"/><circle cx="180" cy="80" r="8" fill="#fef08a"/>
+                    <circle cx="120" cy="80" r="4" fill="#1e293b"/><circle cx="180" cy="80" r="4" fill="#1e293b"/>
+                    <path d="M 130 130 Q 150 148 170 130" fill="#991b1b" stroke="#1e293b" stroke-width="3"/>
+                    <polygon points="105,75 150,15 195,75 210,50 195,85 105,85 90,50" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>
+                    <circle cx="150" cy="38" r="6" fill="#ef4444"/><circle cx="125" cy="65" r="4" fill="#2563eb"/><circle cx="175" cy="65" r="4" fill="#16a34a"/>
+                </svg>`,
+            queen: `
+                <svg viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="150" cy="340" rx="90" ry="12" fill="#d7ccc8"/>
+                    <path d="M 110 100 Q 50 160 50 260 Q 70 310 100 320 Q 80 220 120 130 Z" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+                    <path d="M 190 100 Q 250 160 250 260 Q 230 310 200 320 Q 220 220 180 130 Z" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+                    <path d="M 100 335 C 70 280, 80 200, 115 170 C 130 155, 170 155, 185 170 C 220 200, 230 280, 200 335 Z" fill="#7e22ce" stroke="#f59e0b" stroke-width="4"/>
+                    <path d="M 125 170 L 150 335 L 175 170 Z" fill="#a855f7"/>
+                    <path d="M 125 330 Q 110 350 90 345 M 175 330 Q 190 350 210 345" fill="none" stroke="#65a30d" stroke-width="8" stroke-linecap="round"/>
+                    <circle cx="150" cy="115" r="48" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/><circle cx="180" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="8" fill="#fef08a"/><circle cx="180" cy="80" r="8" fill="#fef08a"/>
+                    <circle cx="120" cy="80" r="4" fill="#1e293b"/><circle cx="180" cy="80" r="4" fill="#1e293b"/>
+                    <ellipse cx="125" cy="125" rx="8" ry="5" fill="#f43f5e" opacity="0.5"/><ellipse cx="175" cy="125" rx="8" ry="5" fill="#f43f5e" opacity="0.5"/>
+                    <path d="M 132 132 Q 150 145 168 132" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                    <polygon points="105,75 150,18 195,75 210,50 195,85 105,85 90,50" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>
+                    <circle cx="150" cy="38" r="6" fill="#ec4899"/>
+                </svg>`,
+            ok: `
+                <svg viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 60 290 Q 150 270 240 290 L 250 350 Q 150 360 50 350 Z" fill="#78350f" stroke="#451a03" stroke-width="4"/>
+                    <ellipse cx="150" cy="290" rx="90" ry="20" fill="#a16207" stroke="#451a03" stroke-width="4"/>
+                    <path d="M 125 180 L 125 280 M 175 180 L 175 280" stroke="#65a30d" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M 110 180 C 100 210, 110 260, 150 260 C 190 260, 200 210, 190 180 Z" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+                    <circle cx="150" cy="115" r="48" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/><circle cx="180" cy="80" r="18" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="120" cy="80" r="8" fill="#ffffff"/><circle cx="180" cy="80" r="8" fill="#ffffff"/>
+                    <circle cx="120" cy="80" r="4" fill="#1e293b"/><circle cx="180" cy="80" r="4" fill="#1e293b"/>
+                    <path d="M 130 130 Q 150 148 170 130" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 200 180 Q 220 160 235 140 Q 245 150 230 170 Q 240 145 252 155 Q 242 175 225 190 Z" fill="#84cc16" stroke="#4d7c0f" stroke-width="3"/>
+                    <rect x="70" y="210" width="40" height="15" rx="4" fill="#fef3c7" stroke="#78350f" stroke-width="2" transform="rotate(-20, 90, 215)"/>
+                </svg>`,
+            baby: `
+                <svg viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 60 290 Q 150 270 240 290 L 250 350 Q 150 360 50 350 Z" fill="#78350f" stroke="#451a03" stroke-width="4"/>
+                    <ellipse cx="150" cy="290" rx="90" ry="20" fill="#a16207" stroke="#451a03" stroke-width="4"/>
+                    <path d="M 125 200 L 125 285 M 175 200 L 175 285" stroke="#84cc16" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M 115 190 C 105 210, 115 260, 150 260 C 185 260, 195 210, 185 190 Z" fill="#3b82f6" stroke="#ffffff" stroke-width="3"/>
+                    <circle cx="150" cy="130" r="52" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="115" cy="90" r="22" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/><circle cx="185" cy="90" r="22" fill="#84cc16" stroke="#4d7c0f" stroke-width="4"/>
+                    <circle cx="115" cy="90" r="12" fill="#ffffff"/><circle cx="185" cy="90" r="12" fill="#ffffff"/>
+                    <circle cx="115" cy="90" r="6" fill="#1e293b"/><circle cx="185" cy="90" r="6" fill="#1e293b"/>
+                    <ellipse cx="120" cy="142" rx="10" ry="6" fill="#f43f5e" opacity="0.5"/><ellipse cx="180" cy="142" rx="10" ry="6" fill="#f43f5e" opacity="0.5"/>
+                    <path d="M 132 145 Q 150 165 168 145 Z" fill="#991b1b" stroke="#1e293b" stroke-width="2"/>
+                </svg>`,
+            threeTadpoles: `
+                <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="150" cy="160" rx="130" ry="60" fill="#bae6fd" stroke="#0284c7" stroke-width="4"/>
+                    <g transform="translate(60, 90)"><path d="M 20 30 Q -10 10 -30 40 Q -10 70 20 50 Z" fill="#365314"/><ellipse cx="40" cy="40" rx="28" ry="22" fill="#65a30d" stroke="#ffffff" stroke-width="3"/><circle cx="32" cy="32" r="6" fill="#ffffff"/><circle cx="32" cy="32" r="3" fill="#1e293b"/></g>
+                    <g transform="translate(130, 110)"><path d="M 20 25 Q -10 5 -25 32 Q -10 55 20 40 Z" fill="#365314"/><ellipse cx="35" cy="32" rx="22" ry="18" fill="#65a30d" stroke="#ffffff" stroke-width="3"/><circle cx="28" cy="26" r="5" fill="#ffffff"/><circle cx="28" cy="26" r="2.5" fill="#1e293b"/></g>
+                    <g transform="translate(190, 130)"><path d="M 15 20 Q -8 2 -20 25 Q -8 45 15 30 Z" fill="#365314"/><ellipse cx="28" cy="25" rx="18" ry="14" fill="#65a30d" stroke="#ffffff" stroke-width="2.5"/><circle cx="22" cy="20" r="4" fill="#ffffff"/><circle cx="22" cy="20" r="2" fill="#1e293b"/></g>
+                </svg>`,
+            oneTadpole: `
+                <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="150" cy="160" rx="130" ry="60" fill="#bae6fd" stroke="#0284c7" stroke-width="4"/>
+                    <g transform="translate(90, 80)"><path d="M 35 40 Q -20 10 -50 55 Q -20 100 35 70 Z" fill="#365314"/><ellipse cx="65" cy="55" rx="42" ry="32" fill="#65a30d" stroke="#ffffff" stroke-width="4"/><circle cx="52" cy="42" r="9" fill="#ffffff"/><circle cx="52" cy="42" r="4.5" fill="#1e293b"/></g>
+                </svg>`,
+            egg: `
+                <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="150" cy="160" rx="130" ry="60" fill="#bae6fd" stroke="#0284c7" stroke-width="4"/>
+                    <circle cx="150" cy="130" r="65" fill="#ffffff" opacity="0.8" stroke="#38bdf8" stroke-width="5"/>
+                    <circle cx="150" cy="130" r="42" fill="#14532d"/>
+                </svg>`
+        };
+
+        // Custom modal dialog helpers (replaces alert/confirm)
+        function showNotice(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-notice-modal');
+                const msgEl = document.getElementById('custom-notice-message');
+                const actionsEl = document.getElementById('custom-notice-actions');
+                msgEl.textContent = message;
+                actionsEl.innerHTML = '';
+                const okBtn = document.createElement('button');
+                okBtn.className = 'btn';
+                okBtn.style.width = 'auto';
+                okBtn.style.padding = '7px 20px';
+                okBtn.textContent = 'OK';
+                okBtn.onclick = () => {
+                    modal.classList.remove('active');
+                    resolve(true);
+                };
+                actionsEl.appendChild(okBtn);
+                modal.classList.add('active');
+            });
+        }
+
+        function showConfirmNotice(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-notice-modal');
+                const msgEl = document.getElementById('custom-notice-message');
+                const actionsEl = document.getElementById('custom-notice-actions');
+                msgEl.textContent = message;
+                actionsEl.innerHTML = '';
+                const yesBtn = document.createElement('button');
+                yesBtn.className = 'btn btn-danger';
+                yesBtn.style.width = 'auto';
+                yesBtn.style.padding = '7px 18px';
+                yesBtn.textContent = 'Yes';
+                yesBtn.onclick = () => {
+                    modal.classList.remove('active');
+                    resolve(true);
+                };
+                const noBtn = document.createElement('button');
+                noBtn.className = 'btn btn-secondary';
+                noBtn.style.width = 'auto';
+                noBtn.style.padding = '7px 18px';
+                noBtn.style.marginTop = '4px';
+                noBtn.textContent = 'Cancel';
+                noBtn.onclick = () => {
+                    modal.classList.remove('active');
+                    resolve(false);
+                };
+                actionsEl.appendChild(yesBtn);
+                actionsEl.appendChild(noBtn);
+                modal.classList.add('active');
+            });
+        }
+
+        // Default reward tiers calibrated to 24 Numbers (No. 16 - No. 39)
+        const DEFAULT_REWARD_TIERS = [
+            { minScore: 24, tier: "king", desc: "All 24 Numbers Mastered! Ultimate Frog King!", descJp: "全24ナンバー完全制覇！究極のフロッグキングです！" },
+            { minScore: 20, tier: "queen", desc: "20+ Numbers Mastered! Royal Grammar Mastery!", descJp: "20ナンバー以上制覇！素晴らしい文法力です！" },
+            { minScore: 15, tier: "ok", desc: "15+ Numbers Mastered! Solid Progress!", descJp: "15ナンバー以上制覇！着実に力がついています！" },
+            { minScore: 10, tier: "baby", desc: "10+ Numbers Mastered! Keep climbing!", descJp: "10ナンバー以上制覇！その調子で進めよう！" },
+            { minScore: 6, tier: "threeTadpoles", desc: "6+ Numbers Mastered! Two bonus games unlocked!", descJp: "6ナンバー以上制覇！着実に成長しています！" },
+            { minScore: 3, tier: "oneTadpole", desc: "3+ Numbers Mastered! First bonus milestone reached!", descJp: "3ナンバー以上制覇！最初のマイルストーン達成！" },
+            { minScore: 0, tier: "egg", desc: "Keep practicing each Number until you get 100%!", descJp: "各ナンバー全問正解を目指して挑戦しよう！" }
+        ];
+
+        // Complete Question Bank from 16-39.pdf (No. 16 through No. 39)
+        const DEFAULT_QUESTIONS_16_39 = [
+            // No. 16
+            {
+                no: 16,
+                type: "Sentence Transformation",
+                text: "Tom and Mary speak French. (疑問文にして、No で答えなさい。)",
+                starter: "Do",
+                answer: "Do Tom and Mary speak French? No, they don't.",
+                altAnswers: [
+                    "Do Tom and Mary speak French? No, they do not.",
+                    "Do Tom and Mary speak French?No, they don't.",
+                    "Do Tom and Mary speak French?No, they do not."
+                ]
+            },
+            {
+                no: 16,
+                type: "Negative Imperative",
+                text: "You are sad. (否定命令文に)",
+                starter: "Don't",
+                answer: "Don't be sad.",
+                altAnswers: ["Do not be sad."]
+            },
+            {
+                no: 16,
+                type: "Wh- Question",
+                text: "I play <u>basketball</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What do you play?",
+                altAnswers: []
+            },
+
+            // No. 17
+            {
+                no: 17,
+                type: "Sentence Transformation",
+                text: "You are good English speakers. (疑問文にして、yes で答えなさい)",
+                starter: "Are",
+                answer: "Are you good English speakers? Yes, we are.",
+                altAnswers: [
+                    "Are you good English speakers?Yes, we are."
+                ]
+            },
+            {
+                no: 17,
+                type: "English Composition",
+                text: "ここで泳がないでください。(英文にしなさい)",
+                starter: "Don't",
+                answer: "Don't swim here.",
+                altAnswers: ["Do not swim here.", "Please don't swim here.", "Please do not swim here."]
+            },
+            {
+                no: 17,
+                type: "Wh- Question",
+                text: "I study <u>for three hours</u>. (下線部を問う疑問文へ)",
+                starter: "How",
+                answer: "How long do you study?",
+                altAnswers: []
+            },
+
+            // No. 18
+            {
+                no: 18,
+                type: "English Composition",
+                text: "私は犬が好きです。(英文にしなさい)",
+                starter: "I",
+                answer: "I like dogs.",
+                altAnswers: ["I love dogs."]
+            },
+            {
+                no: 18,
+                type: "Singular / Plural",
+                text: "Those are old schools. (単数の文に)",
+                starter: "That",
+                answer: "That is an old school.",
+                altAnswers: ["That's an old school."]
+            },
+            {
+                no: 18,
+                type: "Sentence Transformation",
+                text: "This is your book. (疑問文にして No で答えなさい)",
+                starter: "Is",
+                answer: "Is this your book? No, it isn't.",
+                altAnswers: [
+                    "Is this your book? No, it is not.",
+                    "Is this your book? No, it's not.",
+                    "Is this your book?No, it isn't.",
+                    "Is this your book?No, it is not."
+                ]
+            },
+
+            // No. 19
+            {
+                no: 19,
+                type: "Negative Imperative",
+                text: "You speak so fast. (否定命令文に。)",
+                starter: "Don't",
+                answer: "Don't speak so fast.",
+                altAnswers: ["Do not speak so fast."]
+            },
+            {
+                no: 19,
+                type: "Wh- Question",
+                text: "I study English <u>for two hours</u>. (下線部を問う疑問文へ。)",
+                starter: "How",
+                answer: "How long do you study English?",
+                altAnswers: []
+            },
+            {
+                no: 19,
+                type: "Q & A",
+                text: "What is your favorite food? (英語で答えなさい・curry and rice)",
+                starter: "",
+                answer: "My favorite food is curry and rice.",
+                altAnswers: [
+                    "It is curry and rice.",
+                    "It's curry and rice.",
+                    "Curry and rice."
+                ]
+            },
+
+            // No. 20
+            {
+                no: 20,
+                type: "Singular / Plural",
+                text: "That is a library. (複数形の文に)",
+                starter: "Those",
+                answer: "Those are libraries.",
+                altAnswers: []
+            },
+            {
+                no: 20,
+                type: "Singular / Plural",
+                text: "These are old houses. (単数形の文に)",
+                starter: "This",
+                answer: "This is an old house.",
+                altAnswers: []
+            },
+            {
+                no: 20,
+                type: "English Composition",
+                text: "彼らはリンゴが好きです。(英語になおしなさい)",
+                starter: "They",
+                answer: "They like apples.",
+                altAnswers: ["They love apples."]
+            },
+
+            // No. 21
+            {
+                no: 21,
+                type: "Sentence Transformation",
+                text: "Those are useful dictionaries. (疑問文にしてyes で答えなさい)",
+                starter: "Are",
+                answer: "Are those useful dictionaries? Yes, they are.",
+                altAnswers: ["Are those useful dictionaries?Yes, they are."]
+            },
+            {
+                no: 21,
+                type: "Paraphrasing",
+                text: "Let's go to Tokyo. (同じ内容の文に)",
+                starter: "Shall",
+                answer: "Shall we go to Tokyo?",
+                altAnswers: ["Why don't we go to Tokyo?", "How about going to Tokyo?"]
+            },
+            {
+                no: 21,
+                type: "Negative Imperative",
+                text: "You are nervous. (否定命令文に)",
+                starter: "Don't",
+                answer: "Don't be nervous.",
+                altAnswers: ["Do not be nervous."]
+            },
+
+            // No. 22
+            {
+                no: 22,
+                type: "Sentence Transformation",
+                text: "Your eraser is useful. (疑問文にして yes で答えなさい。)",
+                starter: "Is",
+                answer: "Is your eraser useful? Yes, it is.",
+                altAnswers: ["Is your eraser useful?Yes, it is."]
+            },
+            {
+                no: 22,
+                type: "Wh- Question",
+                text: "Jim and Mary live <u>in Japan</u>. (下線部を問う疑問文へ。)",
+                starter: "Where",
+                answer: "Where do Jim and Mary live?",
+                altAnswers: []
+            },
+            {
+                no: 22,
+                type: "Q & A",
+                text: "Who is your English teacher? (英語で答えなさい・Ms. Machida)",
+                starter: "My",
+                answer: "My English teacher is Ms. Machida.",
+                altAnswers: ["My English teacher is Mr. Cabrera.", "My English teacher is Dr. Cabrera.", "My English teacher is Ms. Yahashi."]
+            },
+
+            // No. 23
+            {
+                no: 23,
+                type: "Wh- Question",
+                text: "They speak <u>French</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What do they speak?",
+                altAnswers: []
+            },
+            {
+                no: 23,
+                type: "Singular / Plural",
+                text: "These are old houses. (単数形の文に)",
+                starter: "This",
+                answer: "This is an old house.",
+                altAnswers: []
+            },
+            {
+                no: 23,
+                type: "English Composition",
+                text: "私は英語を書くことが好きです。(英語になおしなさい)",
+                starter: "I",
+                answer: "I like writing English.",
+                altAnswers: ["I like to write English."]
+            },
+
+            // No. 24
+            {
+                no: 24,
+                type: "Sentence Transformation",
+                text: "These are good cars. (疑問文にしてyes で答えなさい)",
+                starter: "Are",
+                answer: "Are these good cars? Yes, they are.",
+                altAnswers: ["Are these good cars?Yes, they are."]
+            },
+            {
+                no: 24,
+                type: "English Composition",
+                text: "ここで走ってはいけません。(英語にしなさい)",
+                starter: "Don't",
+                answer: "Don't run here.",
+                altAnswers: ["Do not run here."]
+            },
+            {
+                no: 24,
+                type: "Negative Imperative",
+                text: "You are nervous. (否定命令文に)",
+                starter: "Don't",
+                answer: "Don't be nervous.",
+                altAnswers: ["Do not be nervous."]
+            },
+
+            // No. 25
+            {
+                no: 25,
+                type: "Negative Sentence",
+                text: "Jim and Mary are at home. (否定文にしなさい)",
+                starter: "Jim",
+                answer: "Jim and Mary aren't at home.",
+                altAnswers: ["Jim and Mary are not at home."]
+            },
+            {
+                no: 25,
+                type: "Sentence Transformation",
+                text: "Tom has some sisters. (疑問文にして No で答えなさい)",
+                starter: "Does",
+                answer: "Does Tom have any sisters? No, he doesn't.",
+                altAnswers: [
+                    "Does Tom have any sisters? No, he does not.",
+                    "Does Tom have any sisters?No, he doesn't.",
+                    "Does Tom have any sisters?No, he does not."
+                ]
+            },
+            {
+                no: 25,
+                type: "English Composition",
+                text: "私は毎日テニスをすることを楽しみます。(英語にしなさい)",
+                starter: "I",
+                answer: "I enjoy playing tennis every day.",
+                altAnswers: ["I enjoy playing tennis everyday."]
+            },
+
+            // No. 26
+            {
+                no: 26,
+                type: "Wh- Question",
+                text: "He studies English <u>after dinner</u>。(下線部を問う質問へ)",
+                starter: "When",
+                answer: "When does he study English?",
+                altAnswers: []
+            },
+            {
+                no: 26,
+                type: "English Composition",
+                text: "私は北海道に行きたいと思います。(英語に直しなさい)",
+                starter: "I",
+                answer: "I want to go to Hokkaido.",
+                altAnswers: ["I'd like to go to Hokkaido.", "I would like to go to Hokkaido."]
+            },
+            {
+                no: 26,
+                type: "Wh- Question",
+                text: "He is <u>in the park</u>. (下線部を問う疑問文へ)",
+                starter: "Where",
+                answer: "Where is he?",
+                altAnswers: ["Where's he?"]
+            },
+
+            // No. 27
+            {
+                no: 27,
+                type: "English Composition",
+                text: "トムはピアノを弾くことが好きです。(英文にしなさい)",
+                starter: "Tom",
+                answer: "Tom likes playing the piano.",
+                altAnswers: ["Tom likes to play the piano."]
+            },
+            {
+                no: 27,
+                type: "Q & A",
+                text: "What sports do you like to watch? (自分の立場で答えなさい・例: soccer)",
+                starter: "I",
+                answer: "I like to watch soccer.",
+                altAnswers: [
+                    "I like watching soccer.",
+                    "I like to watch baseball.",
+                    "I like watching baseball.",
+                    "I like to watch basketball.",
+                    "I like watching basketball.",
+                    "I like to watch tennis.",
+                    "I like watching tennis.",
+                    "I like to watch volleyball.",
+                    "I like watching volleyball.",
+                    "I like to watch swimming.",
+                    "I like watching swimming.",
+                    "I like to watch table tennis.",
+                    "I like watching table tennis.",
+                    "I like to watch badminton.",
+                    "I like watching badminton."
+                ],
+                patternRegex: "^I like (to watch|watching) [a-zA-Z ]+\\.$"
+            },
+            {
+                no: 27,
+                type: "Sentence Transformation",
+                text: "Jiro and Taro are students. (疑問文にして No で答えなさい)",
+                starter: "Are",
+                answer: "Are Jiro and Taro students? No, they aren't.",
+                altAnswers: [
+                    "Are Jiro and Taro students? No, they are not.",
+                    "Are Jiro and Taro students?No, they aren't.",
+                    "Are Jiro and Taro students?No, they are not."
+                ]
+            },
+
+            // No. 28
+            {
+                no: 28,
+                type: "Sentence Transformation",
+                text: "Your house is very big. (疑問文にして、Noで答えなさい。)",
+                starter: "Is",
+                answer: "Is your house very big? No, it isn't.",
+                altAnswers: [
+                    "Is your house very big? No, it is not.",
+                    "Is your house very big? No, it's not.",
+                    "Is your house very big?No, it isn't.",
+                    "Is your house very big?No, it is not."
+                ]
+            },
+            {
+                no: 28,
+                type: "Imperative",
+                text: "You are a good boy. (命令文にしなさい)",
+                starter: "Be",
+                answer: "Be a good boy.",
+                altAnswers: []
+            },
+            {
+                no: 28,
+                type: "Wh- Question",
+                text: "Keiko lives <u>in Chiba</u>. (下線部を問う疑問文にしなさい)",
+                starter: "Where",
+                answer: "Where does Keiko live?",
+                altAnswers: []
+            },
+
+            // No. 29
+            {
+                no: 29,
+                type: "3rd Person Singular",
+                text: "<u>I</u> study English. (下線部をJim に替えて全文を書きかえなさい)",
+                starter: "Jim",
+                answer: "Jim studies English.",
+                altAnswers: []
+            },
+            {
+                no: 29,
+                type: "Wh- Question",
+                text: "Tom plays <u>tennis</u>. (下線部を問う疑問文にしなさい)",
+                starter: "What",
+                answer: "What does Tom play?",
+                altAnswers: []
+            },
+            {
+                no: 29,
+                type: "Wh- Question",
+                text: "Jim and Taro get up <u>at six</u>. (下線部を問う疑問文へ)",
+                starter: "When",
+                answer: "When do Jim and Taro get up?",
+                altAnswers: ["What time do Jim and Taro get up?"]
+            },
+
+            // No. 30
+            {
+                no: 30,
+                type: "Sentence Transformation",
+                text: "He likes apples. (疑問文にして No で答えなさい)",
+                starter: "Does",
+                answer: "Does he like apples? No, he doesn't.",
+                altAnswers: [
+                    "Does he like apples? No, he does not.",
+                    "Does he like apples?No, he doesn't.",
+                    "Does he like apples?No, he does not."
+                ]
+            },
+            {
+                no: 30,
+                type: "Negative Sentence",
+                text: "Mary goes to America. (否定文にしなさい)",
+                starter: "Mary",
+                answer: "Mary doesn't go to America.",
+                altAnswers: ["Mary does not go to America."]
+            },
+            {
+                no: 30,
+                type: "Wh- Question",
+                text: "My English teacher is <u>Ms. Machida</u>. (下線部を問う疑問文にしなさい)",
+                starter: "Who",
+                answer: "Who is your English teacher?",
+                altAnswers: ["Who's your English teacher?"]
+            },
+
+            // No. 31 (Interrogative Fill-in-the-blanks)
+            {
+                no: 31,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) do you study? — I study after dinner.",
+                starter: "",
+                inputMode: "word",
+                answer: "When",
+                altAnswers: ["when"]
+            },
+            {
+                no: 31,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) book is this? — It is Tom's.",
+                starter: "",
+                inputMode: "word",
+                answer: "Whose",
+                altAnswers: ["whose"]
+            },
+            {
+                no: 31,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) is he from? — He is from Canada.",
+                starter: "",
+                inputMode: "word",
+                answer: "Where",
+                altAnswers: ["where"]
+            },
+            {
+                no: 31,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) do you come to school? — I come to school on foot.",
+                starter: "",
+                inputMode: "word",
+                answer: "How",
+                altAnswers: ["how"]
+            },
+            {
+                no: 31,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) speaks English? — Nancy does.",
+                starter: "",
+                inputMode: "word",
+                answer: "Who",
+                altAnswers: ["who"]
+            },
+
+            // No. 32 (Interrogative Fill-in-the-blanks)
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) many classes does he have?",
+                starter: "",
+                inputMode: "word",
+                answer: "How",
+                altAnswers: ["how"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) do you study English? — Because I like it.",
+                starter: "",
+                inputMode: "word",
+                answer: "Why",
+                altAnswers: ["why"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) is your science teacher? — Mr. Kikuchi is.",
+                starter: "",
+                inputMode: "word",
+                answer: "Who",
+                altAnswers: ["who"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) food does Nancy like? — She likes Tempura.",
+                starter: "",
+                inputMode: "word",
+                answer: "What",
+                altAnswers: ["what"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) do you like, Yakiniku or Sukiyaki? — I like Sukiyaki.",
+                starter: "",
+                inputMode: "word",
+                answer: "Which",
+                altAnswers: ["which"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) does Tom live? — He lives in Kashiwa.",
+                starter: "",
+                inputMode: "word",
+                answer: "Where",
+                altAnswers: ["where"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) bell is this? — It is Ms. Machida's.",
+                starter: "",
+                inputMode: "word",
+                answer: "Whose",
+                altAnswers: ["whose"]
+            },
+            {
+                no: 32,
+                type: "Interrogative Word (疑問詞)",
+                text: "【疑問詞】次の(　)に適する疑問詞を1語入れなさい。<br>(　　) do you take a bath? — After dinner.",
+                starter: "",
+                inputMode: "word",
+                answer: "When",
+                altAnswers: ["when"]
+            },
+
+            // No. 33
+            {
+                no: 33,
+                type: "Wh- Question",
+                text: "I study English <u>before dinner</u>. (下線部を問う疑問文に)",
+                starter: "When",
+                answer: "When do you study English?",
+                altAnswers: []
+            },
+            {
+                no: 33,
+                type: "Wh- Question",
+                text: "He lives <u>in Nagareyama</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where does he live?",
+                altAnswers: []
+            },
+            {
+                no: 33,
+                type: "Wh- Question",
+                text: "<u>Ms. Yahashi</u> teaches math. (下線部を問う疑問文に)",
+                starter: "Who",
+                answer: "Who teaches math?",
+                altAnswers: []
+            },
+
+            // No. 34 (be動詞と一般動詞の区別)
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>Tom ( am / is / are / go / goes ) a junior high school student.",
+                choices: ["am", "is", "are", "go", "goes"],
+                inputMode: "choice",
+                answer: "is",
+                altAnswers: []
+            },
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>Mary ( am / is / are / drink / drinks ) milk.",
+                choices: ["am", "is", "are", "drink", "drinks"],
+                inputMode: "choice",
+                answer: "drinks",
+                altAnswers: []
+            },
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>Tom and Mary ( am / is / are / come / comes ) to school.",
+                choices: ["am", "is", "are", "come", "comes"],
+                inputMode: "choice",
+                answer: "come",
+                altAnswers: []
+            },
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>Jim and I ( am / is / are / like / likes ) good friends.",
+                choices: ["am", "is", "are", "like", "likes"],
+                inputMode: "choice",
+                answer: "are",
+                altAnswers: []
+            },
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>You and Jim ( am / is / are / watch / watches ) American anime.",
+                choices: ["am", "is", "are", "watch", "watches"],
+                inputMode: "choice",
+                answer: "watch",
+                altAnswers: []
+            },
+            {
+                no: 34,
+                type: "be動詞と一般動詞の区別",
+                text: "次の(　)から適する語を選びなさい。<br>Nancy ( am / is / are / play / plays ) some Japanese games.",
+                choices: ["am", "is", "are", "play", "plays"],
+                inputMode: "choice",
+                answer: "plays",
+                altAnswers: []
+            },
+
+            // No. 35
+            {
+                no: 35,
+                type: "Sentence Transformation",
+                text: "Yuki speaks English. (疑問文にして yes で答えなさい)",
+                starter: "Does",
+                answer: "Does Yuki speak English? Yes, she does.",
+                altAnswers: [
+                    "Does Yuki speak English? Yes, he does.",
+                    "Does Yuki speak English?Yes, she does.",
+                    "Does Yuki speak English?Yes, he does."
+                ]
+            },
+            {
+                no: 35,
+                type: "Sentence Transformation",
+                text: "Yuki and Andy are good friends. (疑問文にして yes で答えなさい)",
+                starter: "Are",
+                answer: "Are Yuki and Andy good friends? Yes, they are.",
+                altAnswers: ["Are Yuki and Andy good friends?Yes, they are."]
+            },
+            {
+                no: 35,
+                type: "Sentence Transformation",
+                text: "You and Tom play soccer. (疑問文にして no で答えなさい)",
+                starter: "Do",
+                answer: "Do you and Tom play soccer? No, we don't.",
+                altAnswers: [
+                    "Do you and Tom play soccer? No, we do not.",
+                    "Do you and Tom play soccer?No, we don't.",
+                    "Do you and Tom play soccer?No, we do not."
+                ]
+            },
+
+            // No. 36
+            {
+                no: 36,
+                type: "Singular / Plural",
+                text: "These are good cars. (単数形の文に)",
+                starter: "This",
+                answer: "This is a good car.",
+                altAnswers: []
+            },
+            {
+                no: 36,
+                type: "Wh- Question",
+                text: "Nancy goes <u>to Kyoto</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where does Nancy go?",
+                altAnswers: []
+            },
+            {
+                no: 36,
+                type: "Negative Sentence",
+                text: "Mary and Jim eat natto. (否定文に)",
+                starter: "Mary",
+                answer: "Mary and Jim don't eat natto.",
+                altAnswers: ["Mary and Jim do not eat natto."]
+            },
+
+            // No. 37
+            {
+                no: 37,
+                type: "Auxiliary Verb (can)",
+                text: "Tom eats natto. (can を入れて「食べれる」という文に替えなさい)",
+                starter: "Tom",
+                answer: "Tom can eat natto.",
+                altAnswers: []
+            },
+            {
+                no: 37,
+                type: "Singular / Plural",
+                text: "That is a big house. (複数形の文に)",
+                starter: "Those",
+                answer: "Those are big houses.",
+                altAnswers: []
+            },
+            {
+                no: 37,
+                type: "Wh- Question",
+                text: "Ms. Machida teaches <u>English</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What does Ms. Machida teach?",
+                altAnswers: []
+            },
+
+            // No. 38
+            {
+                no: 38,
+                type: "Sentence Transformation",
+                text: "Tom has some books. (疑問文にして yes で答えなさい)",
+                starter: "Does",
+                answer: "Does Tom have any books? Yes, he does.",
+                altAnswers: ["Does Tom have any books?Yes, he does."]
+            },
+            {
+                no: 38,
+                type: "Wh- Question",
+                text: "Ken likes <u>to study English</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What does Ken like to study?",
+                altAnswers: ["What does Ken like doing?"]
+            },
+            {
+                no: 38,
+                type: "Wh- Question",
+                text: "He is <u>163cm</u>. (下線部を問う疑問文に)",
+                starter: "How",
+                answer: "How tall is he?",
+                altAnswers: []
+            },
+
+            // No. 39
+            {
+                no: 39,
+                type: "Sentence Transformation",
+                text: "English is difficult. (疑問文にして yes で答えなさい)",
+                starter: "Is",
+                answer: "Is English difficult? Yes, it is.",
+                altAnswers: ["Is English difficult?Yes, it is."]
+            },
+            {
+                no: 39,
+                type: "Wh- Question",
+                text: "I study math <u>for one hour</u>. (下線部を問う疑問文に)",
+                starter: "How",
+                answer: "How long do you study math?",
+                altAnswers: []
+            },
+            {
+                no: 39,
+                type: "Wh- Question",
+                text: "That desk is <u>his</u>. (下線部を問う疑問文に)",
+                starter: "Whose",
+                answer: "Whose desk is that?",
+                altAnswers: ["Whose is that desk?"]
+            }
+        ];
+
+        const STORAGE_KEY_QUESTIONS = 'grammar_challenge_16_39_questions_v1';
+        const STORAGE_KEY_REWARDS = 'grammar_challenge_16_39_rewards_v1';
+        const STORAGE_KEY_PROGRESS = 'grammar_challenge_16_39_active_progress_v1';
+
+        let rewardTiers = JSON.parse(localStorage.getItem(STORAGE_KEY_REWARDS)) || JSON.parse(JSON.stringify(DEFAULT_REWARD_TIERS));
+        let baseQuestions = JSON.parse(localStorage.getItem(STORAGE_KEY_QUESTIONS)) || JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_16_39));
+
+        // Mastery Challenge Runtime State
+        let orderedNumbers = [];        // e.g. [16, 17, ..., 39]
+        let currentNumberIndex = 0;     // index inside orderedNumbers
+        let currentStageQuestions = []; // rotated questions for current Number
+        let currentStageQuestionIdx = 0;
+        let stageAttemptCount = 1;
+        let masteredNumbers = [];       // list of completed Number IDs
+        let totalCorrectAnswers = 0;
+        let stageFailed = false;
+        let selectedChoiceValue = "";
+        let currentUser = null;
+        let pendingBonusNextNo = null;
+
+        const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
+        const QUIZ_ID = "grammar-challenge-16-39";
+        const FROG_CATCHER_URL = "https://doctor-george.github.io/frog-quiz/indexfrog-catcher.html";
+        let cloudBestScore = null;
+        let teacherPasswordForSession = "";
+        let cloudAttempts = [];
+        let recordsLoadInProgress = false;
+
+        function getOrderedUniqueNumbers() {
+            const nums = [...new Set(baseQuestions.map(q => Number(q.no)).filter(n => !Number.isNaN(n)))];
+            nums.sort((a, b) => a - b);
+            return nums;
+        }
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function saveActiveProgress() {
+            if (!currentUser) return;
+            const payload = {
+                currentUser,
+                orderedNumbers,
+                currentNumberIndex,
+                masteredNumbers,
+                totalCorrectAnswers,
+                pendingBonusNextNo,
+                savedAt: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(payload));
+        }
+
+        function clearActiveProgress() {
+            localStorage.removeItem(STORAGE_KEY_PROGRESS);
+        }
+
+        function checkSavedProgressBanner() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_PROGRESS));
+                const box = document.getElementById('resume-session-box');
+                const label = document.getElementById('resume-no-label');
+                if (saved && saved.currentUser && Array.isArray(saved.orderedNumbers) && saved.currentNumberIndex < saved.orderedNumbers.length) {
+                    const nextNo = saved.orderedNumbers[saved.currentNumberIndex];
+                    label.textContent = `${saved.currentUser.name} - No. ${nextNo} (${saved.masteredNumbers.length}/${saved.orderedNumbers.length} Mastered)`;
+                    box.style.display = 'block';
+                } else {
+                    box.style.display = 'none';
+                }
+            } catch (_) {}
+        }
+
+        async function apiRequest(path, options = {}) {
+            const response = await fetch(`${QUIZ_API_BASE}${path}`, {
+                cache: "no-store",
+                ...options,
+                headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+            });
+            let data = {};
+            try { data = await response.json(); } catch (_) {}
+            if (!response.ok) throw new Error(data.error || `Server request failed (${response.status}).`);
+            return data;
+        }
+
+        function showStudentBest(name, best) {
+            if (best === null || Number.isNaN(Number(best))) return;
+            const bestNum = Number(best);
+            const totalNums = getOrderedUniqueNumbers().length || 24;
+            welcomeName.textContent = name;
+            welcomeBestScore.textContent = bestNum;
+            welcomeTotal.textContent = totalNums;
+            const tierObj = getRewardTier(bestNum);
+            loginBestStickerContainer.innerHTML = FROG_SVGS[tierObj.tier] || FROG_SVGS.egg;
+            loginBestTextCard.classList.add("show");
+            loginBestStickerContainer.classList.add("show");
+        }
+
+        let timeLeft = 35;
+        let timerInterval = null;
+        const TIME_LIMIT = 35;
+
+        const starterWordDisplay = document.getElementById('starter-word-display');
+        const typingAnswerInput = document.getElementById('typing-answer-input');
+        const typingSection = document.getElementById('typing-section');
+        const choiceOptionsGrid = document.getElementById('choice-options-grid');
+
+        const loginScreen = document.getElementById('login-screen');
+        const teacherLoginScreen = document.getElementById('teacher-login-screen');
+        const teacherDashboardScreen = document.getElementById('teacher-dashboard-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const bonusScreen = document.getElementById('bonus-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const loginForm = document.getElementById('login-form');
+        const studentNameInput = document.getElementById('student-name');
+        const studentClassInput = document.getElementById('student-class');
+        const welcomeName = document.getElementById('welcome-name');
+        const welcomeBestScore = document.getElementById('welcome-best-score');
+        const welcomeTotal = document.getElementById('welcome-total');
+        const loginBestTextCard = document.getElementById('login-best-text-card');
+        const loginBestStickerContainer = document.getElementById('login-best-sticker-container');
+        const performanceTiersGrid = document.getElementById('performance-tiers-grid');
+
+        const hudCurrentNo = document.getElementById('hud-current-no');
+        const hudStageProgress = document.getElementById('hud-stage-progress');
+        const hudMasteredCount = document.getElementById('hud-mastered-count');
+        const hudNextBonus = document.getElementById('hud-next-bonus');
+        const numberProgressStrip = document.getElementById('number-progress-strip');
+        const stageAttemptIndicator = document.getElementById('stage-attempt-indicator');
+        const dynamicInstructionBox = document.getElementById('dynamic-instruction-box');
+        const questionTypeBadge = document.getElementById('question-type-badge');
+        const questionPrompt = document.getElementById('question-prompt');
+        const inputBoxLabel = document.getElementById('input-box-label');
+
+        const submitRearrangeBtn = document.getElementById('submit-rearrange-btn');
+        const feedbackDiv = document.getElementById('feedback');
+        const nextContainer = document.getElementById('next-container');
+        const nextBtn = document.getElementById('next-btn');
+        const timerSec = document.getElementById('timer-sec');
+        const timerBar = document.getElementById('timer-bar');
+
+        const resultNameClass = document.getElementById('result-name-class');
+        const finalScoreSpan = document.getElementById('final-score');
+        const finalTotalSpan = document.getElementById('final-total');
+        const finalCorrectCount = document.getElementById('final-correct-count');
+        const pondStageContainer = document.getElementById('pond-stage-container');
+        const pondMessageText = document.getElementById('pond-message-text');
+        const pondMessageJp = document.getElementById('pond-message-jp');
+        const bestScoreText = document.getElementById('best-score-text');
+        const pondAttemptCounter = document.getElementById('pond-attempt-counter');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const gameModalOverlay = document.getElementById('game-modal-overlay');
+        const frogCatcherIframe = document.getElementById('frog-catcher-iframe');
+
+        document.getElementById('goto-teacher-portal-btn').addEventListener('click', () => switchScreen(teacherLoginScreen));
+        document.getElementById('back-to-login-btn').addEventListener('click', () => {
+            checkSavedProgressBanner();
+            switchScreen(loginScreen);
+        });
+        document.getElementById('back-to-home-from-portal').addEventListener('click', () => {
+            checkSavedProgressBanner();
+            switchScreen(loginScreen);
+        });
+
+        document.getElementById('teacher-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('teacher-password').value;
+            const submitButton = e.currentTarget.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = true;
+            try {
+                await apiRequest("/api/admin/login", { method: "POST", body: JSON.stringify({ password: pass }) });
+                teacherPasswordForSession = pass;
+                document.getElementById('teacher-password').value = '';
+                switchScreen(teacherDashboardScreen);
+                renderTeacherPortal();
+                await loadTeacherRecords();
+            } catch (error) {
+                await showNotice(error.message || "Teacher login failed. Please try again.");
+                document.getElementById('teacher-password').value = '';
+            } finally {
+                if (submitButton) submitButton.disabled = false;
+            }
+        });
+
+        document.getElementById('logout-teacher-btn').addEventListener('click', () => {
+            teacherPasswordForSession = "";
+            checkSavedProgressBanner();
+            switchScreen(loginScreen);
+        });
+
+        function switchScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            screen.classList.add('active');
+        }
+
+        function renderPerformanceTiers() {
+            performanceTiersGrid.innerHTML = '';
+            rewardTiers.forEach(tierObj => {
+                const item = document.createElement('div');
+                item.className = 'tier-item';
+                item.innerHTML = `
+                    ${FROG_SVGS[tierObj.tier] || FROG_SVGS.egg}
+                    <div class="tier-score-label">${tierObj.minScore}+ No.</div>
+                    <div class="tier-rank-label">${tierObj.tier.toUpperCase()}</div>
+                `;
+                performanceTiersGrid.appendChild(item);
+            });
+        }
+
+        function getRewardTier(masteredCount) {
+            let sorted = [...rewardTiers].sort((a, b) => b.minScore - a.minScore);
+            for (let t of sorted) if (masteredCount >= t.minScore) return t;
+            return rewardTiers[rewardTiers.length - 1];
+        }
+
+        // Start a fresh challenge
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = studentNameInput.value.trim();
+            const cls = studentClassInput.value.trim();
+            if (!name || !cls) return;
+
+            currentUser = { name, cls, key: `${cls}_${name}` };
+            orderedNumbers = getOrderedUniqueNumbers();
+            let userStats = JSON.parse(localStorage.getItem(`grammar_16_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
+
+            welcomeName.textContent = currentUser.name;
+            welcomeBestScore.textContent = userStats.bestScore;
+            welcomeTotal.textContent = orderedNumbers.length;
+            loginBestTextCard.classList.add('show');
+            loginBestStickerContainer.classList.add('show');
+            let matchedTier = getRewardTier(userStats.bestScore);
+            loginBestStickerContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
+
+            apiRequest(`/api/best?name=${encodeURIComponent(currentUser.name)}&class=${encodeURIComponent(currentUser.cls)}&quizId=${encodeURIComponent(QUIZ_ID)}`)
+                .then(data => {
+                    cloudBestScore = Number(data.bestScore || 0);
+                    const combinedBest = Math.max(Number(userStats.bestScore || 0), cloudBestScore);
+                    userStats.bestScore = combinedBest;
+                    localStorage.setItem(`grammar_16_39_user_${currentUser.key}`, JSON.stringify(userStats));
+                    showStudentBest(currentUser.name, combinedBest);
+                })
+                .catch(() => { cloudBestScore = null; });
+
+            currentNumberIndex = 0;
+            masteredNumbers = [];
+            totalCorrectAnswers = 0;
+            pendingBonusNextNo = null;
+            saveActiveProgress();
+            startNumberStage(currentNumberIndex, true);
+        });
+
+        // Resume saved progress button
+        document.getElementById('resume-session-btn').addEventListener('click', () => {
+            try {
+                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_PROGRESS));
+                if (!saved || !saved.currentUser) return;
+                currentUser = saved.currentUser;
+                orderedNumbers = saved.orderedNumbers && saved.orderedNumbers.length ? saved.orderedNumbers : getOrderedUniqueNumbers();
+                currentNumberIndex = Number(saved.currentNumberIndex || 0);
+                masteredNumbers = Array.isArray(saved.masteredNumbers) ? saved.masteredNumbers : [];
+                totalCorrectAnswers = Number(saved.totalCorrectAnswers || 0);
+                pendingBonusNextNo = saved.pendingBonusNextNo || null;
+                startNumberStage(currentNumberIndex, true);
+            } catch (_) {}
+        });
+
+        function renderNumberStrip() {
+            numberProgressStrip.innerHTML = '';
+            const currentNo = orderedNumbers[currentNumberIndex];
+            orderedNumbers.forEach((noVal, idx) => {
+                const dot = document.createElement('span');
+                dot.className = 'num-dot';
+                if (masteredNumbers.includes(noVal)) dot.classList.add('mastered');
+                else if (noVal === currentNo) dot.classList.add('current');
+                // Every 3rd number (index 2, 5, 8, 11, 14, 17, 20, 23) unlocks Frog Catcher
+                if ((idx + 1) % 3 === 0) dot.classList.add('milestone');
+                dot.textContent = `No.${noVal}`;
+                numberProgressStrip.appendChild(dot);
+            });
+        }
+
+        function startNumberStage(numIdx, isNewStage) {
+            if (numIdx >= orderedNumbers.length) {
+                showResults();
+                return;
+            }
+            currentNumberIndex = numIdx;
+            const currentNo = orderedNumbers[currentNumberIndex];
+            const poolForNo = baseQuestions.filter(q => Number(q.no) === currentNo);
+
+            // Rotate/shuffle questions for this Number so order is never fixed
+            let rotated = shuffleArray(poolForNo);
+            // Ensure rotation differs from previous order if more than 1 question exists
+            if (rotated.length > 1 && currentStageQuestions.length === rotated.length) {
+                const sameOrder = rotated.every((item, i) => item.text === currentStageQuestions[i].text);
+                if (sameOrder) {
+                    rotated.push(rotated.shift());
+                }
+            }
+            currentStageQuestions = rotated;
+            currentStageQuestionIdx = 0;
+            stageFailed = false;
+            if (isNewStage) {
+                stageAttemptCount = 1;
+            } else {
+                stageAttemptCount++;
+            }
+
+            saveActiveProgress();
+            switchScreen(quizScreen);
+            loadStageQuestion();
+        }
+
+        function updateHUD() {
+            const currentNo = orderedNumbers[currentNumberIndex];
+            hudCurrentNo.textContent = `No. ${currentNo}`;
+            hudStageProgress.textContent = `Question ${currentStageQuestionIdx + 1} of ${currentStageQuestions.length}`;
+            hudMasteredCount.textContent = `${masteredNumbers.length} / ${orderedNumbers.length}`;
+
+            const remainder = 3 - (masteredNumbers.length % 3);
+            hudNextBonus.textContent = remainder === 1 ? "After this No.! 🐸" : `In ${remainder} No.`;
+            stageAttemptIndicator.textContent = `No. ${currentNo} — Attempt #${stageAttemptCount} (Questions Rotated)`;
+            renderNumberStrip();
+        }
+
+        function loadStageQuestion() {
+            clearInterval(timerInterval);
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.textContent = '';
+            nextContainer.classList.remove('show');
+            submitRearrangeBtn.disabled = false;
+            selectedChoiceValue = "";
+
+            if (currentStageQuestionIdx >= currentStageQuestions.length) {
+                handleStagePerfected();
+                return;
+            }
+
+            updateHUD();
+            const q = currentStageQuestions[currentStageQuestionIdx];
+            questionTypeBadge.textContent = `No. ${q.no} • ${q.type || "Grammar Practice"}`;
+            questionPrompt.innerHTML = q.text;
+
+            if (q.inputMode === "choice" && Array.isArray(q.choices)) {
+                typingSection.style.display = "none";
+                choiceOptionsGrid.style.display = "flex";
+                dynamicInstructionBox.textContent = "正しい語を1つクリックして選び、「Submit Answer」を押してください。（全問連続正解で次のナンバーへ！）";
+                choiceOptionsGrid.innerHTML = "";
+                q.choices.forEach(choiceText => {
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "choice-option-btn";
+                    btn.textContent = choiceText;
+                    btn.onclick = () => {
+                        if (submitRearrangeBtn.disabled) return;
+                        document.querySelectorAll(".choice-option-btn").forEach(b => b.classList.remove("selected"));
+                        btn.classList.add("selected");
+                        selectedChoiceValue = choiceText;
+                    };
+                    choiceOptionsGrid.appendChild(btn);
+                });
+            } else {
+                choiceOptionsGrid.style.display = "none";
+                typingSection.style.display = "flex";
+                const starter = (q.starter || "").trim();
+                if (starter) {
+                    starterWordDisplay.textContent = starter;
+                    starterWordDisplay.style.display = 'inline-block';
+                    inputBoxLabel.textContent = "Type the rest of the English sentence below:";
+                    typingAnswerInput.placeholder = "Type the rest of the sentence here...";
+                    dynamicInstructionBox.textContent = "文頭の語に続けて正しい英語を入力しなさい。（ピリオド「.」やクエスチョンマーク「?」も忘れずに！）";
+                } else {
+                    starterWordDisplay.textContent = '';
+                    starterWordDisplay.style.display = 'none';
+                    inputBoxLabel.textContent = q.inputMode === "word"
+                        ? "Type the single interrogative word (疑問詞1語) below:"
+                        : "Type your complete English answer below:";
+                    typingAnswerInput.placeholder = q.inputMode === "word"
+                        ? "e.g. When / Whose / Where..."
+                        : "Type your complete English sentence here...";
+                    dynamicInstructionBox.textContent = q.inputMode === "word"
+                        ? "(　)に入る適切な疑問詞を1語だけ入力しなさい。"
+                        : "指示に従って正しい英語の文を入力しなさい。（文末の「.」や「?」も忘れずに！）";
+                }
+                typingAnswerInput.value = '';
+                typingAnswerInput.disabled = false;
+                setTimeout(() => typingAnswerInput.focus(), 50);
+            }
+
+            timeLeft = TIME_LIMIT;
+            timerSec.textContent = timeLeft;
+            timerBar.style.width = '100%';
+            timerBar.classList.remove('warning');
+
+            const startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000;
+                timeLeft = Math.max(0, TIME_LIMIT - elapsed);
+                const percentage = (timeLeft / TIME_LIMIT) * 100;
+                timerBar.style.width = percentage + '%';
+                timerSec.textContent = Math.ceil(timeLeft);
+                if (timeLeft <= 5) timerBar.classList.add('warning');
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleQuestionMistake(q.answer, true);
+                }
+            }, 50);
+        }
+
+        function normalizeSentence(str) {
+            return String(str || "")
+                .replace(/[’‘]/g, "'")
+                .replace(/\s+/g, " ")
+                .replace(/\s+([?.!,])/g, "$1")
+                .trim();
+        }
+
+        typingAnswerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !submitRearrangeBtn.disabled) {
+                e.preventDefault();
+                submitRearrangeBtn.click();
+            }
+        });
+
+        submitRearrangeBtn.onclick = () => {
+            const q = currentStageQuestions[currentStageQuestionIdx];
+            let combined = "";
+
+            if (q.inputMode === "choice") {
+                if (!selectedChoiceValue) {
+                    showNotice("選択肢を1つ選んでから Submit Answer を押してください。");
+                    return;
+                }
+                combined = selectedChoiceValue;
+            } else {
+                const starter = (q.starter || "").trim();
+                const typed = typingAnswerInput.value.trim();
+                if (!typed && !starter) {
+                    showNotice("答えを入力してから Submit Answer を押してください。");
+                    return;
+                }
+                combined = typed;
+                if (starter) {
+                    if (typed.toLowerCase().startsWith(starter.toLowerCase() + " ") || typed.toLowerCase() === starter.toLowerCase()) {
+                        combined = typed;
+                    } else {
+                        combined = starter + (typed ? " " + typed : "");
+                    }
+                }
+            }
+
+            const userNorm = normalizeSentence(combined);
+            const validAnswers = [q.answer, ...(q.altAnswers || [])].map(normalizeSentence);
+
+            let isCorrect = validAnswers.some(ans => ans.toLowerCase() === userNorm.toLowerCase());
+            if (!isCorrect && q.patternRegex) {
+                try {
+                    const rx = new RegExp(q.patternRegex, "i");
+                    isCorrect = rx.test(userNorm);
+                } catch (_) {}
+            }
+
+            clearInterval(timerInterval);
+            submitRearrangeBtn.disabled = true;
+            typingAnswerInput.disabled = true;
+
+            if (isCorrect) {
+                totalCorrectAnswers++;
+                feedbackDiv.textContent = `CORRECT! (${currentStageQuestionIdx + 1}/${currentStageQuestions.length} in No. ${q.no}) 🎉`;
+                feedbackDiv.className = 'feedback-container show feedback-correct';
+                nextBtn.textContent = (currentStageQuestionIdx + 1 < currentStageQuestions.length)
+                    ? "Next Question in No. " + q.no + " ➔"
+                    : "Complete No. " + q.no + " 🏆";
+                nextContainer.classList.add('show');
+                nextBtn.focus();
+            } else {
+                handleQuestionMistake(q.answer, false);
+            }
+        };
+
+        function handleQuestionMistake(correctAnswer, isTimeout) {
+            stageFailed = true;
+            submitRearrangeBtn.disabled = true;
+            typingAnswerInput.disabled = true;
+            const currentNo = orderedNumbers[currentNumberIndex];
+            const prefix = isTimeout ? "TIME’S UP!" : "INCORRECT.";
+            feedbackDiv.innerHTML = `${prefix} Correct answer: <strong>"${escapeHtml(correctAnswer)}"</strong><br>⚠️ 全問連続正解が必要です。<strong>No. ${currentNo}</strong> の最初からやり直します！`;
+            feedbackDiv.className = 'feedback-container show feedback-incorrect';
+            nextBtn.textContent = `Restart No. ${currentNo} from Beginning 🔄`;
+            nextContainer.classList.add('show');
+            nextBtn.focus();
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (stageFailed) {
+                // Mistake made: reset back to the start of the SAME Number with newly rotated questions
+                startNumberStage(currentNumberIndex, false);
+            } else {
+                currentStageQuestionIdx++;
+                loadStageQuestion();
+            }
+        });
+
+        function handleStagePerfected() {
+            const perfectedNo = orderedNumbers[currentNumberIndex];
+            if (!masteredNumbers.includes(perfectedNo)) {
+                masteredNumbers.push(perfectedNo);
+            }
+
+            // Update best mastered record
+            const userKey = `grammar_16_39_user_${currentUser.key}`;
+            let userStats = JSON.parse(localStorage.getItem(userKey)) || { bestScore: 0, attempts: 0 };
+            if (masteredNumbers.length > userStats.bestScore) {
+                userStats.bestScore = masteredNumbers.length;
+                localStorage.setItem(userKey, JSON.stringify(userStats));
+            }
+
+            if (typeof window.confetti === "function") window.confetti({ particleCount: 70, spread: 65, origin: { y: 0.65 } });
+
+            const nextIdx = currentNumberIndex + 1;
+            // Check if all 24 numbers are completed
+            if (nextIdx >= orderedNumbers.length) {
+                clearActiveProgress();
+                showResults();
+                return;
+            }
+
+            // Every 3 mastered numbers (3, 6, 9, 12, 15, 18, 21), unlock Frog Catcher bonus game!
+            if (masteredNumbers.length > 0 && masteredNumbers.length % 3 === 0) {
+                const nextNo = orderedNumbers[nextIdx];
+                pendingBonusNextNo = nextNo;
+                currentNumberIndex = nextIdx;
+                saveActiveProgress();
+                openBonusUnlockScreen(perfectedNo, nextNo);
+            } else {
+                startNumberStage(nextIdx, true);
+            }
+        }
+
+        function openBonusUnlockScreen(justCompletedNo, nextNo) {
+            const startRangeNo = justCompletedNo - 2;
+            document.getElementById('bonus-milestone-text').innerHTML = `
+                おめでとう！<strong>No. ${startRangeNo} 〜 No. ${justCompletedNo}</strong> の3ナンバーを連続クリアしました！<br>
+                ご褒美として <strong>Frog Catcher</strong> ゲームをプレイできます。<br>
+                ゲームが <strong>Game Over</strong> になったら、自動的にクイズの続き（<strong>No. ${nextNo}</strong>）へ戻ります！
+            `;
+            document.getElementById('bonus-frog-icon').innerHTML = FROG_SVGS.king;
+            switchScreen(bonusScreen);
+        }
+
+        document.getElementById('launch-frog-catcher-btn').addEventListener('click', () => {
+            const nextNo = orderedNumbers[currentNumberIndex] || 19;
+            document.getElementById('modal-next-no-badge').textContent = `No. ${nextNo}`;
+            const urlWithReturn = `${FROG_CATCHER_URL}?returnUrl=${encodeURIComponent(window.location.href)}&nextNo=${nextNo}`;
+            document.getElementById('external-game-link').href = urlWithReturn;
+            frogCatcherIframe.src = urlWithReturn;
+            gameModalOverlay.classList.add('active');
+        });
+
+        function returnFromBonusGameToQuiz() {
+            if (!gameModalOverlay.classList.contains('active') && !bonusScreen.classList.contains('active')) return;
+            gameModalOverlay.classList.remove('active');
+            frogCatcherIframe.src = "about:blank";
+            pendingBonusNextNo = null;
+            saveActiveProgress();
+            startNumberStage(currentNumberIndex, true);
+        }
+
+        document.getElementById('manual-return-from-game-btn').addEventListener('click', returnFromBonusGameToQuiz);
+        document.getElementById('skip-bonus-btn').addEventListener('click', returnFromBonusGameToQuiz);
+
+        // Listen for postMessage from Frog Catcher when Game Over happens
+        window.addEventListener('message', (event) => {
+            if (!gameModalOverlay.classList.contains('active')) return;
+            if (event.source !== frogCatcherIframe.contentWindow) return;
+            if (event.origin !== new URL(FROG_CATCHER_URL).origin) return;
+            if (event.data && event.data.type === 'FROG_GAME_OVER' && event.data.event === 'gameover') {
+                returnFromBonusGameToQuiz();
+            }
+        });
+
+        function showResults() {
+            clearInterval(timerInterval);
+            switchScreen(resultsScreen);
+            const totalNums = orderedNumbers.length || 24;
+            const masteredCount = masteredNumbers.length;
+
+            resultNameClass.textContent = `${currentUser.name} (${currentUser.cls})`;
+            finalScoreSpan.textContent = masteredCount;
+            finalTotalSpan.textContent = totalNums;
+            finalCorrectCount.textContent = totalCorrectAnswers;
+
+            const userKey = `grammar_16_39_user_${currentUser.key}`;
+            let userStats = JSON.parse(localStorage.getItem(userKey)) || { bestScore: 0, attempts: 0 };
+            userStats.attempts++;
+            if (masteredCount > userStats.bestScore) userStats.bestScore = masteredCount;
+            localStorage.setItem(userKey, JSON.stringify(userStats));
+            bestScoreText.textContent = `Personal Best Mastered: ${userStats.bestScore} / ${totalNums}`;
+
+            const tierObj = getRewardTier(masteredCount);
+
+            const cloudStatus = document.getElementById("cloud-save-status");
+            if (cloudStatus) {
+                cloudStatus.className = "save-status";
+                cloudStatus.textContent = "Saving your mastery progress to the class database...";
+            }
+
+            apiRequest("/api/attempt", {
+                method: "POST",
+                body: JSON.stringify({
+                    studentName: currentUser.name,
+                    className: currentUser.cls,
+                    quizId: QUIZ_ID,
+                    score: masteredCount,
+                    total: totalNums
+                })
+            }).then(saved => {
+                const best = Math.max(Number(userStats.bestScore || 0), Number(saved.bestScore || 0));
+                userStats.bestScore = best;
+                localStorage.setItem(userKey, JSON.stringify(userStats));
+                bestScoreText.textContent = `Personal Best Mastered: ${best} / ${totalNums}`;
+                welcomeBestScore.textContent = best;
+                if (cloudStatus) {
+                    cloudStatus.className = "save-status";
+                    cloudStatus.textContent = "✓ Mastery record saved to Cloudflare D1.";
+                }
+            }).catch(() => {
+                if (cloudStatus) {
+                    cloudStatus.className = "save-status error";
+                    cloudStatus.textContent = "⚠ Could not sync to Cloudflare D1. Local backup saved.";
+                }
+            });
+
+            pondAttemptCounter.textContent = `Total completed runs: ${userStats.attempts}`;
+            pondStageContainer.innerHTML = FROG_SVGS[tierObj.tier] || FROG_SVGS.egg;
+            pondMessageText.textContent = tierObj.desc;
+            pondMessageJp.textContent = tierObj.descJp;
+
+            if (masteredCount >= Math.floor(totalNums * 0.75)) {
+                if (typeof window.confetti === "function") window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
+        }
+
+        restartBtn.addEventListener('click', () => {
+            if (currentUser) {
+                let userStats = JSON.parse(localStorage.getItem(`grammar_16_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
+                welcomeBestScore.textContent = userStats.bestScore;
+                let matchedTier = getRewardTier(userStats.bestScore);
+                loginBestStickerContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
+            }
+            checkSavedProgressBanner();
+            switchScreen(loginScreen);
+        });
+
+        // TEACHER PORTAL FUNCTIONS
+        function switchPortalTab(tabName) {
+            document.querySelectorAll('.portal-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.portal-section').forEach(section => section.classList.remove('active'));
+            const tabIndex = tabName === 'questions' ? 0 : tabName === 'rewards' ? 1 : 2;
+            document.querySelectorAll('.portal-tab-btn')[tabIndex].classList.add('active');
+            document.getElementById(`portal-tab-${tabName}`).classList.add('active');
+            if (tabName === 'records' && teacherPasswordForSession) loadTeacherRecords();
+        }
+
+        function renderTeacherPortal() {
+            renderQuestionList();
+            renderRewardList();
+        }
+
+        function setRecordsStatus(message, type = "") {
+            const el = document.getElementById("records-status");
+            if (!el) return;
+            el.textContent = message;
+            el.className = `records-status ${type}`.trim();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, ch => ({
+                "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+            })[ch]);
+        }
+
+        function recordPercent(score, total) { return total ? (100 * score / total) : 0; }
+        function recordStudentKey(row) {
+            return `${String(row.student_name || "").trim().toLowerCase()}|||${String(row.class_name || "").trim().toLowerCase()}`;
+        }
+
+        async function loadTeacherRecords() {
+            if (!teacherPasswordForSession) {
+                setRecordsStatus("Please log in to the Teacher Portal again before refreshing records.", "error");
+                return;
+            }
+            if (recordsLoadInProgress) return;
+            const refreshButton = document.getElementById("refresh-records-btn");
+            const originalButtonText = refreshButton ? refreshButton.textContent : "Refresh Records";
+            recordsLoadInProgress = true;
+            if (refreshButton) { refreshButton.disabled = true; refreshButton.textContent = "Refreshing..."; }
+            setRecordsStatus("Refreshing records from Cloudflare D1...");
+            try {
+                const data = await apiRequest(`/api/admin/records?_=${Date.now()}&quizId=${encodeURIComponent(QUIZ_ID)}`, {
+                    method: "GET",
+                    headers: { "X-Teacher-Password": teacherPasswordForSession }
+                });
+                if (!Array.isArray(data.attempts)) throw new Error("The server response did not contain an attempts list.");
+                cloudAttempts = data.attempts;
+                populateRecordFilters();
+                renderStudentRankings();
+                renderClassComparison();
+                renderStudentHistory();
+                const classes = new Set(cloudAttempts.map(row => String(row.class_name || "")));
+                setRecordsStatus(`Updated just now — ${cloudAttempts.length} quiz attempt(s) from ${new Set(cloudAttempts.map(recordStudentKey)).size} student(s) in ${classes.size} class(es).`, "success");
+            } catch (error) {
+                setRecordsStatus(`Refresh failed: ${error.message}. Check your connection and teacher login, then try again.`, "error");
+            } finally {
+                recordsLoadInProgress = false;
+                if (refreshButton) { refreshButton.disabled = false; refreshButton.textContent = originalButtonText; }
+            }
+        }
+
+        function groupedRecordStudents() {
+            const map = new Map();
+            cloudAttempts.forEach(row => {
+                const key = recordStudentKey(row);
+                if (!map.has(key)) map.set(key, { key, name: String(row.student_name || ""), className: String(row.class_name || ""), attempts: [] });
+                map.get(key).attempts.push(row);
+            });
+            return [...map.values()].map(student => {
+                student.attempts.sort((a, b) => new Date(a.completed_at) - new Date(b.completed_at));
+                const scores = student.attempts.map(row => Number(row.score || 0));
+                student.best = Math.max(...scores);
+                student.average = scores.reduce((sum, value) => sum + value, 0) / scores.length;
+                student.latest = scores[scores.length - 1];
+                student.total = Number(student.attempts[student.attempts.length - 1].total || 24);
+                return student;
+            });
+        }
+
+        function populateRecordFilters() {
+            const classFilter = document.getElementById("records-class-filter");
+            const historySelect = document.getElementById("records-history-student");
+            const oldClass = classFilter.value;
+            const oldStudent = historySelect.value;
+            const students = groupedRecordStudents().sort((a, b) =>
+                a.className.localeCompare(b.className, undefined, {numeric:true}) || a.name.localeCompare(b.name)
+            );
+            const classes = [...new Set(students.map(student => student.className))].sort((a, b) => a.localeCompare(b, undefined, {numeric:true}));
+            classFilter.innerHTML = '<option value="">All classes</option>' + classes.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+            if (classes.includes(oldClass)) classFilter.value = oldClass;
+            historySelect.innerHTML = '<option value="">Select a student</option>' + students.map(student => `<option value="${escapeHtml(student.key)}">${escapeHtml(student.name)} (${escapeHtml(student.className)})</option>`).join("");
+            if (students.some(student => student.key === oldStudent)) historySelect.value = oldStudent;
+        }
+
+        function renderStudentRankings() {
+            const classFilter = document.getElementById("records-class-filter").value;
+            const mode = document.getElementById("records-rank-mode").value;
+            const metric = mode === "average" ? "average" : mode === "latest" ? "latest" : "best";
+            const students = groupedRecordStudents().filter(student => !classFilter || student.className === classFilter);
+            students.sort((a, b) => b[metric] - a[metric] || a.name.localeCompare(b.name));
+            let previous = null, rank = 0;
+            document.getElementById("student-ranking-body").innerHTML = students.length
+                ? students.map((student, index) => {
+                    if (previous === null || student[metric] !== previous) rank = index + 1;
+                    previous = student[metric];
+                    return `<tr><td>${rank}</td><td>${escapeHtml(student.name)}</td><td>${escapeHtml(student.className)}</td><td>${student.best}/${student.total}</td><td>${student.average.toFixed(2)}/${student.total}</td><td>${student.latest}/${student.total}</td><td>${student.attempts.length}</td></tr>`;
+                }).join("")
+                : '<tr><td colspan="7">No student records yet.</td></tr>';
+        }
+
+        function renderClassComparison() {
+            const map = new Map();
+            groupedRecordStudents().forEach(student => {
+                if (!map.has(student.className)) map.set(student.className, []);
+                map.get(student.className).push(student);
+            });
+            const rows = [...map.entries()].map(([name, students]) => {
+                const averagePercent = students.reduce((sum, student) => sum + recordPercent(student.average, student.total), 0) / students.length;
+                const averageScore = students.reduce((sum, student) => sum + student.average, 0) / students.length;
+                const best = Math.max(...students.map(student => student.best));
+                const attempts = students.reduce((sum, student) => sum + student.attempts.length, 0);
+                return {name, students: students.length, averagePercent, averageScore, best, attempts};
+            }).sort((a, b) => b.averagePercent - a.averagePercent || a.name.localeCompare(b.name));
+            let previous = null, rank = 0;
+            document.getElementById("class-comparison-body").innerHTML = rows.length
+                ? rows.map((row, index) => {
+                    if (previous === null || row.averagePercent !== previous) rank = index + 1;
+                    previous = row.averagePercent;
+                    return `<tr><td>${rank}</td><td>${escapeHtml(row.name)}</td><td>${row.students}</td><td>${row.averageScore.toFixed(2)}</td><td>${row.averagePercent.toFixed(1)}%</td><td>${row.best}</td><td>${row.attempts}</td></tr>`;
+                }).join("")
+                : '<tr><td colspan="7">No class records yet.</td></tr>';
+        }
+
+        function renderStudentHistory() {
+            const selectedKey = document.getElementById("records-history-student").value;
+            const student = groupedRecordStudents().find(item => item.key === selectedKey);
+            document.getElementById("student-history-body").innerHTML = student
+                ? student.attempts.slice().reverse().map(row => {
+                    const date = new Date(row.completed_at);
+                    const dateText = Number.isNaN(date.getTime()) ? row.completed_at : date.toLocaleString();
+                    return `<tr><td>${escapeHtml(dateText)}</td><td>${Number(row.score)}/${Number(row.total)}</td><td>${recordPercent(Number(row.score), Number(row.total)).toFixed(1)}%</td></tr>`;
+                }).join("")
+                : '<tr><td colspan="3">Choose a student above.</td></tr>';
+        }
+
+        document.getElementById("records-class-filter").addEventListener("change", renderStudentRankings);
+        document.getElementById("records-rank-mode").addEventListener("change", renderStudentRankings);
+        document.getElementById("records-history-student").addEventListener("change", renderStudentHistory);
+        document.getElementById("refresh-records-btn").addEventListener("click", loadTeacherRecords);
+
+        document.getElementById("export-records-btn").addEventListener("click", async () => {
+            if (!cloudAttempts.length) { await showNotice("There are no records to export yet."); return; }
+            const headers = ["Student Name", "Class", "Mastered Numbers", "Total Numbers", "Percentage", "Completed At"];
+            const rows = [headers, ...cloudAttempts.map(row => [
+                row.student_name, row.class_name, row.score, row.total,
+                recordPercent(Number(row.score), Number(row.total)).toFixed(1) + "%", row.completed_at
+            ])];
+            const csv = rows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+            const blob = new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8;"});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "grammar-challenge-16-39-student-scores.csv";
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function renderQuestionList() {
+            const listDiv = document.getElementById('question-list-div');
+            document.getElementById('total-q-count').textContent = baseQuestions.length;
+            listDiv.innerHTML = '';
+            baseQuestions.forEach((q, idx) => {
+                const row = document.createElement('div');
+                row.className = 'question-item-row';
+                const plainPrompt = q.text.replace(/<[^>]*>/g, '');
+                row.innerHTML = `
+                    <div style="flex-grow:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:6px;">
+                        <strong style="color:#0369a1;">[No.${q.no}]</strong> ${escapeHtml(plainPrompt)} <span style="color:#15803d; font-weight:600;">[Ans: ${escapeHtml(q.answer)}]</span>
+                    </div>
+                    <div class="action-btns">
+                        <button class="edit-q-btn" onclick="editQuestion(${idx})">Edit</button>
+                        <button class="del-q-btn" onclick="deleteQuestion(${idx})">Delete</button>
+                    </div>`;
+                listDiv.appendChild(row);
+            });
+        }
+
+        const questionEditForm = document.getElementById('question-edit-form');
+        questionEditForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('edit-index').value);
+            const no = parseInt(document.getElementById('input-q-no').value) || 16;
+            const text = document.getElementById('input-q-text').value.trim();
+            const starter = document.getElementById('input-q-words').value.trim();
+            const answer = document.getElementById('input-q-answer').value.trim();
+            const altRaw = document.getElementById('input-q-alt').value.trim();
+            const altAnswers = altRaw ? altRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            if (editIdx === -1) {
+                baseQuestions.push({ no, type: "Custom Question", text, starter, answer, altAnswers });
+            } else {
+                baseQuestions[editIdx] = { ...baseQuestions[editIdx], no, text, starter, answer, altAnswers };
+                document.getElementById('edit-index').value = '-1';
+                document.getElementById('form-mode-title').textContent = 'Add New Question';
+                document.getElementById('save-question-btn').textContent = 'Save Question';
+                document.getElementById('cancel-edit-btn').style.display = 'none';
+            }
+            baseQuestions.sort((a, b) => Number(a.no) - Number(b.no));
+            localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(baseQuestions));
+            questionEditForm.reset();
+            document.getElementById('input-q-no').value = '16';
+            renderQuestionList();
+        });
+
+        window.editQuestion = function(idx) {
+            const q = baseQuestions[idx];
+            document.getElementById('edit-index').value = idx;
+            document.getElementById('input-q-no').value = q.no || 16;
+            document.getElementById('input-q-text').value = q.text;
+            document.getElementById('input-q-words').value = q.starter || '';
+            document.getElementById('input-q-answer').value = q.answer;
+            document.getElementById('input-q-alt').value = (q.altAnswers || []).join(', ');
+            document.getElementById('form-mode-title').textContent = `Edit Question (No. ${q.no})`;
+            document.getElementById('save-question-btn').textContent = 'Update Question';
+            document.getElementById('cancel-edit-btn').style.display = 'block';
+        };
+
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+            document.getElementById('edit-index').value = '-1';
+            document.getElementById('form-mode-title').textContent = 'Add New Question';
+            document.getElementById('save-question-btn').textContent = 'Save Question';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+            questionEditForm.reset();
+            document.getElementById('input-q-no').value = '16';
+        });
+
+        window.deleteQuestion = async function(idx) {
+            const ok = await showConfirmNotice(`Are you sure you want to delete this question from No. ${baseQuestions[idx].no}?`);
+            if (ok) {
+                baseQuestions.splice(idx, 1);
+                localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(baseQuestions));
+                renderQuestionList();
+            }
+        };
+
+        document.getElementById('reset-default-q-btn').addEventListener('click', async () => {
+            const ok = await showConfirmNotice("Reset all questions back to the original PDF No. 16–39 bank?");
+            if (ok) {
+                baseQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_16_39));
+                localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(baseQuestions));
+                renderQuestionList();
+            }
+        });
+
+        function renderRewardList() {
+            const rewardListDiv = document.getElementById('reward-list-div');
+            rewardListDiv.innerHTML = '';
+            rewardTiers.forEach((r, idx) => {
+                const row = document.createElement('div');
+                row.className = 'reward-item-row';
+                row.innerHTML = `
+                    <div style="flex-grow:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:6px;">
+                        <strong>${r.minScore}+ No. (${r.tier})</strong>: ${escapeHtml(r.desc)}
+                    </div>
+                    <div class="action-btns"><button class="edit-q-btn" onclick="editReward(${idx})">Edit</button></div>`;
+                rewardListDiv.appendChild(row);
+            });
+        }
+
+        const rewardEditForm = document.getElementById('reward-edit-form');
+        window.editReward = function(idx) {
+            const r = rewardTiers[idx];
+            document.getElementById('edit-reward-index').value = idx;
+            document.getElementById('input-r-min').value = r.minScore;
+            document.getElementById('input-r-tier').value = r.tier;
+            document.getElementById('input-r-desc').value = r.desc;
+            document.getElementById('input-r-desc-jp').value = r.descJp;
+            document.getElementById('reward-form-title').textContent = `Edit Reward Tier (${r.tier})`;
+            document.getElementById('cancel-reward-edit-btn').style.display = 'block';
+        };
+
+        rewardEditForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idx = parseInt(document.getElementById('edit-reward-index').value);
+            if (idx === -1) return;
+            rewardTiers[idx] = {
+                minScore: parseInt(document.getElementById('input-r-min').value),
+                tier: document.getElementById('input-r-tier').value,
+                desc: document.getElementById('input-r-desc').value.trim(),
+                descJp: document.getElementById('input-r-desc-jp').value.trim()
+            };
+            localStorage.setItem(STORAGE_KEY_REWARDS, JSON.stringify(rewardTiers));
+            rewardEditForm.reset();
+            document.getElementById('edit-reward-index').value = '-1';
+            document.getElementById('reward-form-title').textContent = 'Edit Reward Tier';
+            document.getElementById('cancel-reward-edit-btn').style.display = 'none';
+            renderRewardList();
+            renderPerformanceTiers();
+        });
+
+        document.getElementById('cancel-reward-edit-btn').addEventListener('click', () => {
+            document.getElementById('edit-reward-index').value = '-1';
+            document.getElementById('reward-form-title').textContent = 'Edit Reward Tier';
+            document.getElementById('cancel-reward-edit-btn').style.display = 'none';
+            rewardEditForm.reset();
+        });
+
+        // Initial boot
+        renderPerformanceTiers();
+        checkSavedProgressBanner();
+    </script>
+</body>
+</html>
