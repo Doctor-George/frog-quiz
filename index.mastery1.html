@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>index-grammar-challenge-16-39.html</title>
+    <title>index-grammar-challenge-1-39.html</title>
     <!-- Confetti Library -->
     <script async src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -220,7 +220,7 @@
             font-weight: 800;
         }
 
-        /* Number Strip (No. 16 - No. 39) */
+        /* Number Strip (No. 1 - No. 39) */
         .number-progress-strip {
             display: flex;
             flex-wrap: wrap;
@@ -548,10 +548,10 @@
                 <div id="login-best-text-card" class="score-left-card">
                     👋 <span id="welcome-name"></span><br>
                     Best Mastered:<br>
-                    <strong id="welcome-best-score" style="font-size:1.1rem; color:#15803d;">0</strong> / <span id="welcome-total">24</span> No. 🏆
+                    <strong id="welcome-best-score" style="font-size:1.1rem; color:#15803d;">0</strong> / <span id="welcome-total">39</span> No. 🏆
                 </div>
                 <div class="title-center-box">
-                    <h1>🐸 Grammar Mastery Challenge (No. 16 – No. 39)</h1>
+                    <h1>🐸 Grammar Mastery Challenge (No. 1 – No. 39)</h1>
                     <p>各ナンバーの全問に連続正解して、次のナンバーへ進もう！</p>
                 </div>
                 <div id="login-best-sticker-container" class="thumbnail-right-box"></div>
@@ -559,7 +559,7 @@
 
             <div class="mastery-rules-banner">
                 <strong>🎯 Mastery Rules (完全習得ルール):</strong><br>
-                ① <strong>No. 16 〜 No. 39</strong> まで、各ナンバーの問題を<strong>全問正解</strong>すると次のナンバーへ進めます。<br>
+                ① <strong>No. 1 〜 No. 39</strong> まで、各ナンバーの問題を<strong>全問正解</strong>すると次のナンバーへ進めます。<br>
                 ② 1問でも間違えると、<strong>そのナンバーの最初から</strong>やり直し（問題順は毎回シャッフルされます）。<br>
                 ③ <strong>3ナンバー連続クリアごと</strong>に、ボーナスゲーム「🐸 Frog Catcher」に挑戦できます！
             </div>
@@ -581,7 +581,7 @@
                 <button type="submit" class="btn">Start Mastery Challenge 🚀</button>
             </form>
             <div id="resume-session-box" style="display:none; margin-top:6px;">
-                <button type="button" id="resume-session-btn" class="btn btn-bonus">▶ Continue Saved Progress (<span id="resume-no-label">No. 16</span>)</button>
+                <button type="button" id="resume-session-btn" class="btn btn-bonus">▶ Continue Saved Progress (<span id="resume-no-label">No. 1</span>)</button>
             </div>
             <button id="goto-teacher-portal-btn" class="btn btn-secondary">🔒 Teacher Portal</button>
         </div>
@@ -607,7 +607,7 @@
         <div id="teacher-dashboard-screen" class="screen">
             <div class="creator-tag">Prepared by Dr. George Cabrera</div>
             <div class="portal-header">
-                <h2 style="font-size:1.05rem;">Teacher Content Manager (No. 16–39)</h2>
+                <h2 style="font-size:1.05rem;">Teacher Content Manager (No. 1–39)</h2>
                 <button id="logout-teacher-btn" class="btn btn-danger" style="width: auto; padding: 3px 8px; margin:0; font-size:0.75rem;">Logout</button>
             </div>
             <div class="portal-tabs">
@@ -617,14 +617,14 @@
             </div>
 
             <div id="portal-tab-questions" class="portal-section active">
-                <div class="instruction-box">Add, edit, or delete questions grouped by Number (No. 16 to No. 39).</div>
+                <div class="instruction-box">Add, edit, or delete questions grouped by Number (No. 1 to No. 39).</div>
                 <h3 id="form-mode-title" style="margin-bottom: 2px; font-size: 0.8rem; color: var(--primary-color);">Add New Question</h3>
                 <form id="question-edit-form" style="background: #edf2f7; padding: 6px; border-radius: 6px; margin-bottom: 5px;">
                     <input type="hidden" id="edit-index" value="-1">
                     <div style="display:grid; grid-template-columns: 110px 1fr; gap:6px; margin-bottom:3px;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label for="input-q-no">Number (No.)</label>
-                            <input type="number" id="input-q-no" min="16" max="39" value="16" required>
+                            <input type="number" id="input-q-no" min="1" max="39" value="1" required>
                         </div>
                         <div class="form-group" style="margin-bottom:0;">
                             <label for="input-q-text">Question Prompt (HTML &lt;u&gt; allowed)</label>
@@ -648,19 +648,19 @@
                 </form>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
                     <h3 style="font-size: 0.8rem;">Existing Questions (<span id="total-q-count">0</span>)</h3>
-                    <button type="button" id="reset-default-q-btn" class="btn btn-secondary" style="width:auto; padding:2px 8px; font-size:0.72rem; margin:0;">Reset Default No. 16–39 Bank</button>
+                    <button type="button" id="reset-default-q-btn" class="btn btn-secondary" style="width:auto; padding:2px 8px; font-size:0.72rem; margin:0;">Reset Default No. 1–39 Bank</button>
                 </div>
                 <div class="question-list-container" id="question-list-div"></div>
             </div>
 
             <div id="portal-tab-rewards" class="portal-section">
-                <div class="instruction-box">Configure mastered-number thresholds (out of 24 Numbers), frog thumbnails, and encouragement messages.</div>
+                <div class="instruction-box">Configure mastered-number thresholds (out of 39 Numbers), frog thumbnails, and encouragement messages.</div>
                 <h3 id="reward-form-title" style="margin-bottom: 2px; font-size: 0.8rem; color: var(--primary-color);">Edit Reward Tier</h3>
                 <form id="reward-edit-form" style="background: #edf2f7; padding: 6px; border-radius: 6px; margin-bottom: 5px;">
                     <input type="hidden" id="edit-reward-index" value="-1">
                     <div class="form-group" style="margin-bottom: 3px;">
-                        <label for="input-r-min">Minimum Mastered Numbers Required (0–24)</label>
-                        <input type="number" id="input-r-min" required min="0" max="24">
+                        <label for="input-r-min">Minimum Mastered Numbers Required (0–39)</label>
+                        <input type="number" id="input-r-min" required min="0" max="39">
                     </div>
                     <div class="form-group" style="margin-bottom: 3px;">
                         <label for="input-r-tier">Frog Thumbnail Tier</label>
@@ -720,7 +720,7 @@
             <div class="mastery-hud">
                 <div class="hud-pill stage-pill">
                     <span class="hud-label">Current Stage</span>
-                    <span class="hud-value" id="hud-current-no">No. 16</span>
+                    <span class="hud-value" id="hud-current-no">No. 1</span>
                 </div>
                 <div class="hud-pill">
                     <span class="hud-label">Progress in Stage</span>
@@ -728,7 +728,7 @@
                 </div>
                 <div class="hud-pill">
                     <span class="hud-label">Mastered Numbers</span>
-                    <span class="hud-value" id="hud-mastered-count">0 / 24</span>
+                    <span class="hud-value" id="hud-mastered-count">0 / 39</span>
                 </div>
                 <div class="hud-pill bonus-pill">
                     <span class="hud-label">Next Frog Catcher</span>
@@ -779,7 +779,7 @@
             <div class="bonus-card pop-out-anim">
                 <h2>🎉 3 Numbers Mastered! Bonus Game Unlocked! 🐸</h2>
                 <p id="bonus-milestone-text">
-                    おめでとう！<strong>No. 16 〜 No. 18</strong> を完璧にクリアしました！<br>
+                    おめでとう！<strong>No. 1 〜 No. 3</strong> を完璧にクリアしました！<br>
                     ご褒美として <strong>Frog Catcher</strong> ゲームをプレイできます。<br>
                     ゲームが <strong>Game Over</strong> になったら、自動的にクイズの続き（<strong id="bonus-next-no-text">No. 19</strong>）へ戻ります！
                 </p>
@@ -795,13 +795,13 @@
             <div class="results-header"><h2>🎉 Challenge Summary! 🎉</h2></div>
             <div class="student-badge-info">
                 <h3 id="result-name-class">Student Name (Class)</h3>
-                <p>Mastered Numbers: <strong id="final-score" style="color: var(--primary-color);">0</strong> / <span id="final-total">24</span> (Correct Answers: <span id="final-correct-count">0</span>)</p>
+                <p>Mastered Numbers: <strong id="final-score" style="color: var(--primary-color);">0</strong> / <span id="final-total">39</span> (Correct Answers: <span id="final-correct-count">0</span>)</p>
             </div>
             <div class="pond-result-box pop-out-anim" id="pond-result-box">
                 <div class="pond-stage-container" id="pond-stage-container"></div>
                 <div class="pond-message-text" id="pond-message-text"></div>
                 <div class="pond-message-jp" id="pond-message-jp"></div>
-                <div class="best-score-display" id="best-score-text">Personal Best Mastered: 0 / 24</div>
+                <div class="best-score-display" id="best-score-text">Personal Best Mastered: 0 / 39</div>
                 <div class="pond-attempt-counter" id="pond-attempt-counter" style="font-size:0.72rem; color:#bae6fd; margin-top:2px;">Total attempts: 1</div>
             </div>
             <div id="cloud-save-status" class="save-status" role="status" aria-live="polite">Your result will be saved to the class database.</div>
@@ -971,19 +971,424 @@
             });
         }
 
-        // Default reward tiers calibrated to 24 Numbers (No. 16 - No. 39)
+        // Default reward tiers calibrated to 39 Numbers (No. 1 - No. 39)
         const DEFAULT_REWARD_TIERS = [
-            { minScore: 24, tier: "king", desc: "All 24 Numbers Mastered! Ultimate Frog King!", descJp: "全24ナンバー完全制覇！究極のフロッグキングです！" },
-            { minScore: 20, tier: "queen", desc: "20+ Numbers Mastered! Royal Grammar Mastery!", descJp: "20ナンバー以上制覇！素晴らしい文法力です！" },
-            { minScore: 15, tier: "ok", desc: "15+ Numbers Mastered! Solid Progress!", descJp: "15ナンバー以上制覇！着実に力がついています！" },
-            { minScore: 10, tier: "baby", desc: "10+ Numbers Mastered! Keep climbing!", descJp: "10ナンバー以上制覇！その調子で進めよう！" },
-            { minScore: 6, tier: "threeTadpoles", desc: "6+ Numbers Mastered! Two bonus games unlocked!", descJp: "6ナンバー以上制覇！着実に成長しています！" },
-            { minScore: 3, tier: "oneTadpole", desc: "3+ Numbers Mastered! First bonus milestone reached!", descJp: "3ナンバー以上制覇！最初のマイルストーン達成！" },
+            { minScore: 39, tier: "king", desc: "All 39 Numbers Mastered! Ultimate Frog King!", descJp: "全39ナンバー完全制覇！究極のフロッグキングです！" },
+            { minScore: 32, tier: "queen", desc: "32+ Numbers Mastered! Royal Grammar Mastery!", descJp: "32ナンバー以上制覇！素晴らしい文法力です！" },
+            { minScore: 24, tier: "ok", desc: "24+ Numbers Mastered! Solid Progress!", descJp: "24ナンバー以上制覇！着実に力がついています！" },
+            { minScore: 16, tier: "baby", desc: "16+ Numbers Mastered! Keep climbing!", descJp: "16ナンバー以上制覇！その調子で進めよう！" },
+            { minScore: 10, tier: "threeTadpoles", desc: "10+ Numbers Mastered! Keep growing!", descJp: "10ナンバー以上制覇！着実に成長しています！" },
+            { minScore: 5, tier: "oneTadpole", desc: "5+ Numbers Mastered! First bonus milestone reached!", descJp: "5ナンバー以上制覇！最初のマイルストーン達成！" },
             { minScore: 0, tier: "egg", desc: "Keep practicing each Number until you get 100%!", descJp: "各ナンバー全問正解を目指して挑戦しよう！" }
         ];
 
-        // Complete Question Bank from 16-39.pdf (No. 16 through No. 39)
-        const DEFAULT_QUESTIONS_16_39 = [
+        // Complete Question Bank from 1-15.pdf and 16-39.pdf (No. 1 through No. 39)
+        const DEFAULT_QUESTIONS_1_39 = [
+            // No. 1
+            {
+                no: 1,
+                type: "Sentence Transformation",
+                text: "I am Tanaka. (否定文)",
+                starter: "I am",
+                answer: "I am not Tanaka.",
+                altAnswers: ["I'm not Tanaka."]
+            },
+            // No. 1
+            {
+                no: 1,
+                type: "Yes/No Question",
+                text: "You are happy. (疑問文にして、Yes で答えなさい。)",
+                starter: "Are",
+                answer: "Are you happy? Yes, I am.",
+                altAnswers: ["Are you happy?Yes, I am."]
+            },
+            // No. 1
+            {
+                no: 1,
+                type: "Yes/No Question",
+                text: "You play tennis. (疑問文にしてNo で答えなさい。)",
+                starter: "Do",
+                answer: "Do you play tennis? No, I don't.",
+                altAnswers: ["Do you play tennis? No, I do not.", "Do you play tennis?No, I don't."]
+            },
+            // No. 2
+            {
+                no: 2,
+                type: "Sentence Transformation",
+                text: "She can play the piano. (否定文)",
+                starter: "She",
+                answer: "She cannot play the piano.",
+                altAnswers: ["She can't play the piano."]
+            },
+            // No. 2
+            {
+                no: 2,
+                type: "Sentence Transformation",
+                text: "I am a nice player. (否定文)",
+                starter: "I am",
+                answer: "I am not a nice player.",
+                altAnswers: ["I'm not a nice player."]
+            },
+            // No. 2
+            {
+                no: 2,
+                type: "Yes/No Question",
+                text: "Misaki and Kaito speak English. (疑問文にしてYes で答えなさい)",
+                starter: "Do",
+                answer: "Do Misaki and Kaito speak English? Yes, they do.",
+                altAnswers: ["Do Misaki and Kaito speak English?Yes, they do."]
+            },
+            // No. 3
+            {
+                no: 3,
+                type: "Yes/No Question",
+                text: "You can drink coffee. (疑問文にしてNo で答えなさい)",
+                starter: "Can",
+                answer: "Can you drink coffee? No, I can't.",
+                altAnswers: ["Can you drink coffee? No, I cannot.", "Can you drink coffee?No, I can't."]
+            },
+            // No. 3
+            {
+                no: 3,
+                type: "Yes/No Question",
+                text: "You are an English teacher. (疑問文にしてyes で答えなさい)",
+                starter: "Are",
+                answer: "Are you an English teacher? Yes, I am.",
+                altAnswers: ["Are you an English teacher?Yes, I am."]
+            },
+            // No. 3
+            {
+                no: 3,
+                type: "Wh- Question",
+                text: "I eat <u>Pizza</u>. (下線部を問う疑問文にしなさい)",
+                starter: "What",
+                answer: "What do you eat?",
+                altAnswers: []
+            },
+            // No. 4
+            {
+                no: 4,
+                type: "Sentence Transformation",
+                text: "I am a tennis fan. (否定文)",
+                starter: "I am",
+                answer: "I am not a tennis fan.",
+                altAnswers: ["I'm not a tennis fan."]
+            },
+            // No. 4
+            {
+                no: 4,
+                type: "Wh- Question",
+                text: "We drink <u>coffee</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What do you drink?",
+                altAnswers: []
+            },
+            // No. 4
+            {
+                no: 4,
+                type: "Wh- Question",
+                text: "I am from <u>China</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where are you from?",
+                altAnswers: []
+            },
+            // No. 5
+            {
+                no: 5,
+                type: "Wh- Question",
+                text: "They live in <u>Tokyo</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where do they live?",
+                altAnswers: []
+            },
+            // No. 5
+            {
+                no: 5,
+                type: "Sentence Transformation",
+                text: "I play games every Sunday. (否定文)",
+                starter: "I",
+                answer: "I do not play games every Sunday.",
+                altAnswers: ["I don't play games every Sunday."]
+            },
+            // No. 5
+            {
+                no: 5,
+                type: "Yes/No Question",
+                text: "Mary is tired. (疑問文にしてYes で答えなさい)",
+                starter: "Is",
+                answer: "Is Mary tired? Yes, she is.",
+                altAnswers: ["Is Mary tired?Yes, she is."]
+            },
+            // No. 6
+            {
+                no: 6,
+                type: "Wh- Question",
+                text: "I play tennis <u>on Sunday</u>. (疑問文に)",
+                starter: "When",
+                answer: "When do you play tennis?",
+                altAnswers: []
+            },
+            // No. 6
+            {
+                no: 6,
+                type: "Yes/No Question",
+                text: "You are a soccer player. (疑問文にして yes で答えなさい)",
+                starter: "Are",
+                answer: "Are you a soccer player? Yes, I am.",
+                altAnswers: ["Are you a soccer player?Yes, I am."]
+            },
+            // No. 6
+            {
+                no: 6,
+                type: "Sentence Transformation",
+                text: "I take a bath (否定文に)",
+                starter: "I",
+                answer: "I do not take a bath.",
+                altAnswers: ["I don't take a bath."]
+            },
+            // No. 7
+            {
+                no: 7,
+                type: "Wh- Question",
+                text: "He is <u>Taro</u>. (下線部を問う疑問文に)",
+                starter: "Who",
+                answer: "Who is he?",
+                altAnswers: []
+            },
+            // No. 7
+            {
+                no: 7,
+                type: "Wh- Question",
+                text: "I have a <u>violin</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What do you have?",
+                altAnswers: []
+            },
+            // No. 7
+            {
+                no: 7,
+                type: "Short Answers",
+                text: "The day before Friday. The day after Monday (質問に英語で答えなさい。)",
+                starter: "",
+                answer: "Thursday. Tuesday.",
+                altAnswers: ["Thursday. Tuesday", "Thursday, Tuesday."]
+            },
+            // No. 8
+            {
+                no: 8,
+                type: "Sentence Transformation",
+                text: "He is a tennis player. (否定文に)",
+                starter: "He",
+                answer: "He is not a tennis player.",
+                altAnswers: ["He isn't a tennis player."]
+            },
+            // No. 8
+            {
+                no: 8,
+                type: "Sentence Transformation",
+                text: "We go to the library. (否定文に)",
+                starter: "We",
+                answer: "We do not go to the library.",
+                altAnswers: ["We don't go to the library."]
+            },
+            // No. 8
+            {
+                no: 8,
+                type: "Wh- Question",
+                text: "I drink <u>juice</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What do you drink?",
+                altAnswers: []
+            },
+            // No. 9
+            {
+                no: 9,
+                type: "Translation",
+                text: "私は猫が好きです。(英語に直しなさい。)",
+                starter: "",
+                answer: "I like cats.",
+                altAnswers: ["I like a cat."]
+            },
+            // No. 9
+            {
+                no: 9,
+                type: "Wh- Question",
+                text: "They have <u>three</u> books. (下線部を問う疑問文に)",
+                starter: "How",
+                answer: "How many books do they have?",
+                altAnswers: []
+            },
+            // No. 9
+            {
+                no: 9,
+                type: "Wh- Question",
+                text: "I visit <u>Nikko</u>. (下線部を問う疑問文にしなさい)",
+                starter: "Where",
+                answer: "Where do you visit?",
+                altAnswers: []
+            },
+            // No. 10
+            {
+                no: 10,
+                type: "Translation",
+                text: "この本は面白いです。(英作しなさい)",
+                starter: "",
+                answer: "This book is interesting.",
+                altAnswers: ["This is an interesting book."]
+            },
+            // No. 10
+            {
+                no: 10,
+                type: "Sentence Transformation",
+                text: "We are baseball players. (否定文に)",
+                starter: "We",
+                answer: "We are not baseball players.",
+                altAnswers: ["We aren't baseball players."]
+            },
+            // No. 10
+            {
+                no: 10,
+                type: "Wh- Question",
+                text: "I go to <u>Kyoto</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where do you go?",
+                altAnswers: []
+            },
+            // No. 11
+            {
+                no: 11,
+                type: "Yes/No Question",
+                text: "You bring your camera. (疑問文にして yes で答えなさい)",
+                starter: "Do",
+                answer: "Do you bring your camera? Yes, I do.",
+                altAnswers: ["Do you bring your camera?Yes, I do."]
+            },
+            // No. 11
+            {
+                no: 11,
+                type: "Vocabulary",
+                text: "The twelfth month of the year. (英語で答えなさい)",
+                starter: "",
+                answer: "December.",
+                altAnswers: ["December"]
+            },
+            // No. 11
+            {
+                no: 11,
+                type: "Wh- Question",
+                text: "I study English <u>at school</u>. (下線部を問う疑問文に)",
+                starter: "Where",
+                answer: "Where do you study English?",
+                altAnswers: []
+            },
+            // No. 12
+            {
+                no: 12,
+                type: "Wh- Question",
+                text: "I have <u>three</u> books. (下線部をたずねる疑問文に)",
+                starter: "How",
+                answer: "How many books do you have?",
+                altAnswers: []
+            },
+            // No. 12
+            {
+                no: 12,
+                type: "Yes/No Question",
+                text: "You have some apples. (疑問文にして、Yes で答えなさい。)",
+                starter: "Do",
+                answer: "Do you have any apples? Yes, I do.",
+                altAnswers: ["Do you have some apples? Yes, I do.", "Do you have any apples?Yes, I do."]
+            },
+            // No. 12
+            {
+                no: 12,
+                type: "Vocabulary",
+                text: "The day before Thursday. (質問に英語で答えなさい。)",
+                starter: "",
+                answer: "Wednesday.",
+                altAnswers: ["Wednesday"]
+            },
+            // No. 13
+            {
+                no: 13,
+                type: "Equivalent Expression",
+                text: "This book is nice. (意味を変えないで別の言い方に)",
+                starter: "This",
+                answer: "This is a nice book.",
+                altAnswers: ["This book is good."]
+            },
+            // No. 13
+            {
+                no: 13,
+                type: "Imperative",
+                text: "You are kind. (命令文に)",
+                starter: "Be",
+                answer: "Be kind.",
+                altAnswers: []
+            },
+            // No. 13
+            {
+                no: 13,
+                type: "Vocabulary",
+                text: "The season after spring. (質問に英語で答えなさい。)",
+                starter: "",
+                answer: "Summer.",
+                altAnswers: ["Summer"]
+            },
+            // No. 14
+            {
+                no: 14,
+                type: "Wh- Question",
+                text: "We say Thank you in <u>English</u>. (下線部を問う疑問文に)",
+                starter: "How",
+                answer: "How do we say \"Thank you\"?",
+                altAnswers: ["How do we say Thank you?"]
+            },
+            // No. 14
+            {
+                no: 14,
+                type: "Sentence Transformation",
+                text: "This is an old house. (否定文に)",
+                starter: "This",
+                answer: "This is not an old house.",
+                altAnswers: ["This isn't an old house."]
+            },
+            // No. 14
+            {
+                no: 14,
+                type: "Wh- Question",
+                text: "I go to bed <u>at ten</u>. (下線部を問う疑問文に)",
+                starter: "What",
+                answer: "What time do you go to bed?",
+                altAnswers: []
+            },
+            // No. 15
+            {
+                no: 15,
+                type: "Equivalent Expression",
+                text: "This book is interesting. (意味を変えないで別の言い方に)",
+                starter: "This",
+                answer: "This is an interesting book.",
+                altAnswers: ["This book is nice."]
+            },
+            // No. 15
+            {
+                no: 15,
+                type: "Yes/No Question",
+                text: "Those are good cars. (疑問文にし、yes で答えなさい)",
+                starter: "Are",
+                answer: "Are those good cars? Yes, they are.",
+                altAnswers: ["Are those good cars?Yes, they are."]
+            },
+            // No. 15
+            {
+                no: 15,
+                type: "Plural Form",
+                text: "This is a beautiful flower. (複数形の文に)",
+                starter: "These",
+                answer: "These are beautiful flowers.",
+                altAnswers: []
+            },
             // No. 16
             {
                 no: 16,
@@ -1765,12 +2170,20 @@
             }
         ];
 
-        const STORAGE_KEY_QUESTIONS = 'grammar_challenge_16_39_questions_v1';
-        const STORAGE_KEY_REWARDS = 'grammar_challenge_16_39_rewards_v1';
-        const STORAGE_KEY_PROGRESS = 'grammar_challenge_16_39_active_progress_v1';
+        const STORAGE_KEY_QUESTIONS = 'grammar_challenge_1_39_questions_v2';
+        const STORAGE_KEY_REWARDS = 'grammar_challenge_1_39_rewards_v2';
+        const STORAGE_KEY_PROGRESS = 'grammar_challenge_1_39_active_progress_v2';
 
         let rewardTiers = JSON.parse(localStorage.getItem(STORAGE_KEY_REWARDS)) || JSON.parse(JSON.stringify(DEFAULT_REWARD_TIERS));
-        let baseQuestions = JSON.parse(localStorage.getItem(STORAGE_KEY_QUESTIONS)) || JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_16_39));
+        const savedQuestionBank = JSON.parse(localStorage.getItem(STORAGE_KEY_QUESTIONS)) || JSON.parse(localStorage.getItem('grammar_challenge_16_39_questions_v1') || "null");
+        let baseQuestions = (() => {
+            if (!Array.isArray(savedQuestionBank)) return JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_1_39));
+            const missingEarlyQuestions = DEFAULT_QUESTIONS_1_39.filter(q =>
+                Number(q.no) >= 1 && Number(q.no) <= 15 &&
+                !savedQuestionBank.some(saved => Number(saved.no) === Number(q.no) && saved.text === q.text)
+            );
+            return [...missingEarlyQuestions, ...savedQuestionBank].sort((a, b) => Number(a.no) - Number(b.no));
+        })();
 
         // Mastery Challenge Runtime State
         let orderedNumbers = [];        // e.g. [16, 17, ..., 39]
@@ -1786,7 +2199,7 @@
         let pendingBonusNextNo = null;
 
         const QUIZ_API_BASE = "https://general-verbs-quiz-api.gerek25.workers.dev";
-        const QUIZ_ID = "grammar-challenge-16-39";
+        const QUIZ_ID = "grammar-challenge-1-39";
         const FROG_CATCHER_URL = "https://doctor-george.github.io/frog-quiz/indexfrog-catcher.html";
         let cloudBestScore = null;
         let teacherPasswordForSession = "";
@@ -1856,7 +2269,7 @@
         function showStudentBest(name, best) {
             if (best === null || Number.isNaN(Number(best))) return;
             const bestNum = Number(best);
-            const totalNums = getOrderedUniqueNumbers().length || 24;
+            const totalNums = getOrderedUniqueNumbers().length || 39;
             welcomeName.textContent = name;
             welcomeBestScore.textContent = bestNum;
             welcomeTotal.textContent = totalNums;
@@ -1994,7 +2407,7 @@
 
             currentUser = { name, cls, key: `${cls}_${name}` };
             orderedNumbers = getOrderedUniqueNumbers();
-            let userStats = JSON.parse(localStorage.getItem(`grammar_16_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
+            let userStats = JSON.parse(localStorage.getItem(`grammar_1_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
 
             welcomeName.textContent = currentUser.name;
             welcomeBestScore.textContent = userStats.bestScore;
@@ -2009,7 +2422,7 @@
                     cloudBestScore = Number(data.bestScore || 0);
                     const combinedBest = Math.max(Number(userStats.bestScore || 0), cloudBestScore);
                     userStats.bestScore = combinedBest;
-                    localStorage.setItem(`grammar_16_39_user_${currentUser.key}`, JSON.stringify(userStats));
+                    localStorage.setItem(`grammar_1_39_user_${currentUser.key}`, JSON.stringify(userStats));
                     showStudentBest(currentUser.name, combinedBest);
                 })
                 .catch(() => { cloudBestScore = null; });
@@ -2281,7 +2694,7 @@
             }
 
             // Update best mastered record
-            const userKey = `grammar_16_39_user_${currentUser.key}`;
+            const userKey = `grammar_1_39_user_${currentUser.key}`;
             let userStats = JSON.parse(localStorage.getItem(userKey)) || { bestScore: 0, attempts: 0 };
             if (masteredNumbers.length > userStats.bestScore) {
                 userStats.bestScore = masteredNumbers.length;
@@ -2291,7 +2704,7 @@
             if (typeof window.confetti === "function") window.confetti({ particleCount: 70, spread: 65, origin: { y: 0.65 } });
 
             const nextIdx = currentNumberIndex + 1;
-            // Check if all 24 numbers are completed
+            // Check if all 39 numbers are completed
             if (nextIdx >= orderedNumbers.length) {
                 clearActiveProgress();
                 showResults();
@@ -2355,7 +2768,7 @@
         function showResults() {
             clearInterval(timerInterval);
             switchScreen(resultsScreen);
-            const totalNums = orderedNumbers.length || 24;
+            const totalNums = orderedNumbers.length || 39;
             const masteredCount = masteredNumbers.length;
 
             resultNameClass.textContent = `${currentUser.name} (${currentUser.cls})`;
@@ -2363,7 +2776,7 @@
             finalTotalSpan.textContent = totalNums;
             finalCorrectCount.textContent = totalCorrectAnswers;
 
-            const userKey = `grammar_16_39_user_${currentUser.key}`;
+            const userKey = `grammar_1_39_user_${currentUser.key}`;
             let userStats = JSON.parse(localStorage.getItem(userKey)) || { bestScore: 0, attempts: 0 };
             userStats.attempts++;
             if (masteredCount > userStats.bestScore) userStats.bestScore = masteredCount;
@@ -2416,7 +2829,7 @@
 
         restartBtn.addEventListener('click', () => {
             if (currentUser) {
-                let userStats = JSON.parse(localStorage.getItem(`grammar_16_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
+                let userStats = JSON.parse(localStorage.getItem(`grammar_1_39_user_${currentUser.key}`)) || { bestScore: 0, attempts: 0 };
                 welcomeBestScore.textContent = userStats.bestScore;
                 let matchedTier = getRewardTier(userStats.bestScore);
                 loginBestStickerContainer.innerHTML = FROG_SVGS[matchedTier.tier] || FROG_SVGS.egg;
@@ -2503,7 +2916,7 @@
                 student.best = Math.max(...scores);
                 student.average = scores.reduce((sum, value) => sum + value, 0) / scores.length;
                 student.latest = scores[scores.length - 1];
-                student.total = Number(student.attempts[student.attempts.length - 1].total || 24);
+                student.total = Number(student.attempts[student.attempts.length - 1].total || 39);
                 return student;
             });
         }
@@ -2591,7 +3004,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = "grammar-challenge-16-39-student-scores.csv";
+            link.download = "grammar-challenge-1-39-student-scores.csv";
             link.click();
             URL.revokeObjectURL(url);
         });
@@ -2620,7 +3033,7 @@
         questionEditForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('edit-index').value);
-            const no = parseInt(document.getElementById('input-q-no').value) || 16;
+            const no = parseInt(document.getElementById('input-q-no').value) || 1;
             const text = document.getElementById('input-q-text').value.trim();
             const starter = document.getElementById('input-q-words').value.trim();
             const answer = document.getElementById('input-q-answer').value.trim();
@@ -2639,14 +3052,14 @@
             baseQuestions.sort((a, b) => Number(a.no) - Number(b.no));
             localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(baseQuestions));
             questionEditForm.reset();
-            document.getElementById('input-q-no').value = '16';
+            document.getElementById('input-q-no').value = '1';
             renderQuestionList();
         });
 
         window.editQuestion = function(idx) {
             const q = baseQuestions[idx];
             document.getElementById('edit-index').value = idx;
-            document.getElementById('input-q-no').value = q.no || 16;
+            document.getElementById('input-q-no').value = q.no || 1;
             document.getElementById('input-q-text').value = q.text;
             document.getElementById('input-q-words').value = q.starter || '';
             document.getElementById('input-q-answer').value = q.answer;
@@ -2662,7 +3075,7 @@
             document.getElementById('save-question-btn').textContent = 'Save Question';
             document.getElementById('cancel-edit-btn').style.display = 'none';
             questionEditForm.reset();
-            document.getElementById('input-q-no').value = '16';
+            document.getElementById('input-q-no').value = '1';
         });
 
         window.deleteQuestion = async function(idx) {
@@ -2675,9 +3088,9 @@
         };
 
         document.getElementById('reset-default-q-btn').addEventListener('click', async () => {
-            const ok = await showConfirmNotice("Reset all questions back to the original PDF No. 16–39 bank?");
+            const ok = await showConfirmNotice("Reset all questions back to the original PDF No. 1–39 bank?");
             if (ok) {
-                baseQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_16_39));
+                baseQuestions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS_1_39));
                 localStorage.setItem(STORAGE_KEY_QUESTIONS, JSON.stringify(baseQuestions));
                 renderQuestionList();
             }
