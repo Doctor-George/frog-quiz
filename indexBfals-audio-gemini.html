@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TESDA NC II BFALS Reviewer — prepared by Dr. George Cabrera</title>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-light: #e6f0fa;
+      --accent: #d9381e;
+      --accent-light: #fdecea;
+      --success: #16794c;
+      --success-light: #e6f6ee;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #dbe3ee;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Top Upper Left Author Attribution Banner */
+    .top-author-bar {
+      background: #0a3357;
+      color: #ffffff;
+      padding: 8px 20px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .author-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .author-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    header.main-header {
+      background: linear-gradient(135deg, var(--primary), #1a6bb3);
+      color: #fff;
+      padding: 22px 20px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .header-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-size: 1.55rem;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .tab-btn {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--primary-light);
+    }
+
+    /* Controls Bar */
+    .controls-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(15, 76, 129, 0.05);
+    }
+
+    .track-switch {
+      display: flex;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .track-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .track-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .name-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .name-input-group input {
+      padding: 7px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      width: 170px;
+    }
+
+    .audio-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+    }
+
+    /* Main Layout */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 860px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Step List */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-card.active {
+      border-color: var(--primary);
+      background: #f8fbff;
+      box-shadow: 0 4px 12px rgba(15, 76, 129, 0.1);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .step-num {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .step-card.active .step-num {
+      background: var(--accent);
+    }
+
+    .step-script {
+      font-size: 1.03rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .step-sublines {
+      background: var(--bg);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.86rem;
+      color: #334155;
+      margin-top: 6px;
+      white-space: pre-line;
+    }
+
+    .step-tagalog {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 8px;
+      border-top: 1px dashed var(--border);
+      padding-top: 6px;
+    }
+
+    /* Visual Stage Card */
+    .visual-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      position: sticky;
+      top: 56px;
+      height: fit-content;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .visual-stage {
+      background: linear-gradient(180deg, #eef6ff 0%, #f8fafc 100%);
+      border: 1.5px solid #cfe2f7;
+      border-radius: 12px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .visual-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 76, 129, 0.9);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .tip-box {
+      background: var(--success-light);
+      border-left: 4px solid var(--success);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    /* SVG Animations */
+    @keyframes pulseRing {
+      0% { transform: scale(0.85); opacity: 0.9; }
+      70% { transform: scale(1.35); opacity: 0; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    @keyframes compressMove {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(12px); }
+    }
+    @keyframes breathExpand {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+    .anim-pulse { transform-origin: center; animation: pulseRing 1.2s infinite; }
+    .anim-compress { animation: compressMove 0.6s infinite ease-in-out; }
+    .anim-breath { transform-origin: center; animation: breathExpand 1.8s infinite ease-in-out; }
+
+    /* Cadence & Quiz Sections */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .cadence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .cadence-box {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fbfdff;
+      text-align: center;
+    }
+
+    .counter-display {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 12px 0;
+      min-height: 48px;
+    }
+
+    .quiz-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .quiz-opt {
+      text-align: left;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .quiz-opt.correct {
+      background: var(--success-light);
+      border-color: var(--success);
+      color: #0f5132;
+    }
+
+    .quiz-opt.wrong {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: #842029;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Print Styling */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; }
+      .top-author-bar { position: static; background: #fff; color: #000; border-bottom: 2px solid #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP UPPER LEFT ATTRIBUTION -->
+  <div class="top-author-bar">
+    <div class="author-left">
+      <span>prepared by Dr. George Cabrera</span>
+      <span class="author-badge">TESDA NC II Reviewer</span>
+    </div>
+    <div style="font-size: 0.8rem; opacity: 0.9;">BFALS Practical Exam Guide</div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="main-header no-print">
+    <div class="container header-flex">
+      <div>
+        <h1>BFALS (Basic First Aid and Life Support) Reviewer</h1>
+        <p>Interactive Audio-Visual Script &amp; Practical Simulator for NC II Certification</p>
+      </div>
+      <div>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Print Cheat Sheet</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- NAVIGATION TABS -->
+    <div class="nav-tabs no-print">
+      <button class="tab-btn active" onclick="switchTab('simulator', this)">1. Step-by-Step Audio &amp; Visual Guide</button>
+      <button class="tab-btn" onclick="switchTab('cadence', this)">2. Counting &amp; Cadence Trainer</button>
+      <button class="tab-btn" onclick="switchTab('quiz', this)">3. NC II Mock Exam Quiz</button>
+      <button class="tab-btn" onclick="switchTab('cheatsheet', this)">4. Side-by-Side Comparison</button>
+    </div>
+
+    <!-- TAB 1: STEP-BY-STEP SIMULATOR -->
+    <section id="tab-simulator">
+      <div class="controls-panel no-print">
+        <div class="track-switch">
+          <button id="btn-adult" class="track-btn active" onclick="setTrack('adult')">🧑 ADULT CPR/RB</button>
+          <button id="btn-infant" class="track-btn" onclick="setTrack('infant')">👶 INFANT CPR/RB</button>
+        </div>
+
+        <div class="name-input-group">
+          <label for="traineeName">Your Name (Step 3):</label>
+          <input type="text" id="traineeName" placeholder="e.g. Juan Dela Cruz" oninput="renderSteps()" />
+        </div>
+
+        <div class="audio-controls">
+          <button class="btn btn-accent" id="btnPlayAll" onclick="togglePlayAll()">▶️ Listen Full Script</button>
+          <button class="btn btn-outline" onclick="stopAudio()">⏹️ Stop</button>
+          <select id="speechRate" class="btn btn-outline" title="Cadence Trainer Speech Speed">
+            <option value="0.8">0.8x Slow (Memorize)</option>
+            <option value="1.0" selected>1.0x Normal</option>
+            <option value="1.15">1.15x Fast</option>
+          </select>
+          <label style="font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+            <input type="checkbox" id="includeTagalogAudio" checked /> + Tagalog Guide
+          </label>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <!-- LEFT: STEPS SCRIPT -->
+        <div id="stepsContainer" class="steps-list"></div>
+
+        <!-- RIGHT: MATCHING VISUAL & ASSESSOR CHECKPOINT -->
+        <div class="visual-panel">
+          <div class="visual-stage" id="visualStage"></div>
+          <h3 id="visualTitle" style="color: var(--primary); margin-bottom: 6px;">Step 1: Scene Safety</h3>
+          <p id="visualDesc" style="font-size: 0.94rem; color: var(--text);"></p>
+          <div class="tip-box" id="visualTip"></div>
+          <div style="margin-top: 14px; display: flex; gap: 8px;">
+            <button class="btn btn-primary" onclick="speakCurrentStep()">🔊 Replay Step Audio</button>
+            <button class="btn btn-outline" onclick="nextStep()">Next Step ➡️</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: CADENCE TRAINER -->
+    <section id="tab-cadence" class="hidden">
+      <div class="section-card">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">prepared by Dr. George Cabrera</div>
+        <h2>⏱️ NC II Counting &amp; Timing Drills (With Audio)</h2>
+        <p style="color: var(--muted); font-size: 0.94rem;">Practice the exact verbal rhythm required by TESDA NC II assessors so you never rush or lose count.</p>
+
+        <div class="cadence-grid">
+          <!-- LLF Timer -->
+          <div class="cadence-box">
+            <h3>1. LLF Pulse &amp; Breath Check</h3>
+            <p style="font-size: 0.85rem; color: var(--muted);">10-second count: 1001 to 1010</p>
+            <div class="counter-display" id="llfDisplay">Ready</div>
+            <button class="btn btn-primary" onclick="runLLFTrainer()">▶️ Start 1001–1010</button>
+            <button class="btn btn-outline" onclick="stopCadence()">⏹️ Stop</button>
+          </div>
+
+          <!-- CPR 30/2 Cadence -->
+          <div class="cadence-box">
+            <h3>2. CPR Verbal Count (30:2)</h3>
+            <p style="font-size: 0.85rem; color: var(--muted);">1–20, then 1–9 and 1 + 2 Blows</p>
+            <div class="counter-display" id="cprDisplay">Ready</div>
+            <button class="btn btn-accent" onclick="runCPRTrainer()">▶️ Start 1 Cycle (30:2)</button>
+            <button class="btn btn-outline" onclick="stopCadence()">⏹️ Stop</button>
+          </div>
+
+          <!-- Rescue Breathing Cadence -->
+          <div class="cadence-box">
+            <h3>3. Rescue Breathing Pacing</h3>
+            <p style="font-size: 0.85rem; color: var(--muted);">Adult (up to 1024) vs Infant (up to 1, 1040)</p>
+            <div class="counter-display" id="rbDisplay">Ready</div>
+            <button class="btn btn-success" onclick="runRBTrainer('adult')">▶️ Adult RB Sample</button>
+            <button class="btn btn-primary" onclick="runRBTrainer('infant')">▶️ Infant RB Sample</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MOCK EXAM QUIZ -->
+    <section id="tab-quiz" class="hidden">
+      <div class="section-card">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">prepared by Dr. George Cabrera</div>
+        <h2>📝 NC II BFALS Self-Assessment Quiz</h2>
+        <p style="color: var(--muted); margin-bottom: 12px;">Test your mastery of Adult vs. Infant protocols before your practical assessment.</p>
+        <div id="quizContainer"></div>
+        <div style="margin-top: 16px; font-weight: 800; font-size: 1.1rem; color: var(--primary);" id="quizScore"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SIDE-BY-SIDE COMPARISON -->
+    <section id="tab-cheatsheet" class="hidden">
+      <div class="section-card">
+        <div style="font-size: 0.82rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">prepared by Dr. George Cabrera</div>
+        <h2>📋 Adult vs. Infant Key Differences (Quick Review)</h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.94rem;">
+          <thead>
+            <tr style="background: var(--primary); color: #fff; text-align: left;">
+              <th style="padding: 10px;">Step / Protocol</th>
+              <th style="padding: 10px;">🧑 ADULT CPR / RB</th>
+              <th style="padding: 10px;">👶 INFANT CPR / RB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700;">Step 4: Checking Responsiveness</td>
+              <td style="padding: 10px;">"Hey hey hey are you okey? (2x)" — <strong>Tap the shoulder</strong></td>
+              <td style="padding: 10px;">"Baby, Baby are you okey? (2x)" — <strong>Tap the feet</strong></td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border); background: #f8fafc;">
+              <td style="padding: 10px; font-weight: 700;">Step 6: Pulse Location (LLF)</td>
+              <td style="padding: 10px;"><strong>Carotid pulse</strong> (neck) — 1001 to 1010</td>
+              <td style="padding: 10px;"><strong>Brachial pulse</strong> (inner upper arm) — 1001 to 1010</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 10px; font-weight: 700;">Step 7: CPR Compressions</td>
+              <td style="padding: 10px;">Two hands on center of chest (30/2/5 cycles)</td>
+              <td style="padding: 10px;">Two fingers just below nipple line (30/2/5 cycles)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border); background: #f8fafc;">
+              <td style="padding: 10px; font-weight: 700;">Step 8: Rescue Breathing (RB)</td>
+              <td style="padding: 10px;">1 blow then 1, 1002, 1003, 1001 ... up to <strong>1024</strong> then 1 blow</td>
+              <td style="padding: 10px;">1 blow then 1, 1001 ... up to <strong>1, 1040</strong> then 1 blow</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; font-weight: 700;">Step 11: Recovery Position</td>
+              <td style="padding: 10px;">Side-lying recovery position (away or towards you)</td>
+              <td style="padding: 10px;">Infant <strong>over the shoulder</strong> or <strong>football hold</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const DATA = {
+      adult: [
+        {
+          num: 1,
+          script: "The scene is safe.",
+          tagalog: "Suriin muna ang paligid bago lumapit upang masigurong ligtas ka at ang biktima.",
+          tip: "Look left, right, up, and down clearly so the assessor sees you scanning the environment.",
+          visualType: "scene"
+        },
+        {
+          num: 2,
+          script: "I have 1 adult victim lying on the floor. I have my BSI on.",
+          tagalog: "Ipahayag na may 1 adult na biktima at nakasuot ka ng BSI (gloves at mask).",
+          tip: "Show your gloved hands clearly while stating 'I have my BSI on.'",
+          visualType: "bsi"
+        },
+        {
+          num: 3,
+          script: "My name is {NAME}, a trained first aider, can I help?",
+          tagalog: "Ipakilala ang sarili bilang trained first aider at humingi ng pahintulot tumulong.",
+          tip: "Speak loudly and confidently to establish authority and implied consent.",
+          visualType: "intro"
+        },
+        {
+          num: 4,
+          script: "Hey hey hey are you okey? (2x) — tap the shoulder.",
+          tagalog: "Tapikin nang marahan ang balikat ng biktima nang dalawang beses habang tinatanong kung okay siya.",
+          tip: "Tap BOTH shoulders firmly without shaking the neck or spine.",
+          visualType: "tap_shoulder"
+        },
+        {
+          num: 5,
+          script: "The victim is unresponsive, please activate medical assistance and transport facilities as I do primary assessment.",
+          tagalog: "Walang malay ang biktima. Ituro ang isang bystander para tumawag ng ambulansya habang sinisimulan ang primary assessment.",
+          tip: "Point directly at someone: 'You in the blue shirt, call emergency services and report back!'",
+          visualType: "call_help"
+        },
+        {
+          num: 6,
+          script: "Mouth and nose are clear, there is no obstruction seen.",
+          sub: "- LLF (carotid pulse) - 1001, 1002 up to 1010",
+          tagalog: "Buksan ang airway (head-tilt chin-lift), tingnan kung walang bara, at i-check ang paghinga (LLF) at Carotid pulse sa leeg sa loob ng 10 segundo.",
+          tip: "Place two fingers on the side of the neck (Carotid) while your ear is near the mouth looking at the chest.",
+          visualType: "llf_carotid"
+        },
+        {
+          num: 7,
+          script: "Negative breathing, negative pulse, please follow-up medical assistance and transport facilities as I do CPR (-B) (-P) 30/2/5.",
+          sub: "- 1,2,3,4,5,6,7,8,9,10 up to 20 then 1,2,3,4,5,6,7,8,9 and 1 then 2 blows to mouth (5 CYCLES)\n- LLF - 1001, 1002 up to 1010",
+          tagalog: "Walang paghinga (-B) at walang pulso (-P). Magsagawa ng 30 chest compressions at 2 rescue breaths sa loob ng 5 cycles, pagkatapos ay mag-LLF muli.",
+          tip: "Keep elbows locked straight. Count out loud clearly: '1..20, 1..9 and 1' (that equals 30!).",
+          visualType: "cpr_adult"
+        },
+        {
+          num: 8,
+          script: "Negative breathing, positive pulse, follow-up medical assistance and transport facilities as I do RB (-B) (+P).",
+          sub: "- 1 blow then 1, 1002, 1003, 1001\n- 1 blow then 1, 1002, 1003, 1002\n- 1 blow then 1, 1002, 1003, 1003\n- 1 blow then 1, 1002, 1003, 1004 up to 1024 then 1 blow\n- LLF… 1001, 1002 up to 1010",
+          tagalog: "Walang paghinga (-B) pero may pulso na (+P). Magbigay ng Rescue Breathing (24 cycles) gamit ang tamang pagbibilang, tapos mag-LLF muli.",
+          tip: "Pinch the nose before each blow and watch the chest rise gently.",
+          visualType: "rb_adult"
+        },
+        {
+          num: 9,
+          script: "Positive breathing, positive pulse, please follow up medical assistance and transport facilities and report it back to me as soon as possible as I do secondary assessment.",
+          tagalog: "May paghinga (+B) at may pulso na (+P). Magpa-follow up ng ambulansya habang ginagawa ang head-to-toe secondary assessment.",
+          tip: "Do not stop monitoring the victim even after breathing returns.",
+          visualType: "revived_check"
+        },
+        {
+          num: 10,
+          script: "No bleeding, no fracture seen (Head to toe).",
+          tagalog: "Kapain mula ulo hanggang paa kung may pagdurugo, bukol, o bali sa buto.",
+          tip: "Visually inspect your gloves after checking the head, neck, torso, and limbs.",
+          visualType: "head_to_toe"
+        },
+        {
+          num: 11,
+          script: "The victim is revived. I will now put him into a recovery position (away or towards you).",
+          tagalog: "Ligtas na at humihinga ang biktima. Ihiga siya nang patagilid (recovery position) upang hindi mabulunan.",
+          tip: "Support the head and neck smoothly as you roll the body onto its side.",
+          visualType: "recovery_adult"
+        }
+      ],
+      infant: [
+        {
+          num: 1,
+          script: "The scene is safe.",
+          tagalog: "Suriin ang paligid bago lumapit sa sanggol upang matiyak ang kaligtasan.",
+          tip: "Scan the area visibly before kneeling beside the infant mannequin.",
+          visualType: "scene"
+        },
+        {
+          num: 2,
+          script: "I have 1 infant victim lying on the floor. I have my BSI on.",
+          tagalog: "Ipahayag na may 1 sanggol na biktima at nakasuot ka ng BSI.",
+          tip: "Show your gloves and mask clearly.",
+          visualType: "bsi"
+        },
+        {
+          num: 3,
+          script: "My name is {NAME}, a trained first aider, can I help?",
+          tagalog: "Ipakilala ang sarili bilang trained first aider at humingi ng pahintulot sa magulang o bantay.",
+          tip: "State your full name clearly.",
+          visualType: "intro"
+        },
+        {
+          num: 4,
+          script: "Baby, Baby are you okey? (2x) — tap the feet.",
+          tagalog: "Tapikin nang marahan ang talampakan (feet) ng sanggol nang dalawang beses — HUWAG sa balikat.",
+          tip: "Assessor Trap: Never shake an infant or tap the shoulders; always tap the sole of the feet!",
+          visualType: "tap_feet"
+        },
+        {
+          num: 5,
+          script: "The victim is unresponsive, please activate medical assistance and transport facilities as I do primary assessment.",
+          tagalog: "Walang tugon ang sanggol. Magpatawag agad ng medical assistance habang sinisimulan ang primary assessment.",
+          tip: "Point to a specific bystander to call emergency services.",
+          visualType: "call_help"
+        },
+        {
+          num: 6,
+          script: "Mouth and nose are clear, there is no obstruction seen.",
+          sub: "· LLF (Brachial pulse) 1001, 1002 up to 1010",
+          tagalog: "Ilagay sa neutral sniffing position ang ulo, suriin ang bibig at ilong, at kapain ang Brachial pulse sa loob ng braso sa loob ng 10 segundo.",
+          tip: "Assessor Trap: Check BRACHIAL pulse (inner upper arm), NOT Carotid!",
+          visualType: "llf_brachial"
+        },
+        {
+          num: 7,
+          script: "Negative breathing, negative pulse, please follow-up medical assistance and transport facilities as I do CPR (-B) (-P) 30/2/5.",
+          sub: "· 1,2,3,4,5,6,7,8,9,10 up to 20 then 1,2,3,4,5,6,7,8,9 and 1 then 2 blows to mouth (5 CYCLES)\n· LLF… 1001, 1002……1010",
+          tagalog: "Walang paghinga at walang pulso. Gumamit ng 2 daliri sa gitna ng dibdib (30 compressions, 2 gentle puffs) sa loob ng 5 cycles.",
+          tip: "Cover both the infant's mouth and nose with your mouth using gentle puffs of air.",
+          visualType: "cpr_infant"
+        },
+        {
+          num: 8,
+          script: "Negative breathing, positive pulse, please follow-up medical assistance and transport facilities as I do Rescue breathing (RB).",
+          sub: "- 1 blow then 1, 1001,\n- 1 blow then 1, 1002,\n- 1 blow then 1, 1003,\n- 1 blow then 1, 1004 up to 1, 1040 then 1 blow\n- LLF…. 1001, 1002……1010",
+          tagalog: "Walang paghinga pero may pulso (+P). Magbigay ng Rescue Breathing hanggang 1, 1040 (mas mabilis ang interval para sa sanggol), tapos LLF.",
+          tip: "Watch the count carefully: Infant RB goes up to 1, 1040 before the final blow and LLF.",
+          visualType: "rb_infant"
+        },
+        {
+          num: 9,
+          script: "Positive breathing, positive pulse, please follow up medical assistance and transport facilities and report it back to me as soon as possible as I do secondary assessment.",
+          tagalog: "May paghinga at may pulso na ang sanggol. Magpa-follow up ng tulong medikal habang nagsasagawa ng secondary assessment.",
+          tip: "Keep the infant's airway in a neutral position.",
+          visualType: "revived_check"
+        },
+        {
+          num: 10,
+          script: "No bleeding, no fracture seen (Head to toe).",
+          tagalog: "Suriin nang marahan mula ulo hanggang paa kung may pagdurugo o bali.",
+          tip: "Check the fontanelle (soft spot) gently without pressing hard.",
+          visualType: "head_to_toe"
+        },
+        {
+          num: 11,
+          script: "The victim is revived. I will now put him into a recovery position (away or towards you) — infant over the shoulder or football hold.",
+          tagalog: "Ligtas na ang sanggol. Buhatin sa recovery position gamit ang 'over the shoulder' o 'football hold' habang sinusuportahan ang ulo.",
+          tip: "Demonstrate cradling the infant securely with head slightly angled downward.",
+          visualType: "recovery_infant"
+        }
+      ]
+    };
+
+    const QUIZ_QUESTIONS = [
+      {
+        q: "1. What does BSI stand for in Step 2 of BFALS?",
+        options: ["Basic Safety Inspection", "Body Substance Isolation", "Breathing Support Intervention"],
+        answer: 1,
+        explain: "BSI stands for Body Substance Isolation (wearing gloves and protective barriers)."
+      },
+      {
+        q: "2. How do you check responsiveness on an INFANT in Step 4?",
+        options: ["Tap the shoulder firmly", "Tap the sole of the feet", "Gently shake the arms"],
+        answer: 1,
+        explain: "For an infant, say 'Baby, Baby are you okey? (2x)' while tapping the feet."
+      },
+      {
+        q: "3. Which pulse is checked during LLF for an ADULT vs. an INFANT?",
+        options: ["Adult: Brachial | Infant: Carotid", "Adult: Carotid | Infant: Brachial", "Radial pulse for both"],
+        answer: 1,
+        explain: "Adult pulse is checked at the Carotid artery (neck); Infant pulse is checked at the Brachial artery (inner upper arm)."
+      },
+      {
+        q: "4. What does (-B) (+P) indicate in Step 8?",
+        options: ["Perform 5 cycles of CPR", "Negative breathing, positive pulse — perform Rescue Breathing (RB)", "Victim is revived — place in recovery position"],
+        answer: 1,
+        explain: "(-B) (+P) means no breathing but pulse is present, so you perform Rescue Breathing (RB)."
+      },
+      {
+        q: "5. What are the two accepted infant recovery hold positions in Step 11?",
+        options: ["Supine or Prone flat hold", "Over the shoulder or football hold", "Sitting upright hold"],
+        answer: 1,
+        explain: "In Step 11, an infant is placed in recovery using the over-the-shoulder or football hold."
+      }
+    ];
+
+    let currentTrack = "adult";
+    let activeStepIndex = 0;
+    let isPlayingAll = false;
+    let cadenceTimer = null;
+
+    function getFormattedScript(step) {
+      const nameVal = document.getElementById("traineeName").value.trim() || "________";
+      return step.script.replace("{NAME}", nameVal);
+    }
+
+    function getVisualSVG(type) {
+      const svgs = {
+        scene: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="120" cy="85" r="55" fill="#dbeafe" class="anim-pulse"/>
+          <circle cx="120" cy="85" r="36" fill="#0f4c81"/>
+          <path d="M105 85 L116 96 L138 74" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <text x="120" y="155" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f4c81">360° SCENE SAFE CHECK</text>
+        </svg>`,
+        bsi: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="65" y="35" width="42" height="75" rx="18" fill="#38bdf8" stroke="#0284c7" stroke-width="3"/>
+          <rect x="133" y="35" width="42" height="75" rx="18" fill="#38bdf8" stroke="#0284c7" stroke-width="3"/>
+          <text x="120" y="142" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f4c81">GLOVES &amp; MASK ON (BSI)</text>
+        </svg>`,
+        intro: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="85" cy="65" r="24" fill="#0f4c81"/>
+          <path d="M50 130 C50 98, 120 98, 120 130" fill="#0f4c81"/>
+          <rect x="122" y="32" width="95" height="44" rx="10" fill="#fff" stroke="#0f4c81" stroke-width="2.5"/>
+          <text x="169" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">"Can I help?"</text>
+        </svg>`,
+        tap_shoulder: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="120" cy="52" r="22" fill="#94a3b8"/>
+          <rect x="75" y="80" width="90" height="55" rx="16" fill="#cbd5e1"/>
+          <circle cx="78" cy="88" r="14" fill="#ef4444" class="anim-pulse"/>
+          <circle cx="162" cy="88" r="14" fill="#ef4444" class="anim-pulse"/>
+          <text x="120" y="158" text-anchor="middle" font-size="12" font-weight="bold" fill="#d9381e">TAP SHOULDERS (2x)</text>
+        </svg>`,
+        tap_feet: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <ellipse cx="95" cy="80" rx="22" ry="34" fill="#fca5a5" stroke="#d9381e" stroke-width="3"/>
+          <ellipse cx="145" cy="80" rx="22" ry="34" fill="#fca5a5" stroke="#d9381e" stroke-width="3"/>
+          <circle cx="95" cy="82" r="14" fill="#ef4444" class="anim-pulse"/>
+          <circle cx="145" cy="82" r="14" fill="#ef4444" class="anim-pulse"/>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#d9381e">TAP INFANT FEET (2x)</text>
+        </svg>`,
+        call_help: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="85" y="30" width="70" height="90" rx="12" fill="#d9381e"/>
+          <text x="120" y="72" text-anchor="middle" font-size="22" font-weight="bold" fill="#fff">EMS</text>
+          <text x="120" y="96" text-anchor="middle" font-size="12" fill="#fff">911 / AMBULANCE</text>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">ACTIVATE MEDICAL HELP</text>
+        </svg>`,
+        llf_carotid: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="120" cy="60" r="28" fill="#cbd5e1"/>
+          <rect x="104" y="86" width="32" height="40" fill="#94a3b8"/>
+          <circle cx="134" cy="102" r="12" fill="#ef4444" class="anim-pulse"/>
+          <text x="120" y="152" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">LLF + CAROTID PULSE (10s)</text>
+        </svg>`,
+        llf_brachial: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="65" y="65" width="110" height="32" rx="14" fill="#cbd5e1"/>
+          <circle cx="120" cy="81" r="13" fill="#ef4444" class="anim-pulse"/>
+          <text x="120" y="138" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">LLF + BRACHIAL PULSE (INNER ARM)</text>
+        </svg>`,
+        cpr_adult: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="55" y="85" width="130" height="42" rx="14" fill="#94a3b8"/>
+          <g class="anim-compress">
+            <rect x="98" y="38" width="44" height="44" rx="10" fill="#d9381e"/>
+            <text x="120" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">30 : 2</text>
+          </g>
+          <text x="120" y="152" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">2-HAND CHEST COMPRESSIONS</text>
+        </svg>`,
+        cpr_infant: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="75" y="90" width="90" height="34" rx="12" fill="#cbd5e1"/>
+          <g class="anim-compress">
+            <rect x="106" y="42" width="11" height="44" rx="5" fill="#d9381e"/>
+            <rect x="123" y="42" width="11" height="44" rx="5" fill="#d9381e"/>
+          </g>
+          <text x="120" y="152" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">2-FINGER INFANT CPR (30:2)</text>
+        </svg>`,
+        rb_adult: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <ellipse cx="95" cy="80" rx="26" ry="38" fill="#38bdf8" class="anim-breath"/>
+          <ellipse cx="145" cy="80" rx="26" ry="38" fill="#38bdf8" class="anim-breath"/>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">RESCUE BREATHING (UP TO 1024)</text>
+        </svg>`,
+        rb_infant: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <ellipse cx="100" cy="80" rx="20" ry="30" fill="#38bdf8" class="anim-breath"/>
+          <ellipse cx="140" cy="80" rx="20" ry="30" fill="#38bdf8" class="anim-breath"/>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">INFANT RB (UP TO 1, 1040)</text>
+        </svg>`,
+        revived_check: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="120" cy="78" r="42" fill="#16794c"/>
+          <text x="120" y="74" text-anchor="middle" font-size="15" font-weight="bold" fill="#fff">+B  +P</text>
+          <text x="120" y="94" text-anchor="middle" font-size="11" fill="#fff">REVIVED</text>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#16794c">SECONDARY ASSESSMENT</text>
+        </svg>`,
+        head_to_toe: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <circle cx="120" cy="36" r="14" fill="#0f4c81"/>
+          <rect x="104" y="54" width="32" height="48" rx="8" fill="#0f4c81"/>
+          <line x1="70" y1="36" x2="170" y2="36" stroke="#d9381e" stroke-width="3" stroke-dasharray="5,5"/>
+          <line x1="70" y1="102" x2="170" y2="102" stroke="#d9381e" stroke-width="3" stroke-dasharray="5,5"/>
+          <text x="120" y="146" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f4c81">HEAD-TO-TOE SCAN</text>
+        </svg>`,
+        recovery_adult: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="45" y="88" width="150" height="32" rx="16" fill="#16794c"/>
+          <circle cx="62" cy="82" r="16" fill="#0f4c81"/>
+          <text x="120" y="148" text-anchor="middle" font-size="12" font-weight="bold" fill="#16794c">SIDE-LYING RECOVERY POSITION</text>
+        </svg>`,
+        recovery_infant: `<svg width="240" height="170" viewBox="0 0 240 170">
+          <rect x="65" y="65" width="110" height="44" rx="20" fill="#16794c"/>
+          <circle cx="84" cy="87" r="15" fill="#fef08a"/>
+          <text x="120" y="146" text-anchor="middle" font-size="12" font-weight="bold" fill="#16794c">OVER SHOULDER / FOOTBALL HOLD</text>
+        </svg>`
+      };
+      return svgs[type] || svgs.scene;
+    }
+
+    function renderSteps() {
+      const list = DATA[currentTrack];
+      const container = document.getElementById("stepsContainer");
+      container.innerHTML = "";
+
+      list.forEach((step, idx) => {
+        const card = document.createElement("div");
+        card.className = "step-card" + (idx === activeStepIndex ? " active" : "");
+        card.onclick = () => selectStep(idx, true);
+
+        const formatted = getFormattedScript(step);
+        card.innerHTML = `
+          <div class="step-header">
+            <span class="step-num">STEP ${step.num}</span>
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="event.stopPropagation(); selectStep(${idx}, true);">🔊 Listen</button>
+          </div>
+          <div class="step-script">${formatted}</div>
+          ${step.sub ? `<div class="step-sublines">${step.sub}</div>` : ""}
+          <div class="step-tagalog"><strong>Gabay:</strong> ${step.tagalog}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      updateVisualPanel();
+    }
+
+    function updateVisualPanel() {
+      const step = DATA[currentTrack][activeStepIndex];
+      document.getElementById("visualStage").innerHTML = `
+        <span class="visual-badge">${currentTrack.toUpperCase()} — STEP ${step.num}</span>
+        ${getVisualSVG(step.visualType)}
+      `;
+      document.getElementById("visualTitle").textContent = `Step ${step.num} (${currentTrack.toUpperCase()})`;
+      document.getElementById("visualDesc").textContent = step.tagalog;
+      document.getElementById("visualTip").innerHTML = `<strong>Assessor Tip:</strong> ${step.tip}`;
+    }
+
+    function selectStep(idx, autoSpeak = false) {
+      activeStepIndex = idx;
+      renderSteps();
+      if (autoSpeak) speakCurrentStep();
+    }
+
+    function nextStep() {
+      const list = DATA[currentTrack];
+      activeStepIndex = (activeStepIndex + 1) % list.length;
+      selectStep(activeStepIndex, true);
+    }
+
+    function setTrack(track) {
+      stopAudio();
+      currentTrack = track;
+      activeStepIndex = 0;
+      document.getElementById("btn-adult").classList.toggle("active", track === "adult");
+      document.getElementById("btn-infant").classList.toggle("active", track === "infant");
+      renderSteps();
+    }
+
+    // Gemini Live narration (same audio transport approach used by Avi).
+    // BFALS uses a separate narration mode on the Worker so Avi's tutor prompt stays unchanged.
+    const BFALS_WORKER_TOKEN_URL = "https://avi-voice-backend.gerek25.workers.dev/token";
+    const BFALS_MODEL = "models/gemini-3.8-live";
+    const bfalsAudio = {
+      socket: null,
+      audioContext: null,
+      nextPlayTime: 0,
+      activeSources: new Set(),
+      sequence: [],
+      sequenceIndex: 0,
+      waitingForTurn: false,
+      stopRequested: false,
+      onComplete: null,
+      setupReady: false
+    };
+
+    function setNarrationButton(playing) {
+      const button = document.getElementById("btnPlayAll");
+      button.textContent = playing ? "⏸️ Playing All..." : "▶️ Listen Full Script";
+    }
+
+    function stopGeminiPlayback() {
+      for (const source of bfalsAudio.activeSources) {
+        try { source.stop(); } catch (_) {}
+      }
+      bfalsAudio.activeSources.clear();
+      if (bfalsAudio.audioContext) {
+        bfalsAudio.nextPlayTime = bfalsAudio.audioContext.currentTime;
+      }
+    }
+
+    function finishGeminiNarration(message = "") {
+      const callback = bfalsAudio.onComplete;
+      bfalsAudio.onComplete = null;
+      bfalsAudio.stopRequested = true;
+      bfalsAudio.setupReady = false;
+      bfalsAudio.waitingForTurn = false;
+      if (bfalsAudio.socket) {
+        const socket = bfalsAudio.socket;
+        bfalsAudio.socket = null;
+        socket.onclose = null;
+        try { socket.close(1000, "Narration finished"); } catch (_) {}
+      }
+      stopGeminiPlayback();
+      if (bfalsAudio.audioContext) {
+        bfalsAudio.audioContext.close().catch(() => {});
+        bfalsAudio.audioContext = null;
+      }
+      isPlayingAll = false;
+      setNarrationButton(false);
+      if (message) console.warn(message);
+      if (callback) callback();
+    }
+
+    function playGeminiPcm24k(base64) {
+      if (!bfalsAudio.audioContext || bfalsAudio.stopRequested) return;
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      const pcm = new Int16Array(bytes.buffer, bytes.byteOffset, Math.floor(bytes.byteLength / 2));
+      const samples = new Float32Array(pcm.length);
+      for (let i = 0; i < pcm.length; i++) samples[i] = pcm[i] / 32768;
+      const buffer = bfalsAudio.audioContext.createBuffer(1, samples.length, 24000);
+      buffer.copyToChannel(samples, 0);
+      const source = bfalsAudio.audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(bfalsAudio.audioContext.destination);
+      bfalsAudio.nextPlayTime = Math.max(bfalsAudio.nextPlayTime, bfalsAudio.audioContext.currentTime + 0.04);
+      source.start(bfalsAudio.nextPlayTime);
+      bfalsAudio.nextPlayTime += buffer.duration;
+      bfalsAudio.activeSources.add(source);
+      source.onended = () => bfalsAudio.activeSources.delete(source);
+    }
+
+    function buildStepNarration(step) {
+      const nameVal = document.getElementById("traineeName").value.trim() || "Candidate";
+      const english = (step.script.replace("{NAME}", nameVal) + (step.sub ? ". " + step.sub.replace(/[-·]/g, " ") : "")).trim();
+      const includeFilipino = document.getElementById("includeTagalogAudio").checked;
+      const filipino = (step.tagalog || "").trim();
+      const rate = parseFloat(document.getElementById("speechRate").value || "1.0");
+      const pace = rate <= 0.85 ? "Speak slowly and deliberately." : rate >= 1.1 ? "Speak slightly briskly but remain clear." : "Speak at a natural, measured pace.";
+      if (!includeFilipino || !filipino) {
+        return `Read this English instructional script exactly as written. ${pace}\n${english}`;
+      }
+      return `Read the following bilingual instructional script in this exact order. First speak the complete English section in English. Pause briefly. Then speak the Filipino section in natural Filipino/Tagalog. Do not translate, add, omit, summarize, or change either section. ${pace}\n\nENGLISH:\n${english}\n\nFILIPINO:\n${filipino}`;
+    }
+
+    function requestNextNarrationTurn() {
+      if (bfalsAudio.stopRequested || !bfalsAudio.socket || bfalsAudio.socket.readyState !== WebSocket.OPEN) return;
+      if (bfalsAudio.sequenceIndex >= bfalsAudio.sequence.length) {
+        finishGeminiNarration();
+        return;
+      }
+      const step = DATA[currentTrack][bfalsAudio.sequence[bfalsAudio.sequenceIndex]];
+      bfalsAudio.waitingForTurn = true;
+      bfalsAudio.socket.send(JSON.stringify({ realtimeInput: { text: buildStepNarration(step) } }));
+    }
+
+    async function handleBfalsGeminiMessage(message) {
+      if (message.setupComplete) {
+        bfalsAudio.setupReady = true;
+        requestNextNarrationTurn();
+        return;
+      }
+      const content = message.serverContent;
+      if (!content) return;
+      if (content.interrupted) stopGeminiPlayback();
+      for (const part of (content.modelTurn?.parts || [])) {
+        const audio = part.inlineData || part.inline_data;
+        if (audio?.data) playGeminiPcm24k(audio.data);
+      }
+      if (content.turnComplete && bfalsAudio.waitingForTurn) {
+        bfalsAudio.waitingForTurn = false;
+        bfalsAudio.sequenceIndex++;
+        // Allow the final audio chunk to finish before requesting the next step.
+        const remainingMs = bfalsAudio.audioContext
+          ? Math.max(0, (bfalsAudio.nextPlayTime - bfalsAudio.audioContext.currentTime) * 1000)
+          : 0;
+        window.setTimeout(requestNextNarrationTurn, Math.min(remainingMs + 180, 12000));
+      }
+    }
+
+    async function startGeminiNarration(stepIndexes, onComplete = null) {
+      stopAudio();
+      bfalsAudio.sequence = stepIndexes.slice();
+      bfalsAudio.sequenceIndex = 0;
+      bfalsAudio.stopRequested = false;
+      bfalsAudio.waitingForTurn = false;
+      bfalsAudio.setupReady = false;
+      bfalsAudio.onComplete = onComplete;
+      try {
+        bfalsAudio.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        await bfalsAudio.audioContext.resume();
+        bfalsAudio.nextPlayTime = bfalsAudio.audioContext.currentTime;
+
+        const response = await fetch(BFALS_WORKER_TOKEN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language: "en-US", mode: "bfals_reading" })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.token) {
+          throw new Error(data.error || "Could not get a secure Gemini narration token.");
+        }
+
+        const url = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=${encodeURIComponent(data.token)}`;
+        const socket = new WebSocket(url);
+        bfalsAudio.socket = socket;
+        socket.onopen = () => {
+          if (!bfalsAudio.stopRequested) socket.send(JSON.stringify({ setup: { model: BFALS_MODEL, ...data.config } }));
+        };
+        socket.onmessage = async event => {
+          try {
+            let raw = event.data;
+            if (raw instanceof Blob) raw = await raw.text();
+            else if (raw instanceof ArrayBuffer) raw = new TextDecoder().decode(raw);
+            const message = typeof raw === "string" ? JSON.parse(raw) : raw;
+            if (message && typeof message === "object") await handleBfalsGeminiMessage(message);
+          } catch (error) {
+            console.error("Could not process BFALS Gemini audio:", error);
+            finishGeminiNarration("BFALS audio message could not be processed.");
+          }
+        };
+        socket.onerror = () => finishGeminiNarration("Gemini Live connection issue during BFALS narration.");
+        socket.onclose = event => {
+          if (!bfalsAudio.stopRequested) finishGeminiNarration(`BFALS Gemini connection closed (${event.code}).`);
+        };
+      } catch (error) {
+        console.error(error);
+        finishGeminiNarration(error.message || "Could not start Gemini narration.");
+        alert(error.message || "Could not start Gemini narration.");
+      }
+    }
+
+    function speakCurrentStep(onComplete = null) {
+      startGeminiNarration([activeStepIndex], onComplete);
+    }
+
+    function togglePlayAll() {
+      if (isPlayingAll) {
+        stopAudio();
+        return;
+      }
+      isPlayingAll = true;
+      setNarrationButton(true);
+      const list = DATA[currentTrack];
+      const indexes = list.map((_, index) => index);
+      startGeminiNarration(indexes, () => {
+        isPlayingAll = false;
+        setNarrationButton(false);
+      });
+    }
+
+    function playSequence(idx) {
+      const list = DATA[currentTrack];
+      if (idx >= list.length) {
+        stopAudio();
+        return;
+      }
+      activeStepIndex = idx;
+      renderSteps();
+      speakCurrentStep(() => {
+        if (isPlayingAll) playSequence(idx + 1);
+      });
+    }
+
+    function stopAudio() {
+      isPlayingAll = false;
+      bfalsAudio.stopRequested = true;
+      bfalsAudio.onComplete = null;
+      bfalsAudio.sequence = [];
+      bfalsAudio.sequenceIndex = 0;
+      if (bfalsAudio.socket) {
+        const socket = bfalsAudio.socket;
+        bfalsAudio.socket = null;
+        socket.onclose = null;
+        try { socket.close(1000, "Stopped by user"); } catch (_) {}
+      }
+      stopGeminiPlayback();
+      if (bfalsAudio.audioContext) {
+        bfalsAudio.audioContext.close().catch(() => {});
+        bfalsAudio.audioContext = null;
+      }
+      window.speechSynthesis.cancel();
+      setNarrationButton(false);
+    }
+
+    // The short, precisely timed cadence counts remain on browser TTS so their timing is not affected by network latency.
+    function speakText(text, onEndCallback = null) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = parseFloat(document.getElementById("speechRate").value || "1.0");
+      utter.lang = "en-US";
+      if (onEndCallback) utter.onend = onEndCallback;
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* Cadence Trainers */
+    function stopCadence() {
+      clearInterval(cadenceTimer);
+      window.speechSynthesis.cancel();
+    }
+
+    function runLLFTrainer() {
+      stopCadence();
+      let count = 1001;
+      const display = document.getElementById("llfDisplay");
+      display.textContent = count;
+      speakText(String(count));
+      cadenceTimer = setInterval(() => {
+        count++;
+        if (count > 1010) {
+          clearInterval(cadenceTimer);
+          display.textContent = "Done (10s)";
+          return;
+        }
+        display.textContent = count;
+        speakText(String(count));
+      }, 1000);
+    }
+
+    function runCPRTrainer() {
+      stopCadence();
+      const seq = [
+        "1","2","3","4","5","6","7","8","9","10",
+        "11","12","13","14","15","16","17","18","19","20",
+        "1","2","3","4","5","6","7","8","9","and 1",
+        "Blow 1", "Blow 2"
+      ];
+      let i = 0;
+      const display = document.getElementById("cprDisplay");
+      cadenceTimer = setInterval(() => {
+        if (i >= seq.length) {
+          clearInterval(cadenceTimer);
+          display.textContent = "Cycle Complete!";
+          return;
+        }
+        display.textContent = seq[i];
+        speakText(seq[i]);
+        i++;
+      }, 620);
+    }
+
+    function runRBTrainer(mode) {
+      stopCadence();
+      const lines = mode === "adult"
+        ? ["1 blow", "1, 1002, 1003, 1001", "1 blow", "1, 1002, 1003, 1002", "1 blow", "1, 1002, 1003, 1024", "1 blow"]
+        : ["1 blow", "1, 1001", "1 blow", "1, 1002", "1 blow", "1, 1040", "1 blow"];
+      let i = 0;
+      const display = document.getElementById("rbDisplay");
+      function nextLine() {
+        if (i >= lines.length) {
+          display.textContent = "Proceed to LLF";
+          return;
+        }
+        display.textContent = lines[i];
+        speakText(lines[i], () => {
+          i++;
+          setTimeout(nextLine, 350);
+        });
+      }
+      nextLine();
+    }
+
+    /* Quiz Renderer */
+    function renderQuiz() {
+      const container = document.getElementById("quizContainer");
+      container.innerHTML = QUIZ_QUESTIONS.map((item, qIdx) => `
+        <div class="quiz-item">
+          <div style="font-weight: 700;">${item.q}</div>
+          <div class="quiz-options">
+            ${item.options.map((opt, oIdx) => `
+              <button class="quiz-opt" onclick="checkAnswer(${qIdx}, ${oIdx}, this)">${opt}</button>
+            `).join("")}
+          </div>
+          <div id="q-exp-${qIdx}" style="font-size: 0.88rem; margin-top: 8px; color: var(--primary); font-weight: 600;"></div>
+        </div>
+      `).join("");
+    }
+
+    function checkAnswer(qIdx, oIdx, btn) {
+      const item = QUIZ_QUESTIONS[qIdx];
+      const parent = btn.parentElement;
+      Array.from(parent.children).forEach(b => b.disabled = true);
+      if (oIdx === item.answer) {
+        btn.classList.add("correct");
+      } else {
+        btn.classList.add("wrong");
+        parent.children[item.answer].classList.add("correct");
+      }
+      document.getElementById(`q-exp-${qIdx}`).textContent = item.explain;
+    }
+
+    function switchTab(tabId, btn) {
+      stopAudio();
+      stopCadence();
+      ["simulator", "cadence", "quiz", "cheatsheet"].forEach(id => {
+        document.getElementById(`tab-${id}`).classList.toggle("hidden", id !== tabId);
+      });
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    // Initialize
+    renderSteps();
+    renderQuiz();
+  </script>
+</body>
+</html>
